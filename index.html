@@ -10,8 +10,8 @@
   :root{
     --card:#fff; --ink:#0b2a5a; --sub:#475569; --border:#e2e8f0;
     --accent:#2bd9a7; --accent2:#40c8ff;
-    --oldA:#fff3f4; --oldB:#ffdede; --oldBorder:#d93c3c; /* rojo más oscuro */
-    --newA:#eafaf1; --newB:#d8f5e2; --newBorder:#16a34a; /* verde más oscuro */
+    --oldA:#ffe8ea; --oldB:#ffd2d7; --oldBorder:#c62828;   /* rojo más oscuro */
+    --newA:#e7f7ee; --newB:#d1f1de; --newBorder:#15803d;   /* verde más oscuro */
     --muted:#eef2f7;
   }
   *{box-sizing:border-box}
@@ -21,12 +21,18 @@
     font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,Inter,Roboto,"Segoe UI",system-ui,sans-serif;
     background:#fff;
   }
-  /* Fondo Maarlab + velo blanco (muy sutil) */
+  /* Fondo Maarlab + velo blanco muy sutil */
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
-  body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.38),rgba(255,255,255,.6) 45%,rgba(255,255,255,.9))}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.44),rgba(255,255,255,.66) 45%,rgba(255,255,255,.92))}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
-  .bar{position:sticky;top:0;background:#ffffffbf;backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:20}
-  .flex{display:flex;gap:12px;align-items:center}
+
+  /* Barra superior blanca + separador degradado de marca */
+  .bar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);z-index:30}
+  .barInner{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:1240px;margin:0 auto;padding:10px 16px}
+  .brandChip{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:6px 12px;border-radius:12px;display:inline-flex;align-items:center}
+  .mlogoH{height:22px;display:block;filter:drop-shadow(0 0 0 rgba(0,0,0,.0))} /* logo es blanco, el chip lo hace visible */
+  .sep{height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+
   .grid2{display:grid;gap:16px}
   @media(min-width:1100px){.grid2{grid-template-columns:2fr 1fr}}
   .btn{border:0;border-radius:12px;padding:10px 14px;color:#0b2a5a;background:linear-gradient(135deg,var(--accent),var(--accent2));cursor:pointer;font-weight:600}
@@ -44,14 +50,13 @@
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
-  .mlogoH{height:32px}
   .logoBoxSq{width:48px;height:48px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .logoBoxSq img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 
   /* ===== Visualizador (izquierda) ===== */
   #exportArea{position:relative; font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,Inter,Roboto,"Segoe UI",system-ui,sans-serif;}
   .headerRow{display:flex;justify-content:space-between;align-items:center;gap:12px}
-  #hdr-title{font:700 26px Poppins,-apple-system,"Helvetica Neue",Arial}
+  #hdr-title{font:700 30px Poppins,-apple-system,"Helvetica Neue",Arial}
   .itins{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
   .itinCol{border:1px solid var(--border);border-radius:14px;padding:12px;min-height:300px}
   .itinOld{background:linear-gradient(180deg,var(--oldA),var(--oldB));border-color:var(--oldBorder)}
@@ -86,7 +91,7 @@
   /* ===== Print (PDF nativo) ===== */
   @media print{
     body{background:#fff}
-    .bar, #panel, .btnPdfHide{display:none!important}
+    .bar, .sep, #panel, .btnPdfHide{display:none!important}
     #exportArea{page-break-inside:avoid}
     *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
     @page{size:A4 landscape;margin:10mm}
@@ -96,25 +101,28 @@
 <body>
   <!-- TOP -->
   <div class="bar">
-    <div class="wrap flex">
-      <!-- Logo largo Maarlab -->
-      <img class="mlogoH" alt="Maarlab" src="https://www.ifema.es/fitur/img/logo-maarlab/logo-maarlab.webp" crossorigin="anonymous" referrerpolicy="no-referrer">
-      <div style="flex:1"></div>
-      <!-- Idiomas -->
-      <div class="chip" id="chipLang" style="margin-right:8px">
-        <button data-lang="es" class="active">ES</button>
-        <button data-lang="en">EN</button>
-        <button data-lang="fr">FR</button>
-        <button data-lang="it">IT</button>
-        <button data-lang="de">DE</button>
-      </div>
-      <!-- Monedas -->
-      <div class="chip" id="chipCurrency" style="margin-right:8px">
-        <button data-cur="EUR" class="active">EUR</button>
-        <button data-cur="USD">USD</button>
-        <button data-cur="MXN">MXN</button>
+    <div class="barInner">
+      <span class="brandChip">
+        <img class="mlogoH" alt="Maarlab" src="https://maarlab.com/wp-content/uploads/2024/09/maarlab-footer.svg" crossorigin="anonymous" referrerpolicy="no-referrer">
+      </span>
+      <div style="display:flex;gap:10px;align-items:center">
+        <!-- Idiomas -->
+        <div class="chip" id="chipLang">
+          <button data-lang="es" class="active">ES</button>
+          <button data-lang="en">EN</button>
+          <button data-lang="fr">FR</button>
+          <button data-lang="it">IT</button>
+          <button data-lang="de">DE</button>
+        </div>
+        <!-- Monedas -->
+        <div class="chip" id="chipCurrency">
+          <button data-cur="EUR" class="active">EUR</button>
+          <button data-cur="USD">USD</button>
+          <button data-cur="MXN">MXN</button>
+        </div>
       </div>
     </div>
+    <div class="sep"></div>
   </div>
 
   <main class="wrap grid2">
@@ -495,7 +503,7 @@ const TZ_DB = {
 
 /* ===== formato / helpers ===== */
 let CUR="EUR";
-let fmt = new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2});
+const { DateTime } = luxon;
 const nf = (cur,lang)=>new Intl.NumberFormat(
   lang==="en"?"en-US":lang==="fr"?"fr-FR":lang==="it"?"it-IT":lang==="de"?"de-DE":"es-ES",
   {style:"currency",currency:cur,minimumFractionDigits:2,maximumFractionDigits:2}
@@ -505,7 +513,6 @@ const normalizeCode = c => (c||"").toUpperCase();
 const airlineLogoUrl = code => ( ($("airlineBase")?.value || DEFAULT_AIRLINE_BASE).replace(/\/$/,"") + "/" + code + ".png" );
 const fmtDate = (val)=>{ if(!val) return "—"; const [y,m,d]=String(val).split("-"); return (y&&m&&d)?`${d}/${m}/${y}`:val; };
 const HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-const { DateTime } = luxon;
 let hotelLogoData = ""; // dataURL de logo hotel local
 
 function dayOfWeek(dateISO){
@@ -539,14 +546,15 @@ const fmtHM = m => isFinite(m)?(`${Math.floor(Math.abs(m)/60)}h ${Math.abs(m)%60
 
 /* Precios / moneda */
 function moneyOut(v){
-  if(CUR==="EUR") return nf("EUR",LANG).format(v);
-  const fx = $("fxEnable")?.checked;
-  if(!fx) return nf(CUR,LANG).format(v);
-  const usd = Number($("fxUSD").value||1.08);
-  const mxn = Number($("fxMXN").value||19.0);
-  if(CUR==="USD") return nf("USD",LANG).format(v*usd);
-  if(CUR==="MXN") return nf("MXN",LANG).format(v*mxn);
-  return nf(CUR,LANG).format(v);
+  const fxOn = $("#fxEnable")?.checked;
+  const lang = LANG;
+  if(CUR==="EUR") return nf("EUR",lang).format(v);
+  if(!fxOn) return nf(CUR,lang).format(v);
+  const usd = Number($("#fxUSD").value||1.08);
+  const mxn = Number($("#fxMXN").value||19.0);
+  if(CUR==="USD") return nf("USD",lang).format(v*usd);
+  if(CUR==="MXN") return nf("MXN",lang).format(v*mxn);
+  return nf(CUR,lang).format(v);
 }
 
 /* i18n */
@@ -558,8 +566,8 @@ function applyI18n(){
   $("#hOut").textContent = S.outTitle; $("#hRet").textContent=S.retTitle;
   $("#hCosts").textContent=S.costs; $("#penLabel").textContent=S.penalty; $("#feeLabel").textContent=S.fee;
   $("#fareLabel").textContent=S.fare; $("#ppLabel").textContent=S.perPax; $("#totLabel").textContent=S.total;
-  $("#advSummary").textContent=S.adv; 
-  const lblBase = $("#lblBaseUrl"); if(lblBase && lblBase.firstChild) lblBase.firstChild.textContent = S.baseUrl + " ";
+  $("#advSummary").textContent=S.adv;
+  const lblBase=$("#lblBaseUrl"); if(lblBase && lblBase.firstChild) lblBase.firstChild.textContent=S.baseUrl+" ";
   $("#fxLabel").textContent=S.fx; $("#ncText").textContent=S.nc; $("#footerText").textContent=S.footer;
   $("#stopsSummary").textContent=S.stops;
   document.querySelectorAll("#btnPdf,#btnPdf2").forEach(b=>b.textContent="PDF");
@@ -671,8 +679,10 @@ function refresh(){
 
   const ood=fmtDate($("#ooDate").value), ord=fmtDate($("#orDate").value), nod=fmtDate($("#noDate").value), nrd=fmtDate($("#nrDate").value);
   const oodD=dayOfWeek($("#ooDate").value), ordD=dayOfWeek($("#orDate").value), nodD=dayOfWeek($("#noDate").value), nrdD=dayOfWeek($("#nrDate").value);
-  const S=STR[LANG];
-  $("#hdr-dates").textContent = `${LANG==="es"? "Ida":LANG==="fr"?"Aller":LANG==="it"?"Andata":LANG==="de"?"Hinflug":"Out"}: ${oodD?oodD+" ":""}${ood} → ${nodD?nodD+" ":""}${nod} · ${LANG==="es"?"Vuelta":LANG==="fr"?"Retour":LANG==="it"?"Ritorno":LANG==="de"?"Rückflug":"Return"}: ${ordD?ordD+" ":""}${ord} → ${nrdD?nrdD+" ":""}${nrd}`;
+
+  $("#hdr-dates").textContent =
+    `${LANG==="es"? "Ida":LANG==="fr"?"Aller":LANG==="it"?"Andata":LANG==="de"?"Hinflug":"Out"}: ${oodD?oodD+" ":""}${ood} → ${nodD?nodD+" ":""}${nod} · `+
+    `${LANG==="es"?"Vuelta":LANG==="fr"?"Retour":LANG==="it"?"Ritorno":LANG==="de"?"Rückflug":"Return"}: ${ordD?ordD+" ":""}${ord} → ${nrdD?nrdD+" ":""}${nrd}`;
 
   renderLeg("oo", outFrom, outTo, outFromCity, outToCity);
   renderLeg("or", retFrom, retTo, retFromCity, retToCity);
@@ -703,24 +713,27 @@ function refresh(){
   if(showLogo){ img.src = hotelLogoData; img.style.display="block"; } else { img.removeAttribute("src"); img.style.display="none"; }
 }
 
-/* Binds */
+/* Binds (en tiempo real robusto) */
 function bindAll(){
-  // inputs -> refresco en tiempo real
-  document.querySelectorAll("#panel input, #panel select, #notesBox").forEach(el=>{
-    const isTime = /(Dep|Arr|StopArr|StopDep)$/i.test(el.id);
-    const isIata = /(outFrom|outTo|retFrom|retTo|Stop)$/i.test(el.id);
-    el.addEventListener("input",(e)=>{
-      if(isIata) e.target.value = e.target.value.toUpperCase();
-      if(isTime) e.target.classList.toggle("invalid", !!e.target.value && !/^([01]\d|2[0-3]):[0-5]\d$/.test(e.target.value));
-      if(e.target.dataset.iata){
-        const city=$(e.target.dataset.iata);
-        const c=e.target.value.toUpperCase().trim();
-        if(city && c.length>=3 && IATA_DB[c]) city.value=IATA_DB[c];
-      }
-      refresh();
+  const rebind = ()=>{
+    document.querySelectorAll("#panel input, #panel select").forEach(el=>{
+      el.oninput = (e)=>{
+        const isTime = /(Dep|Arr|StopArr|StopDep)$/i.test(el.id);
+        const isIata = /(outFrom|outTo|retFrom|retTo|Stop)$/i.test(el.id);
+        if(isIata) e.target.value = e.target.value.toUpperCase();
+        if(isTime) e.target.classList.toggle("invalid", !!e.target.value && !/^([01]\d|2[0-3]):[0-5]\d$/.test(e.target.value));
+        if(e.target.dataset.iata){
+          const city=$(e.target.dataset.iata);
+          const c=e.target.value.toUpperCase().trim();
+          if(city && c.length>=3 && IATA_DB[c]) city.value=IATA_DB[c];
+        }
+        refresh();
+      };
+      el.onchange = refresh;
+      el.onkeyup  = refresh; // redundancia para “tiempo real”
     });
-    el.addEventListener("change", refresh);
-  });
+  };
+  rebind();
 
   // Hotel logo local
   $("#hotelLogoFile")?.addEventListener("change", (e)=>{
@@ -736,7 +749,6 @@ function bindAll(){
     const b=e.target.closest("button"); if(!b) return;
     CUR=b.dataset.cur;
     document.querySelectorAll("#chipCurrency button").forEach(x=>x.classList.toggle("active",x===b));
-    // Si no es EUR, activamos conversión por defecto
     if(CUR!=="EUR") $("#fxEnable").checked = true;
     refresh();
   });
@@ -766,6 +778,7 @@ function bindAll(){
   const dlIata = $("#iataList"); dlIata.innerHTML="";
   Object.keys(IATA_DB).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlIata.appendChild(o); });
 
+  // Primer render
   refresh();
 }
 
@@ -808,7 +821,7 @@ async function exportPNG(){
 }
 
 /* Start */
-(function start(){ bindAll(); applyI18n(); })();
+document.addEventListener("DOMContentLoaded", ()=>{ bindAll(); applyI18n(); });
 </script>
 </body>
 </html>
