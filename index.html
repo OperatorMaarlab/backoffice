@@ -16,11 +16,11 @@
   *{box-sizing:border-box}
   html,body{height:100%}
   body{margin:0;color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,Roboto;background:#fff;}
-  /* Fondo Maarlab con velo aún más suave (más color visible) */
+  /* Fondo Maarlab con velo más bajo (más color visible) */
   body::before{content:"";position:fixed;inset:0;z-index:-2;
     background:linear-gradient(135deg,var(--accent),var(--accent2));}
   body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-    background:linear-gradient(to bottom, rgba(255,255,255,.45) 0%, rgba(255,255,255,.65) 45%, rgba(255,255,255,.88) 100%);}
+    background:linear-gradient(to bottom, rgba(255,255,255,.42) 0%, rgba(255,255,255,.62) 45%, rgba(255,255,255,.86) 100%);}
 
   h1{font:700 22px/1.2 Poppins;margin:0}
   h2{font:700 16px/1.2 Poppins;margin:0 0 6px}
@@ -87,7 +87,7 @@
         <button data-cur="MXN">MXN</button>
       </div>
       <div class="logoBoxSq">
-        <img alt="M" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg" crossorigin="anonymous">
+        <img alt="M" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg" crossorigin="anonymous" referrerpolicy="no-referrer">
       </div>
     </div>
   </div>
@@ -178,7 +178,7 @@
       </details>
     </div>
 
-    <!-- TARJETA (ÁREA A EXPORTAR: incluye precios) -->
+    <!-- TARJETA (ÁREA A EXPORTAR: incluye itinerarios + precios) -->
     <div class="card" id="cardWrap" style="position:relative">
       <div id="exportArea">
         <div class="band"></div>
@@ -188,7 +188,7 @@
             <div style="font:700 22px Poppins" id="hdr-title">Cambio de vuelos</div>
             <div class="tiny" id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
           </div>
-          <div class="logoBoxSq"><img id="maarlabLogoM" alt="M" crossorigin="anonymous" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg"></div>
+          <div class="logoBoxSq"><img id="maarlabLogoM" alt="M" crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg"></div>
         </div>
 
         <div class="itins">
@@ -203,7 +203,7 @@
                   <div class="codes" id="ooCodes">XXX → XXX</div>
                   <div class="tiny" id="ooCities">— → —</div>
                 </div>
-                <div class="airLogoBox"><img id="logo-oo" alt="airline-oo" crossorigin="anonymous"></div>
+                <div class="airLogoBox"><img id="logo-oo" alt="airline-oo" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
               </div>
               <div class="meta" id="ooMeta">Vuelo — Fecha</div>
               <div class="times" style="margin-top:6px">
@@ -220,7 +220,7 @@
                   <div class="codes" id="orCodes">XXX → XXX</div>
                   <div class="tiny" id="orCities">— → —</div>
                 </div>
-                <div class="airLogoBox"><img id="logo-or" alt="airline-or" crossorigin="anonymous"></div>
+                <div class="airLogoBox"><img id="logo-or" alt="airline-or" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
               </div>
               <div class="meta" id="orMeta">Vuelo — Fecha</div>
               <div class="times" style="margin-top:6px">
@@ -242,7 +242,7 @@
                   <div class="codes" id="noCodes">XXX → XXX</div>
                   <div class="tiny" id="noCities">— → —</div>
                 </div>
-                <div class="airLogoBox"><img id="logo-no" alt="airline-no" crossorigin="anonymous"></div>
+                <div class="airLogoBox"><img id="logo-no" alt="airline-no" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
               </div>
               <div class="meta" id="noMeta">Vuelo — Fecha</div>
               <div class="times" style="margin-top:6px">
@@ -260,7 +260,7 @@
                   <div class="codes" id="nrCodes">XXX → XXX</div>
                   <div class="tiny" id="nrCities">— → —</div>
                 </div>
-                <div class="airLogoBox"><img id="logo-nr" alt="airline-nr" crossorigin="anonymous"></div>
+                <div class="airLogoBox"><img id="logo-nr" alt="airline-nr" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
               </div>
               <div class="meta" id="nrMeta">Vuelo — Fecha</div>
               <div class="times" style="margin-top:6px">
@@ -292,6 +292,8 @@
 <datalist id="airlineCodes"></datalist>
 <datalist id="iataList"></datalist>
 
+<!-- Luxon para TZ -->
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
 const $ = (id)=>document.getElementById(id);
@@ -309,7 +311,7 @@ const STR = {
       nc:"Confirmo que este material es informativo y no tiene fines comerciales. Puedes exportar o hacer captura.",
       footer:"Generado por Maarlab · Contacto: booking@maarlab.com",
       exportWarn:"Debes confirmar uso informativo / no comercial.",
-      exportFail:"No se pudo exportar. Puedes hacer una captura. Para PNG con logos remotos, activa CORS o sirve imágenes desde el mismo dominio.",
+      exportFail:"No se pudo exportar. Se exportará sin logos si el servidor no permite CORS.",
       depDelta:"Δ Salida", arrDelta:"Δ Llegada"},
   en:{docTitle:"Flight change · Maarlab",pageTitle:"Flight change · Maarlab",
       pageSub:"Previous/new itinerary · 4 flights · EUR/USD/MXN · PNG",
@@ -322,7 +324,7 @@ const STR = {
       nc:"I confirm this is informational and non-commercial. You may export or take a screenshot.",
       footer:"Generated by Maarlab · Contact: booking@maarlab.com",
       exportWarn:"Please confirm non-commercial use.",
-      exportFail:"Export failed. You can take a screenshot. For PNG with remote logos, enable CORS or host images on the same domain.",
+      exportFail:"Export failed. It will export without logos if the server blocks CORS.",
       depDelta:"Δ Dep", arrDelta:"Δ Arr"}
 };
 let LANG="es";
@@ -333,66 +335,50 @@ const DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe4
 
 /* Aerolíneas (ampliado + alias U→U2) */
 const AIRLINES = {
-  // alias
   "U":"easyJet","U2":"easyJet",
-  // MX / LATAM
   "AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
   "AV":"Avianca","G3":"GOL","H2":"Sky Airline","QP":"Amaszonas","VE":"EasyFly",
-  // Europa
   "IB":"Iberia","I2":"Iberia Express","VY":"Vueling","UX":"Air Europa","NT":"Binter Canarias","FR":"Ryanair",
   "W6":"Wizz Air","W4":"Wizz Air Malta","TO":"Transavia France","HV":"Transavia","BA":"British Airways",
   "KL":"KLM","AF":"Air France","LH":"Lufthansa","LX":"SWISS","OS":"Austrian","SN":"Brussels Airlines","LO":"LOT",
   "SK":"SAS","DY":"Norwegian","EW":"Eurowings","A3":"Aegean","OA":"Olympic","TK":"Turkish Airlines","PC":"Pegasus",
   "RO":"TAROM","OU":"Croatia Airlines","JU":"Air Serbia","BT":"airBaltic","AY":"Finnair","OK":"Czech Airlines",
   "RK":"Lauda Europe","X3":"TUIfly","XQ":"SunExpress","QS":"Smartwings","FB":"Bulgaria Air","KM":"Air Malta",
-  // Oriente Medio
   "QR":"Qatar Airways","EK":"Emirates","EY":"Etihad","RJ":"Royal Jordanian","SV":"Saudia","ME":"MEA","MS":"Egyptair",
-  // USA / Canadá
   "AA":"American Airlines","UA":"United","DL":"Delta","B6":"JetBlue","WN":"Southwest","NK":"Spirit",
   "F9":"Frontier","AS":"Alaska Airlines","HA":"Hawaiian","AC":"Air Canada","WS":"WestJet","TS":"Air Transat",
-  // UK/IE
   "EI":"Aer Lingus","LS":"Jet2","BE":"Flybe"
 };
 
-/* IATA → ciudad (incluye TQO, CZM, HUX, PVR, ACA, DFW, EWR, LPL, EMA y muchas más) */
+/* IATA → ciudad */
 const IATA_DB = {
-  // España
   "MAD":"Madrid","BCN":"Barcelona","VLC":"Valencia","AGP":"Málaga","SVQ":"Sevilla","BIO":"Bilbao","PMI":"Palma de Mallorca",
   "IBZ":"Ibiza","ALC":"Alicante","TFN":"Tenerife Norte","TFS":"Tenerife Sur","LPA":"Gran Canaria","ACE":"Lanzarote",
   "FUE":"Fuerteventura","SCQ":"Santiago de Compostela","LCG":"A Coruña","OVD":"Asturias","SDR":"Santander",
   "XRY":"Jerez","GRX":"Granada","LEI":"Almería","VGO":"Vigo","MAH":"Menorca","REU":"Reus",
-  // Portugal
   "LIS":"Lisboa","OPO":"Oporto","FAO":"Faro","FNC":"Madeira",
-  // Francia / BeNeLux / NL
   "CDG":"París (CDG)","ORY":"París (Orly)","NCE":"Niza","LYS":"Lyon","MRS":"Marsella","BRU":"Bruselas",
   "AMS":"Ámsterdam","EIN":"Eindhoven","RTM":"Róterdam",
-  // Alemania / AT / CH
   "FRA":"Fráncfort","MUC":"Múnich","BER":"Berlín","DUS":"Düsseldorf","HAM":"Hamburgo","STR":"Stuttgart","CGN":"Colonia/Bonn",
   "VIE":"Viena","ZRH":"Zúrich","GVA":"Ginebra","BSL":"Basilea",
-  // Italia
   "FCO":"Roma (Fiumicino)","CIA":"Roma (Ciampino)","MXP":"Milán (Malpensa)","LIN":"Milán (Linate)","BGY":"Bérgamo",
   "NAP":"Nápoles","VCE":"Venecia","FLR":"Florencia","CTA":"Catania","PMO":"Palermo",
-  // UK / IE (incluye LPL y EMA)
   "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Londres (Luton)","STN":"Londres (Stansted)","LCY":"Londres (City)",
   "MAN":"Mánchester","BHX":"Birmingham","EDI":"Edimburgo","GLA":"Glasgow","ABZ":"Aberdeen","NCL":"Newcastle",
   "LPL":"Liverpool","LBA":"Leeds Bradford","EMA":"East Midlands","BRS":"Bristol","EXT":"Exeter","SOU":"Southampton",
   "CWL":"Cardiff","BFS":"Belfast (Intl)","BHD":"Belfast (City)","JER":"Jersey","GCI":"Guernsey","NQY":"Newquay",
   "DUB":"Dublín","SNN":"Shannon","ORK":"Cork",
-  // Nórdicos / Este
   "CPH":"Copenhague","OSL":"Oslo","ARN":"Estocolmo","HEL":"Helsinki","RIX":"Riga","TLL":"Tallin","VNO":"Vilna",
   "WAW":"Varsovia","KRK":"Cracovia","PRG":"Praga","BUD":"Budapest","OTP":"Bucarest","SOF":"Sofía","BEG":"Belgrado",
   "ZAG":"Zagreb","SPU":"Split","DBV":"Dubrovnik","ATH":"Atenas","SKG":"Tesalónica","LCA":"Lárnaca","MLA":"La Valeta",
   "KEF":"Reikiavik",
-  // Turquía / MENA
   "IST":"Estambul","SAW":"Estambul (SAW)","AYT":"Antalya","ADB":"Esmirna","CMN":"Casablanca","RAK":"Marrakech","TUN":"Túnez","CAI":"El Cairo",
-  // MÉXICO (incluye TQO, CZM, HUX, PVR, ACA)
   "MEX":"Ciudad de México","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","PVR":"Puerto Vallarta","SJD":"Los Cabos",
   "CZM":"Cozumel","MID":"Mérida","HMO":"Hermosillo","TIJ":"Tijuana","CUL":"Culiacán","LAP":"La Paz","LTO":"Loreto",
   "MZT":"Mazatlán","VER":"Veracruz","TAM":"Tampico","TAP":"Tapachula","TGZ":"Tuxtla Gutiérrez","OAX":"Oaxaca","HUX":"Huatulco",
   "PXM":"Puerto Escondido","PBC":"Puebla","QRO":"Querétaro","BJX":"León/Del Bajío","ZIH":"Ixtapa-Zihuatanejo","ZLO":"Manzanillo",
   "CEN":"Ciudad Obregón","CUU":"Chihuahua","CJS":"Ciudad Juárez","REX":"Reynosa","NLD":"Nuevo Laredo","SLW":"Saltillo",
   "MXL":"Mexicali","CPE":"Campeche","VSA":"Villahermosa","ACA":"Acapulco","TQO":"Tulum (Felipe Carrillo Puerto)",
-  // USA (incluye DFW y EWR + hubs)
   "ATL":"Atlanta","JFK":"Nueva York (JFK)","LGA":"Nueva York (LaGuardia)","EWR":"Newark",
   "BOS":"Boston","PHL":"Filadelfia","IAD":"Washington Dulles","DCA":"Washington National","BWI":"Baltimore",
   "MIA":"Miami","FLL":"Fort Lauderdale","PBI":"West Palm Beach","MCO":"Orlando","TPA":"Tampa","RSW":"Fort Myers","JAX":"Jacksonville",
@@ -407,6 +393,61 @@ const IATA_DB = {
   "PWM":"Portland (ME)","HNL":"Honolulu","OGG":"Kahului (Maui)","LIH":"Lihue (Kauai)","KOA":"Kona","ANC":"Anchorage"
 };
 
+/* IATA → Zona horaria IANA (principalmente por país/región) */
+const TZ_DB = {
+  // España
+  "MAD":"Europe/Madrid","BCN":"Europe/Madrid","VLC":"Europe/Madrid","AGP":"Europe/Madrid","SVQ":"Europe/Madrid","BIO":"Europe/Madrid","PMI":"Europe/Madrid",
+  "IBZ":"Europe/Madrid","ALC":"Europe/Madrid","TFN":"Atlantic/Canary","TFS":"Atlantic/Canary","LPA":"Atlantic/Canary","ACE":"Atlantic/Canary","FUE":"Atlantic/Canary",
+  "SCQ":"Europe/Madrid","LCG":"Europe/Madrid","OVD":"Europe/Madrid","SDR":"Europe/Madrid","XRY":"Europe/Madrid","GRX":"Europe/Madrid","LEI":"Europe/Madrid",
+  "VGO":"Europe/Madrid","MAH":"Europe/Madrid","REU":"Europe/Madrid",
+  // Portugal
+  "LIS":"Europe/Lisbon","OPO":"Europe/Lisbon","FAO":"Europe/Lisbon","FNC":"Atlantic/Madeira",
+  // Francia/BeNeLux/NL
+  "CDG":"Europe/Paris","ORY":"Europe/Paris","NCE":"Europe/Paris","LYS":"Europe/Paris","MRS":"Europe/Paris","BRU":"Europe/Brussels",
+  "AMS":"Europe/Amsterdam","EIN":"Europe/Amsterdam","RTM":"Europe/Amsterdam",
+  // D/A/CH
+  "FRA":"Europe/Berlin","MUC":"Europe/Berlin","BER":"Europe/Berlin","DUS":"Europe/Berlin","HAM":"Europe/Berlin","STR":"Europe/Berlin","CGN":"Europe/Berlin",
+  "VIE":"Europe/Vienna","ZRH":"Europe/Zurich","GVA":"Europe/Zurich","BSL":"Europe/Zurich",
+  // Italia
+  "FCO":"Europe/Rome","CIA":"Europe/Rome","MXP":"Europe/Rome","LIN":"Europe/Rome","BGY":"Europe/Rome","NAP":"Europe/Rome","VCE":"Europe/Rome","FLR":"Europe/Rome","CTA":"Europe/Rome","PMO":"Europe/Rome",
+  // UK / IE
+  "LHR":"Europe/London","LGW":"Europe/London","LTN":"Europe/London","STN":"Europe/London","LCY":"Europe/London","MAN":"Europe/London","BHX":"Europe/London",
+  "EDI":"Europe/London","GLA":"Europe/London","ABZ":"Europe/London","NCL":"Europe/London","LPL":"Europe/London","LBA":"Europe/London","EMA":"Europe/London",
+  "BRS":"Europe/London","EXT":"Europe/London","SOU":"Europe/London","CWL":"Europe/London","BFS":"Europe/London","BHD":"Europe/London",
+  "JER":"Europe/Jersey","GCI":"Europe/Guernsey","NQY":"Europe/London","DUB":"Europe/Dublin","SNN":"Europe/Dublin","ORK":"Europe/Dublin",
+  // Norte/Este
+  "CPH":"Europe/Copenhagen","OSL":"Europe/Oslo","ARN":"Europe/Stockholm","HEL":"Europe/Helsinki","RIX":"Europe/Riga","TLL":"Europe/Tallinn","VNO":"Europe/Vilnius",
+  "WAW":"Europe/Warsaw","KRK":"Europe/Warsaw","PRG":"Europe/Prague","BUD":"Europe/Budapest","OTP":"Europe/Bucharest","SOF":"Europe/Sofia","BEG":"Europe/Belgrade",
+  "ZAG":"Europe/Zagreb","SPU":"Europe/Zagreb","DBV":"Europe/Zagreb","ATH":"Europe/Athens","SKG":"Europe/Athens","LCA":"Asia/Nicosia","MLA":"Europe/Malta",
+  "KEF":"Atlantic/Reykjavik",
+  // Turquía / MENA
+  "IST":"Europe/Istanbul","SAW":"Europe/Istanbul","AYT":"Europe/Istanbul","ADB":"Europe/Istanbul","CMN":"Africa/Casablanca",
+  "RAK":"Africa/Casablanca","TUN":"Africa/Tunis","CAI":"Africa/Cairo",
+  // México
+  "MEX":"America/Mexico_City","GDL":"America/Mexico_City","MTY":"America/Monterrey","CUN":"America/Cancun","TQO":"America/Cancun",
+  "CZM":"America/Cancun","PVR":"America/Mexico_City","SJD":"America/Mazatlan","HMO":"America/Hermosillo","TIJ":"America/Tijuana",
+  "CUL":"America/Mazatlan","LAP":"America/Mazatlan","LTO":"America/Mazatlan","MZT":"America/Mazatlan","VER":"America/Mexico_City",
+  "TAM":"America/Mexico_City","TAP":"America/Mexico_City","TGZ":"America/Mexico_City","OAX":"America/Mexico_City","HUX":"America/Mexico_City",
+  "PXM":"America/Mexico_City","PBC":"America/Mexico_City","QRO":"America/Mexico_City","BJX":"America/Mexico_City",
+  "ZIH":"America/Mexico_City","ZLO":"America/Mexico_City","CEN":"America/Hermosillo","CUU":"America/Chihuahua","CJS":"America/Ojinaga",
+  "REX":"America/Matamoros","NLD":"America/Matamoros","SLW":"America/Monterrey","MXL":"America/Tijuana","CPE":"America/Merida","VSA":"America/Mexico_City","ACA":"America/Mexico_City",
+  // USA
+  "ATL":"America/New_York","JFK":"America/New_York","LGA":"America/New_York","EWR":"America/New_York","BOS":"America/New_York","PHL":"America/New_York",
+  "IAD":"America/New_York","DCA":"America/New_York","BWI":"America/New_York","MIA":"America/New_York","FLL":"America/New_York","PBI":"America/New_York",
+  "MCO":"America/New_York","TPA":"America/New_York","RSW":"America/New_York","JAX":"America/New_York","ORD":"America/Chicago","MDW":"America/Chicago",
+  "MSP":"America/Chicago","DTW":"America/Detroit","CLE":"America/New_York","CMH":"America/New_York","IND":"America/Indiana/Indianapolis",
+  "MKE":"America/Chicago","STL":"America/Chicago","DFW":"America/Chicago","DAL":"America/Chicago","IAH":"America/Chicago","HOU":"America/Chicago",
+  "AUS":"America/Chicago","SAT":"America/Chicago","DEN":"America/Denver","PHX":"America/Phoenix","LAS":"America/Los_Angeles","SLC":"America/Denver",
+  "SEA":"America/Los_Angeles","PDX":"America/Los_Angeles","GEG":"America/Los_Angeles","BOI":"America/Boise","SFO":"America/Los_Angeles","OAK":"America/Los_Angeles",
+  "SJC":"America/Los_Angeles","LAX":"America/Los_Angeles","BUR":"America/Los_Angeles","SNA":"America/Los_Angeles","ONT":"America/Los_Angeles",
+  "SAN":"America/Los_Angeles","SMF":"America/Los_Angeles","RNO":"America/Los_Angeles","ABQ":"America/Denver","ELP":"America/Denver",
+  "OKC":"America/Chicago","TUL":"America/Chicago","MCI":"America/Chicago","OMA":"America/Chicago","BNA":"America/Chicago","MEM":"America/Chicago",
+  "CLT":"America/New_York","RDU":"America/New_York","GSO":"America/New_York","CHS":"America/New_York","SAV":"America/New_York",
+  "RIC":"America/New_York","ORF":"America/New_York","BUF":"America/New_York","ROC":"America/New_York","SYR":"America/New_York","ALB":"America/New_York",
+  "BDL":"America/New_York","PVD":"America/New_York","BTV":"America/New_York","PWM":"America/New_York","HNL":"Pacific/Honolulu",
+  "OGG":"Pacific/Honolulu","LIH":"Pacific/Honolulu","KOA":"Pacific/Honolulu","ANC":"America/Anchorage"
+};
+
 /* ===== estado/helpers ===== */
 let CUR="EUR";
 let fmt = new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2});
@@ -418,10 +459,26 @@ const fmtDate = (val)=>{ if(!val) return "—"; const [y,m,d]=String(val).split(
 const flightStr = (code,num)=>{ const cc=(code||"").toUpperCase(); const nn=(num||"").toUpperCase(); return (cc||nn)?`${cc}${nn}`:"—"; };
 
 const HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-const tMin = (hm)=> HM_RE.test(hm) ? (parseInt(hm.slice(0,2),10)*60 + parseInt(hm.slice(3),10)) : NaN;
-const durMin = (dep,arr)=>{ const d=tMin(dep), a=tMin(arr); if(!isFinite(d)||!isFinite(a)) return NaN; let m=a-d; if(m<0) m+=1440; return m; };
+
+/* Duración real con TZ (Luxon) */
+const { DateTime } = luxon;
+function zonedDT(dateISO, hm, iata){
+  if(!dateISO || !HM_RE.test(hm) || !iata) return null;
+  const z = TZ_DB[iata.toUpperCase()] || "UTC";
+  // compone YYYY-MM-DDTHH:MM en zona del aeropuerto
+  return DateTime.fromISO(`${dateISO}T${hm}`, { zone: z });
+}
+function legDurationM(dateISO, depHM, arrHM, fromIata, toIata){
+  const dep = zonedDT(dateISO, depHM, fromIata);
+  const arrSame = zonedDT(dateISO, arrHM, toIata);
+  if(!dep || !arrSame) return NaN;
+  // compara en UTC; si negativo, asume llegada día siguiente (+24h) hasta ser positivo
+  let diff = arrSame.toUTC().diff(dep.toUTC(), "minutes").minutes;
+  while(diff < 0) diff += 1440;
+  return diff;
+}
 const fmtH = (m)=> isFinite(m)?(`${Math.floor(Math.abs(m)/60)}h ${Math.abs(m)%60}m`):"—";
-const fmtSigned = (m)=> !isFinite(m)?"—":((m===0)?"±0m":((m>0?"+":"-")+fmtH(m)));
+const fmtSigned = (m)=> !isFinite(m)?"—":((m===0)?"±0m":((m>0?"+":"-")+`${Math.floor(Math.abs(m)/60)}h ${Math.abs(m)%60}m`));
 
 function moneyOut(v){
   if(CUR==="EUR") return fmt.format(v);
@@ -451,7 +508,6 @@ function applyI18n(){
   $("advSummary").textContent=S.adv; $("lblBaseUrl").childNodes[0].textContent=S.baseUrl+" ";
   $("fxLabel").textContent=S.fx; $("ncText").textContent=S.nc; $("footerText").textContent=S.footer;
 
-  // etiquetas
   $("lblOOAirTxt").textContent = `${LANG==="es"?"Ida —": "Out —"} ${S.acode}`;
   $("lblOONumTxt").textContent = `${LANG==="es"?"Ida —": "Out —"} ${S.fnum}`;
   $("lblORAirTxt").textContent = `${LANG==="es"?"Vuelta —": "Return —"} ${S.acode}`;
@@ -467,12 +523,9 @@ function applyI18n(){
 
 /* ===== binds ===== */
 function bindAll(){
-  // inputs
   document.querySelectorAll("#panel input, #panel select").forEach(el=>{
     el.addEventListener("input", (e)=>{
-      // Uppercase para códigos e IATA
       if(/(Air|outFrom|outTo|retFrom|retTo)$/i.test(e.target.id)){ e.target.value = e.target.value.toUpperCase(); }
-      // Validación HH:MM
       if(/(Dep|Arr)$/i.test(e.target.id)){
         e.target.classList.toggle("invalid", !HM_RE.test(e.target.value));
       }
@@ -480,24 +533,18 @@ function bindAll(){
     });
     el.addEventListener("change", refresh);
   });
-  // IATA → ciudad
   document.querySelectorAll('input[data-iata]').forEach(inp=>{
     inp.addEventListener('input', ()=>{ const city=$(inp.dataset.iata); const c=(inp.value||"").toUpperCase().trim(); if(city && c.length>=3 && IATA_DB[c]) city.value=IATA_DB[c]; refresh(); });
     inp.addEventListener('blur',  ()=>{ const city=$(inp.dataset.iata); const c=(inp.value||"").toUpperCase().trim(); if(city && IATA_DB[c]) city.value=IATA_DB[c]; refresh(); });
   });
-  // moneda
   $("chipCurrency")?.addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b) return; CUR=b.dataset.cur; document.querySelectorAll("#chipCurrency button").forEach(x=>x.classList.toggle("active",x===b)); fmt=nf(CUR,LANG); refresh(); });
-  // idioma
   $("chipLang")?.addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b) return; LANG=b.dataset.lang; document.querySelectorAll("#chipLang button").forEach(x=>x.classList.toggle("active",x===b)); applyI18n(); });
-  // export
   $("ncAgree")?.addEventListener("change", ()=>{ $("btnPng").disabled=!$("ncAgree").checked; });
   $("btnPng")?.addEventListener("click", exportPNG);
 
-  // defaults
   $("airlineBase").value ||= DEFAULT_AIRLINE_BASE;
   $("maarlabLogoM").src ||= DEFAULT_MAARLAB_MARK;
 
-  // datalists
   const dlAir = $("airlineCodes"); dlAir.innerHTML="";
   Object.keys(AIRLINES).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); });
   const dlIata = $("iataList"); dlIata.innerHTML="";
@@ -508,8 +555,10 @@ function bindAll(){
 function setLegLogo(imgId, code){
   const img=$(imgId); if(!img) return;
   const c = normalizeLogoCode(code);
-  if(c){ img.src=airlineLogo(c); img.style.visibility="visible"; img.onerror=()=>{img.style.visibility="hidden"; img.removeAttribute("src");}; }
-  else { img.style.visibility="hidden"; img.removeAttribute("src"); }
+  if(c){ img.src=airlineLogo(c); img.style.visibility="visible";
+    img.onerror=()=>{img.style.visibility="hidden"; img.removeAttribute("src");};
+    img.crossOrigin="anonymous"; img.referrerPolicy="no-referrer";
+  } else { img.style.visibility="hidden"; img.removeAttribute("src"); }
 }
 
 function deltaSpan(label, mins){
@@ -531,7 +580,7 @@ function refresh(){
   const ood=fmtDate($("ooDate").value), ord=fmtDate($("orDate").value), nod=fmtDate($("noDate").value), nrd=fmtDate($("nrDate").value);
   $("hdr-dates").textContent = `${LANG==="es"?"Ida":"Out"}: ${ood} → ${nod} · ${LANG==="es"?"Vuelta":"Return"}: ${ord} → ${nrd}`;
 
-  // códigos aerolínea + números
+  // códigos + números
   const ooC=($("ooAir").value||"").toUpperCase(), orC=($("orAir").value||"").toUpperCase();
   const noC=($("noAir").value||"").toUpperCase(), nrC=($("nrAir").value||"").toUpperCase();
   const ooN=($("ooNum").value||"").toUpperCase(), orN=($("orNum").value||"").toUpperCase();
@@ -552,51 +601,36 @@ function refresh(){
   // logos
   setLegLogo("logo-oo", ooC); setLegLogo("logo-or", orC); setLegLogo("logo-no", noC); setLegLogo("logo-nr", nrC);
 
-  // horas + validación
-  const oodm = durMin($("ooDep").value, $("ooArr").value);
-  const ordm = durMin($("orDep").value, $("orArr").value);
-  const nodm = durMin($("noDep").value, $("noArr").value);
-  const nrdm = durMin($("nrDep").value, $("nrArr").value);
+  // horas + validación (duración real con TZ)
+  const oodm = legDurationM($("ooDate").value, $("ooDep").value, $("ooArr").value, outFrom, outTo);
+  const ordm = legDurationM($("orDate").value, $("orDep").value, $("orArr").value, retFrom, retTo);
+  const nodm = legDurationM($("noDate").value, $("noDep").value, $("noArr").value, outFrom, outTo);
+  const nrdm = legDurationM($("nrDate").value, $("nrDep").value, $("nrArr").value, retFrom, retTo);
 
-  $("ooDepLabel").textContent=$("ooDep").value||"--:--";
-  $("ooArrLabel").textContent=$("ooArr").value||"--:--";
-  $("orDepLabel").textContent=$("orDep").value||"--:--";
-  $("orArrLabel").textContent=$("orArr").value||"--:--";
-  $("noDepLabel").textContent=$("noDep").value||"--:--";
-  $("noArrLabel").textContent=$("noArr").value||"--:--";
-  $("nrDepLabel").textContent=$("nrDep").value||"--:--";
-  $("nrArrLabel").textContent=$("nrArr").value||"--:--";
+  $("ooDepLabel").textContent=$("ooDep").value||"--:--"; $("ooArrLabel").textContent=$("ooArr").value||"--:--";
+  $("orDepLabel").textContent=$("orDep").value||"--:--"; $("orArrLabel").textContent=$("orArr").value||"--:--";
+  $("noDepLabel").textContent=$("noDep").value||"--:--"; $("noArrLabel").textContent=$("noArr").value||"--:--";
+  $("nrDepLabel").textContent=$("nrDep").value||"--:--"; $("nrArrLabel").textContent=$("nrArr").value||"--:--";
 
-  // Duraciones
   $("ooDur").textContent = `${STR[LANG].duration}: ${fmtH(oodm)}`;
   $("orDur").textContent = `${STR[LANG].duration}: ${fmtH(ordm)}`;
   $("noDur").textContent = `${STR[LANG].duration}: ${fmtH(nodm)}`;
   $("nrDur").textContent = `${STR[LANG].duration}: ${fmtH(nrdm)}`;
 
-  // Deltas horario (nuevo vs anterior) por tramo
-  const depOutDelta = tMin($("noDep").value) - tMin($("ooDep").value);
-  const arrOutDelta = tMin($("noArr").value) - tMin($("ooArr").value);
-  const depRetDelta = tMin($("nrDep").value) - tMin($("orDep").value);
-  const arrRetDelta = tMin($("nrArr").value) - tMin($("orArr").value);
-
-  // normaliza a rango -720..+720 para que +23:00 vs 00:10 muestre -0:50, etc.
-  function normalizeDelta(m){
-    if(!isFinite(m)) return NaN;
-    if(m>720) m-=1440;
-    if(m<-720) m+=1440;
-    return m;
-  }
-  const nDepOut = normalizeDelta(depOutDelta), nArrOut = normalizeDelta(arrOutDelta);
-  const nDepRet = normalizeDelta(depRetDelta), nArrRet = normalizeDelta(arrRetDelta);
+  // Deltas horario (local vs local anterior)
+  const tMin = (hm)=> HM_RE.test(hm) ? (parseInt(hm.slice(0,2),10)*60 + parseInt(hm.slice(3),10)) : NaN;
+  function norm(m){ if(!isFinite(m)) return NaN; if(m>720) m-=1440; if(m<-720) m+=1440; return m; }
+  const nDepOut = norm(tMin($("noDep").value)-tMin($("ooDep").value));
+  const nArrOut = norm(tMin($("noArr").value)-tMin($("ooArr").value));
+  const nDepRet = norm(tMin($("nrDep").value)-tMin($("orDep").value));
+  const nArrRet = norm(tMin($("nrArr").value)-tMin($("orArr").value));
 
   const noDelta = $("noDelta"); noDelta.textContent = STR[LANG].changes + ": ";
-  noDelta.appendChild(deltaSpan(STR[LANG].depDelta, nDepOut));
-  noDelta.append(" · ");
+  noDelta.appendChild(deltaSpan(STR[LANG].depDelta, nDepOut)); noDelta.append(" · ");
   noDelta.appendChild(deltaSpan(STR[LANG].arrDelta, nArrOut));
 
   const nrDelta = $("nrDelta"); nrDelta.textContent = STR[LANG].changes + ": ";
-  nrDelta.appendChild(deltaSpan(STR[LANG].depDelta, nDepRet));
-  nrDelta.append(" · ");
+  nrDelta.appendChild(deltaSpan(STR[LANG].depDelta, nDepRet)); nrDelta.append(" · ");
   nrDelta.appendChild(deltaSpan(STR[LANG].arrDelta, nArrRet));
 
   // precios
@@ -607,21 +641,60 @@ function refresh(){
   $("totVal").textContent=moneyOut(p+f+d);
 }
 
+/* ===== incrustar logos para evitar CORS (si falla, oculta logos y exporta igual) ===== */
+async function inlineImgs(root){
+  const imgs = Array.from(root.querySelectorAll("img"));
+  const originals = [];
+  for(const img of imgs){
+    if(!img.src || img.src.startsWith("data:")) continue;
+    originals.push([img, img.src, img.style.visibility]);
+    try{
+      const res = await fetch(img.src, {mode:"cors", cache:"no-store"});
+      if(!res.ok) throw new Error("fetch " + res.status);
+      const blob = await res.blob();
+      const reader = new FileReader();
+      const dataUrl = await new Promise(r=>{ reader.onload=()=>r(reader.result); reader.readAsDataURL(blob); });
+      img.setAttribute("data-inline-src", img.src);
+      img.src = dataUrl;
+    }catch(e){
+      // si no se puede, esconder para no taint el canvas
+      img.setAttribute("data-inline-failed","1");
+      img.style.visibility="hidden";
+    }
+  }
+  return ()=>{ // restore
+    for(const [img, src, vis] of originals){
+      if(img.getAttribute("data-inline-src")) img.src = src;
+      img.style.visibility = vis || "";
+      img.removeAttribute("data-inline-src");
+      img.removeAttribute("data-inline-failed");
+    }
+  };
+}
+
 /* ===== export (incluye itinerarios + precios) ===== */
 async function exportPNG(){
   if(!$("ncAgree").checked){ alert(STR[LANG].exportWarn); return; }
   try{
+    const restore = await inlineImgs($("exportArea"));
     const dataUrl = await htmlToImage.toPng($("exportArea"), {pixelRatio:2, cacheBust:true});
+    restore();
     const out=$("outFrom").value||"XXX", to=$("outTo").value||"XXX", r1=$("retFrom").value||"XXX", r2=$("retTo").value||"XXX";
     const when = $("nrDate").value || $("noDate").value || $("orDate").value || $("ooDate").value || "date";
     const a=document.createElement("a"); a.href=dataUrl; a.download=`${out}-${to}_${r1}-${r2}-${when}.png`.replace(/\s+/g,"_"); a.click();
-  }catch(e){ alert(STR[LANG].exportFail); console.error(e); }
+  }catch(e){
+    alert(STR[LANG].exportFail);
+    console.error(e);
+  }
 }
 
 /* start */
 (function start(){
   $("airlineBase").value = $("airlineBase").value || DEFAULT_AIRLINE_BASE;
   bindAll();
+  // datalist inicial
+  const dlAir = $("airlineCodes"); Object.keys(AIRLINES).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); });
+  const dlIata = $("iataList"); Object.keys(IATA_DB).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlIata.appendChild(o); });
   applyI18n(); // llama a refresh
 })();
 </script>
