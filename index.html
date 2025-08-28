@@ -9,8 +9,8 @@
   :root{
     --card:#fff; --ink:#0b2a5a; --sub:#475569; --border:#e2e8f0;
     --accent:#2bd9a7; --accent2:#40c8ff;
-    --oldA:#ffe0e3; --oldB:#ffc0c8; --oldBorder:#b91c1c;  /* rojo más oscuro */
-    --newA:#e6f7ee; --newB:#ccf0dc; --newBorder:#166534;  /* verde más oscuro */
+    --oldA:#ffdfe3; --oldB:#ffbfc7; --oldBorder:#b91c1c;   /* rojo más oscuro */
+    --newA:#e6f7ee; --newB:#ccf0dc; --newBorder:#166534;   /* verde más oscuro */
     --muted:#eef2f7;
   }
   *{box-sizing:border-box}
@@ -20,9 +20,9 @@
     font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
     background:#fff;
   }
-  /* Fondo Maarlab velado */
+  /* Fondo Maarlab velado (un poquito más intenso) */
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
-  body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.44),rgba(255,255,255,.66) 45%,rgba(255,255,255,.94))}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.34),rgba(255,255,255,.56) 45%,rgba(255,255,255,.90))}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
 
   /* Barra superior */
@@ -60,8 +60,6 @@
   }
   .headerRow{display:flex;justify-content:space-between;align-items:center;gap:12px}
   #hdr-title{font:700 30px/1.1 Poppins, -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui}
-  .banner{margin-top:10px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;padding:6px}
-  .banner img{display:block;height:40px;width:auto;margin:0 auto}
 
   .itins{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
   .itinCol{border:1px solid var(--border);border-radius:14px;padding:12px;min-height:300px}
@@ -75,6 +73,8 @@
   .meta{font-size:12px;color:#475569;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .badges{display:flex;gap:6px;flex-wrap:wrap}
   .badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:#fff;border-radius:999px;padding:3px 8px;font-size:11px;color:#334155}
+  #locBadges .badge{font-size:13px;padding:5px 10px} /* localizadores más grandes */
+
   .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .times.stop{grid-template-columns:repeat(4,1fr)}
   .big{font-weight:700;font-size:18px}
@@ -97,7 +97,13 @@
     .bar,.sep,#panel,.btnPdfHide{display:none!important}
     *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
     @page{size:A4 landscape;margin:10mm}
+    /* Logo Maarlab solo en PDF */
+    #exportArea #printBrand{display:block; position:absolute; top:10px; right:10px; width:170px; height:auto; opacity:.95; z-index:5;}
   }
+
+  /* Logo Maarlab para PNG (se fuerza temporalmente) */
+  #printBrand{display:none}
+  .forceShow{display:block!important; position:absolute; top:10px; right:10px; width:170px; height:auto; opacity:.95; z-index:5}
 
   #err{display:none;background:#fff4f4;border:1px solid #fecaca;color:#7f1d1d;padding:8px;border-radius:10px;margin:10px 0;font-size:13px}
 </style>
@@ -115,7 +121,7 @@
       </div>
 
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <!-- Selector de idioma -->
+        <!-- Idioma -->
         <label class="tiny" style="display:flex;align-items:center;gap:6px">
           <span id="langLbl">Idioma</span>
           <select id="langSelect">
@@ -158,12 +164,9 @@
           </div>
         </div>
 
-        <!-- Banner pequeño -->
-        <div class="banner">
-          <img id="maarlabBanner" alt="Maarlab banner"
-               src="https://maarlab.com/wp-content/uploads/2024/09/maarlab-footer.svg"
-               crossorigin="anonymous" referrerpolicy="no-referrer">
-        </div>
+        <!-- Logo Maarlab (solo en exportaciones) -->
+        <img id="printBrand" alt="Maarlab" crossorigin="anonymous" referrerpolicy="no-referrer"
+             src="https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png">
 
         <div class="itins">
           <!-- Anterior -->
@@ -443,6 +446,7 @@
   /* ===== datos ===== */
   var DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
   var DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
+  var EXPORT_LOGO = "https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png";
 
   /* Aerolíneas (incluye F8→F9 y U→U2 fallback) */
   var AIRLINES = {
@@ -458,18 +462,15 @@
   };
   var LOGO_FALLBACK = {"F8":"F9","U":"U2"};
 
-  /* IATA → ciudad */
+  /* IATA → ciudad (ampliado básico; puedes ampliar) */
   var IATA_DB = {
     "MAD":"Madrid","TFN":"Tenerife Norte","TFS":"Tenerife Sur","BCN":"Barcelona","VLC":"Valencia","AGP":"Málaga","SVQ":"Sevilla","PMI":"Palma",
-    "IBZ":"Ibiza","ALC":"Alicante","LIS":"Lisboa",
-    "CDG":"París (CDG)","ORY":"París (Orly)","FRA":"Fráncfort","AMS":"Ámsterdam",
-    "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Luton","STN":"Stansted","LCY":"City",
-    "MAN":"Mánchester","LPL":"Liverpool","EMA":"East Midlands",
-    "MEX":"Ciudad de México","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","TQO":"Tulum (Felipe Carrillo Puerto)","CZM":"Cozumel",
-    "HUX":"Huatulco","PVR":"Puerto Vallarta","ACA":"Acapulco","DFW":"Dallas/Fort Worth","EWR":"Newark",
-    "JFK":"Nueva York (JFK)","LAX":"Los Ángeles","SFO":"San Francisco"
+    "IBZ":"Ibiza","ALC":"Alicante","LIS":"Lisboa","CDG":"París (CDG)","ORY":"París (Orly)","FRA":"Fráncfort","AMS":"Ámsterdam",
+    "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Luton","STN":"Stansted","LCY":"City","MAN":"Mánchester","LPL":"Liverpool","EMA":"East Midlands","LPA":"Las Palmas",
+    "MEX":"Ciudad de México","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","TQO":"Tulum (Felipe Carrillo Puerto)","CZM":"Cozumel","CSL":"Los Cabos - Cabo San Lucas","SJD":"San José Del Cabo",
+    "HUX":"Huatulco","PVR":"Puerto Vallarta","ACA":"Acapulco","DFW":"Dallas/Fort Worth","EWR":"Newark","NLU":"Ciudad de México",
+    "JFK":"Nueva York (JFK)","LAX":"Los Ángeles","SFO":"San Francisco","PHL":"Philadelphia","WAW":"Warszawa-Chopin","WMI":"Warszawa-Modlin"
   };
-  /* IATA → zona horaria */
   var TZ_DB = {
     "MAD":"Europe/Madrid","TFN":"Atlantic/Canary","TFS":"Atlantic/Canary","BCN":"Europe/Madrid","VLC":"Europe/Madrid","AGP":"Europe/Madrid","SVQ":"Europe/Madrid","PMI":"Europe/Madrid","IBZ":"Europe/Madrid","ALC":"Europe/Madrid",
     "LIS":"Europe/Lisbon","CDG":"Europe/Paris","ORY":"Europe/Paris","FRA":"Europe/Berlin","AMS":"Europe/Amsterdam",
@@ -554,17 +555,14 @@
     $("langLbl").textContent = LANG==="en"?"Language":LANG==="fr"?"Langue":LANG==="it"?"Lingua":LANG==="de"?"Sprache":"Idioma";
     if ($("modeBadge")) $("modeBadge").textContent = (MODE==="confirm") ? M.conf : M.sim;
 
-    // Total label según modo
     $("totLabel").textContent = (MODE==="confirm") ? M.totConf : M.totQuote;
 
-    // Watermark
     var wm = $("wm"); if(wm){ wm.dataset.text = (MODE==="confirm") ? (M.seal || "CONFIRMADO") : ""; wm.classList.toggle("show", MODE==="confirm"); }
 
     applyModeUI();
     refresh();
   }
 
-  /* badges inteligentes */
   function buildBadges(dateISO, depHM, arrHM, fromIata, toIata){
     var S=STR[LANG].badges, out=[];
     try{
@@ -582,7 +580,6 @@
     return out;
   }
 
-  /* logos aerolínea */
   function setLegLogo(imgId, code){
     var img=$(imgId); if(!img) return;
     var raw=normalizeCode(code);
@@ -599,7 +596,6 @@
     img.src=airlineLogoUrl(raw);
   }
 
-  /* render de un tramo */
   function renderLeg(prefix, fromIata, toIata, cityFrom, cityTo){
     var S=STR[LANG];
     var code=normalizeCode($(prefix+"Air").value);
@@ -643,7 +639,6 @@
     $(prefix+"Dur").textContent = S.duration+": "+(isFinite(totalM)?fmtHM(totalM):"—")+(isFinite(layM)?(" · "+S.layover+": "+fmtHM(layM)):"");
   }
 
-  /* refresco global */
   function refresh(){
     try{
       var outFrom=normalizeCode(($("outFrom").value)||"XXX"), outTo=normalizeCode(($("outTo").value)||"XXX");
@@ -653,7 +648,6 @@
 
       var ood=fmtDate(($("ooDate").value)||""), ord=fmtDate(($("orDate").value)||""), nod=fmtDate(($("noDate").value)||""), nrd=fmtDate(($("nrDate").value)||"");
       var oodD=dayOfWeek(($("ooDate").value)||""), ordD=dayOfWeek(($("orDate").value)||""), nodD=dayOfWeek(($("noDate").value)||""), nrdD=dayOfWeek(($("nrDate").value)||"");
-
       $("hdr-dates").textContent = "Ida: "+(oodD?oodD+" ":"")+ood+" → "+(nodD?nodD+" ":"")+nod+" · Vuelta: "+(ordD?ordD+" ":"")+ord+" → "+(nrdD?nrdD+" ":"")+nrd;
 
       renderLeg("oo", outFrom, outTo, outFromCity, outToCity);
@@ -669,13 +663,11 @@
       $("ppVal").textContent=moneyOut(p+f+d);
       $("totVal").textContent=moneyOut((p+f+d)*pax);
 
-      // Chips de localizadores
       var c=$("locBadges"); c.innerHTML="";
       var locs=(($("bookingRef").value)||"").trim(); if(locs){ var b=document.createElement("span"); b.className="badge"; b.textContent="PNR: "+locs; c.appendChild(b); }
       var ml=(($("maarlabRef").value)||"").trim(); if(ml){ var b2=document.createElement("span"); b2.className="badge"; b2.textContent="Maarlab: "+ml; c.appendChild(b2); }
       var hr=(($("hotelRef").value)||"").trim(); if(hr){ var b3=document.createElement("span"); b3.className="badge"; b3.textContent="Hotel: "+hr; c.appendChild(b3); }
 
-      // Hotel opcional
       var hname=(($("hotelNameInput").value)||"").trim();
       $("hotelName").textContent = hname || "—";
       $("hotelBox").style.display = (hname || hotelLogoData) ? "flex" : "none";
@@ -684,24 +676,18 @@
     }catch(e){ console.error(e); $("err").textContent="⚠️ Error: "+e.message; $("err").style.display="block"; setTimeout(function(){ $("err").style.display="none"; },4000); }
   }
 
-  /* UI de modo (oculta PNG y bloquea panel en Confirmación) */
+  /* UI de modo: solo control de export PNG y sellos */
   function applyModeUI(){
     var isConfirm = (MODE === "confirm");
     ["btnPng","btnPng2"].forEach(function(id){ var b=$(id); if(b) b.style.display = isConfirm ? "none" : ""; });
-
-    // Bloquear/desbloquear inputs del panel (notas quedan fuera)
-    var els = document.querySelectorAll("#panel input, #panel select, #panel textarea");
-    for(var i=0;i<els.length;i++){ els[i].disabled = isConfirm; }
   }
 
-  /* binds */
   function bindAll(){
-    // inputs tiempo real
     var inputs = document.querySelectorAll("#panel input, #panel select");
     for(var i=0;i<inputs.length;i++){
       (function(el){
         el.addEventListener("input", function(){
-          if(/(outFrom|outTo|retFrom|retTo|Stop)$/i.test(el.id)){ el.value = el.value.toUpperCase(); }
+          if(/(outFrom|outTo|retFrom|retTo|Stop|Air)$/i.test(el.id)){ el.value = el.value.toUpperCase(); }
           if(/(Dep|Arr|StopArr|StopDep)$/i.test(el.id)){
             var ok = (!el.value) || HM_RE.test(el.value);
             if(!ok) el.classList.add("invalid"); else el.classList.remove("invalid");
@@ -711,133 +697,57 @@
             var cityEl=$(targetId), c=el.value.toUpperCase().trim();
             if(cityEl && c.length>=3 && IATA_DB[c]) cityEl.value = IATA_DB[c];
           }
-          refresh(); saveState();
+          refresh();
         });
-        el.addEventListener("change", function(){ refresh(); saveState(); });
-        el.addEventListener("keyup", function(){ refresh(); saveState(); });
+        el.addEventListener("change", refresh);
+        el.addEventListener("keyup", refresh);
       })(inputs[i]);
     }
 
-    // notas
-    if($("notesBox")) $("notesBox").addEventListener("input", saveState);
-
-    // logo hotel por archivo
     if($("hotelLogoFile")){
       $("hotelLogoFile").addEventListener("change", function(e){
         var f = e.target.files && e.target.files[0];
-        if(!f){ hotelLogoData=""; refresh(); saveState(); return; }
-        var r=new FileReader(); r.onload=function(){ hotelLogoData = r.result; refresh(); saveState(); }; r.readAsDataURL(f);
+        if(!f){ hotelLogoData=""; refresh(); return; }
+        var r=new FileReader(); r.onload=function(){ hotelLogoData = r.result; refresh(); }; r.readAsDataURL(f);
       });
     }
 
-    // idioma
     if($("langSelect")){
       $("langSelect").addEventListener("change", function(){
         LANG = this.value || "es";
-        applyI18n(); saveState();
+        applyI18n();
       });
     }
 
-    // moneda
     if($("chipCurrency")){
       $("chipCurrency").addEventListener("click", function(e){
         var b=e.target.closest("button"); if(!b) return;
         CUR = b.getAttribute("data-cur");
         var btns = $("chipCurrency").querySelectorAll("button"); for(var i=0;i<btns.length;i++){ btns[i].classList.toggle("active", btns[i]===b); }
-        refresh(); saveState();
+        refresh();
       });
     }
 
-    // modo
     if ($("chipMode")) {
       $("chipMode").addEventListener("click", function(e){
         var b = e.target.closest("button"); if(!b) return;
         MODE = b.getAttribute("data-mode") || "quote";
         var btns = $("chipMode").querySelectorAll("button");
         for (var i=0;i<btns.length;i++){ btns[i].classList.toggle("active", btns[i]===b); }
-        applyI18n(); saveState();
+        applyI18n();
       });
     }
 
-    // export
     ["btnPng","btnPng2"].forEach(function(id){ if($(id)) $(id).addEventListener("click", exportPNG); });
     ["btnPdf","btnPdf2"].forEach(function(id){ if($(id)) $(id).addEventListener("click", function(){ window.print(); }); });
 
-    // defaults
     if($("airlineBase")) $("airlineBase").value = DEFAULT_AIRLINE_BASE;
     if($("maarlabLogoMTop")) $("maarlabLogoMTop").src = DEFAULT_MAARLAB_MARK;
 
-    // datalists
     var dlAir=$("airlineCodes"); if(dlAir){ dlAir.innerHTML=""; Object.keys(AIRLINES).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); }); }
     var dlI=$("iataList"); if(dlI){ dlI.innerHTML=""; Object.keys(IATA_DB).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlI.appendChild(o); }); }
   }
 
-  /* ===== Autoguardado ===== */
-  var LS_KEY = "maarlab_visualizer_v2";
-  var saveTimer=null;
-
-  function collectIds(){
-    return [
-      "outFrom","outFromCity","outTo","outToCity",
-      "retFrom","retFromCity","retTo","retToCity",
-      "ooAir","ooNum","ooDep","ooArr","ooDate",
-      "orAir","orNum","orDep","orArr","orDate",
-      "noAir","noNum","noDep","noArr","noDate",
-      "nrAir","nrNum","nrDep","nrArr","nrDate",
-      "ooStop","ooStopArr","ooStopDep",
-      "orStop","orStopArr","orStopDep",
-      "noStop","noStopArr","noStopDep",
-      "nrStop","nrStopArr","nrStopDep",
-      "hotelNameInput","bookingRef","maarlabRef","hotelRef",
-      "penalty","fee","fareDiff","pax",
-      "airlineBase","fxUSD","fxMXN","fxEnable"
-    ];
-  }
-
-  function saveState(){
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(function(){
-      try{
-        var data = { LANG:LANG, CUR:CUR, MODE:MODE, fields:{}, notes:"", hotelLogoData:"" };
-        var ids = collectIds();
-        for (var i=0;i<ids.length;i++){ var el=$(ids[i]); if(el) data.fields[ids[i]] = el.type==="checkbox" ? !!el.checked : (el.value||""); }
-        if ($("notesBox")) data.notes = $("notesBox").innerHTML || "";
-        if (typeof hotelLogoData==="string" && hotelLogoData.length>0 && hotelLogoData.length<120000) data.hotelLogoData = hotelLogoData;
-        localStorage.setItem(LS_KEY, JSON.stringify(data));
-      }catch(e){}
-    }, 300);
-  }
-
-  function loadState(){
-    try{
-      var raw = localStorage.getItem(LS_KEY); if(!raw) return;
-      var data = JSON.parse(raw)||{};
-      LANG = data.LANG || LANG;
-      CUR  = data.CUR  || CUR;
-      MODE = data.MODE || MODE;
-      if (data.fields){
-        Object.keys(data.fields).forEach(function(id){
-          var el=$(id); if(!el) return;
-          if (el.type==="checkbox") el.checked = !!data.fields[id];
-          else el.value = data.fields[id];
-        });
-      }
-      if (data.notes && $("notesBox")) $("notesBox").innerHTML = data.notes;
-      if (data.hotelLogoData){ hotelLogoData = data.hotelLogoData; }
-
-      if ($("langSelect")) $("langSelect").value = LANG;
-      if ($("chipCurrency")) {
-        var btns = $("chipCurrency").querySelectorAll("button");
-        for (var i=0;i<btns.length;i++){ btns[i].classList.toggle("active", btns[i].getAttribute("data-cur")===CUR); }
-      }
-      if ($("chipMode")) {
-        var mbtns = $("chipMode").querySelectorAll("button");
-        for (var j=0;j<mbtns.length;j++){ mbtns[j].classList.toggle("active", mbtns[j].getAttribute("data-mode")===MODE); }
-      }
-    }catch(e){}
-  }
-
-  /* incrustar imágenes (para PNG, evitar CORS) */
   async function inlineImgs(root){
     var imgs = root.querySelectorAll("img"); var original=[];
     for(var i=0;i<imgs.length;i++){
@@ -859,23 +769,47 @@
     return function(){ for(var j=0;j<original.length;j++){ var tup=original[j]; var im=tup[0]; im.src=tup[1]; im.style.visibility=tup[2]||""; im.removeAttribute("data-inline-src"); im.removeAttribute("data-inline-failed"); } };
   }
 
-  /* export PNG (solo Simulación y solo el visualizador) */
   async function exportPNG(){
     if (MODE === "confirm") { alert("En Confirmación se exporta solo a PDF."); return; }
     try{
+      var pb = $("printBrand");
+      var added = false;
+      if(!pb){
+        pb = document.createElement("img");
+        pb.id = "printBrand";
+        pb.alt = "Maarlab";
+        pb.crossOrigin = "anonymous";
+        pb.referrerPolicy = "no-referrer";
+        pb.src = "https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png";
+        pb.className = "forceShow";
+        $("exportArea").appendChild(pb);
+        added = true;
+      }else{
+        if(!pb.src) pb.src = "https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png";
+        pb.classList.add("forceShow");
+      }
+
       var restore = await inlineImgs($("exportArea"));
       var dataUrl = await htmlToImage.toPng($("exportArea"), {pixelRatio:2, cacheBust:true});
       restore();
+      if(added){ pb.remove(); } else { pb.classList.remove("forceShow"); }
+
       var out=($("outFrom").value)||"XXX", to=($("outTo").value)||"XXX", r1=($("retFrom").value)||"XXX", r2=($("retTo").value)||"XXX";
       var when = ($("nrDate").value)||($("noDate").value)||($("orDate").value)||($("ooDate").value)||"date";
       var a=document.createElement("a"); a.href=dataUrl; a.download=(out+"-"+to+"_"+r1+"-"+r2+"-"+when+"_QUOTE.png").replace(/\s+/g,"_"); a.click();
-    }catch(e){ console.error(e); alert("Export PNG falló (CORS o red). Se intentará sin logos si persiste."); }
+    }catch(e){
+      console.error(e);
+      alert("Export PNG falló (CORS o red). Intenta PDF.");
+    }
   }
+
+  document.addEventListener("visibilitychange", function(){
+    applyModeUI();
+  });
 
   document.addEventListener("DOMContentLoaded", function(){
     try{
       bindAll();
-      loadState();
       applyI18n();
       applyModeUI();
       refresh();
