@@ -1,24 +1,21 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Maarlab — Visualizador de Cambios RT</title>
 
-<!-- Tipografías estilo Maarlab -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-
 <style>
   :root{
-    /* Paleta inspirada en maarlab.com */
     --bg:#f7fafc; --card:#ffffff; --ink:#0b2a5a; --sub:#475569;
     --accent:#2bd9a7; --accent2:#40c8ff; --border:#e2e8f0;
     --old:#fff5f5; --new:#ecfdf5; --muted:#eef2f7;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,Roboto}
-  h1{font:700 22px/1.2 Poppins,Inter,system-ui;margin:0}
-  h2{font:700 16px/1.2 Poppins,Inter;margin:0 0 6px}
+  h1{font:700 22px/1.2 Poppins;margin:0}
+  h2{font:700 16px/1.2 Poppins;margin:0 0 6px}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
   .bar{position:sticky;top:0;background:#ffffffcc;backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:20}
   .flex{display:flex;gap:12px;align-items:center}
@@ -36,27 +33,15 @@
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   .band{position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
-  /* Logos aerolínea horizontales GRANDES */
   .logos{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .logoBox{
-    height:78px; padding:8px 14px;
-    border:1px solid var(--border); border-radius:16px;
-    background:#fff; display:inline-flex; align-items:center; justify-content:center;
-    overflow:hidden; max-width:340px;
-    box-shadow:0 1px 0 rgba(0,0,0,.02);
-  }
-  .logoBox img{ max-height:100%; width:auto; display:block }
-  /* Logo hotel cuadrado */
-  .logoBoxSq{
-    width:68px;height:68px;border:1px solid var(--border);border-radius:16px;background:#fff;
-    display:grid;place-items:center;overflow:hidden
-  }
+  .logoBox{height:78px;padding:8px 14px;border:1px solid var(--border);border-radius:16px;background:#fff;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;max-width:340px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+  .logoBox img{max-height:100%;width:auto;display:block}
+  .logoBoxSq{width:68px;height:68px;border:1px solid var(--border);border-radius:16px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .logoBoxSq img{max-width:100%;max-height:100%;object-fit:contain;display:block}
   .tiny{font-size:11px;color:#64748b}
   .itins{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
   .itinCol{border:1px solid var(--border);border-radius:14px;padding:12px}
-  .itinOld{background:var(--old)}
-  .itinNew{background:var(--new)}
+  .itinOld{background:var(--old)} .itinNew{background:var(--new)}
   .leg{border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffb0;margin-top:10px}
   .leg .hdrL{display:flex;justify-content:space-between;align-items:center}
   .leg .rt{font:600 14px Inter}
@@ -69,33 +54,25 @@
   .foot{display:flex;justify-content:space-between;gap:12px;margin-top:16px;color:#64748b;font-size:12px;align-items:center}
   details{margin-top:10px;font-size:12px}
   details summary{cursor:pointer;color:#0b2a5a;font-weight:600}
-
-  /* Badge de no-comercial dentro de la tarjeta (se exporta en el PNG) */
-  .badge-nc{
-    position:absolute; top:10px; right:10px;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    color:#0b2a5a; font:700 11px Inter; padding:4px 8px; border-radius:10px; border:1px solid #ffffffa0;
-  }
+  .badge-nc{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b2a5a;font:700 11px Inter;padding:4px 8px;border-radius:10px;border:1px solid #ffffffa0}
 </style>
 </head>
 <body>
   <div class="bar">
     <div class="wrap flex">
       <div class="flex" style="gap:10px">
-        <!-- Combo Marca: horizontal + M cuadrada -->
         <div class="logoBox" style="height:48px;padding:6px 10px;max-width:220px">
-          <img id="brandH" alt="Maarlab" src="https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png" crossorigin="anonymous">
+          <img alt="Maarlab" src="https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png" crossorigin="anonymous">
         </div>
         <div class="logoBoxSq" style="width:48px;height:48px">
-          <img id="brandM" alt="M" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg" crossorigin="anonymous">
+          <img alt="M" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg" crossorigin="anonymous">
         </div>
         <div>
-          <h1 id="title">Visualizador de Cambios RT · Maarlab</h1>
+          <h1>Visualizador de Cambios RT · Maarlab</h1>
           <div class="tiny">Itinerario anterior/nuevo • 4 vuelos • Moneda EUR/USD/MXN • PNG</div>
         </div>
       </div>
       <div class="grow"></div>
-
       <div class="chip" id="chipCurrency" style="margin-right:8px">
         <button data-cur="EUR" class="active">EUR</button>
         <button data-cur="USD">USD</button>
@@ -109,176 +86,102 @@
   </div>
 
   <div class="wrap grid">
-    <!-- Panel de entrada -->
-    <div class="card">
+    <!-- Panel -->
+    <div class="card" id="panel">
       <h2>Ruta (ida)</h2>
       <div class="row">
-        <label>Origen (IATA)
-          <input id="outFrom" placeholder="TFN" data-iata="outFromCity">
-        </label>
-        <label>Ciudad origen
-          <input id="outFromCity" placeholder="Tenerife Norte">
-        </label>
-        <label>Destino (IATA)
-          <input id="outTo" placeholder="MAD" data-iata="outToCity">
-        </label>
-        <label>Ciudad destino
-          <input id="outToCity" placeholder="Madrid">
-        </label>
+        <label>Origen (IATA) <input id="outFrom" placeholder="TFN" data-iata="outFromCity"></label>
+        <label>Ciudad origen <input id="outFromCity" placeholder="Tenerife Norte"></label>
+        <label>Destino (IATA) <input id="outTo" placeholder="MAD" data-iata="outToCity"></label>
+        <label>Ciudad destino <input id="outToCity" placeholder="Madrid"></label>
       </div>
 
       <h2 style="margin-top:12px">Ruta (vuelta)</h2>
       <div class="row">
-        <label>Origen (IATA)
-          <input id="retFrom" placeholder="MAD" data-iata="retFromCity">
-        </label>
-        <label>Ciudad origen
-          <input id="retFromCity" placeholder="Madrid">
-        </label>
-        <label>Destino (IATA)
-          <input id="retTo" placeholder="TFN" data-iata="retToCity">
-        </label>
-        <label>Ciudad destino
-          <input id="retToCity" placeholder="Tenerife Norte">
-        </label>
+        <label>Origen (IATA) <input id="retFrom" placeholder="MAD" data-iata="retFromCity"></label>
+        <label>Ciudad origen <input id="retFromCity" placeholder="Madrid"></label>
+        <label>Destino (IATA) <input id="retTo" placeholder="TFN" data-iata="retToCity"></label>
+        <label>Ciudad destino <input id="retToCity" placeholder="Tenerife Norte"></label>
       </div>
 
       <h2 style="margin-top:14px">Itinerario anterior</h2>
       <div class="row">
-        <label>Ida — Vuelo
-          <input id="ooFlight" placeholder="IB3478">
-        </label>
-        <label>Ida — Fecha
-          <input id="ooDate" type="date">
-        </label>
-        <label>Ida — Salida
-          <input id="ooDep" placeholder="10:30">
-        </label>
-        <label>Ida — Llegada
-          <input id="ooArr" placeholder="12:50">
-        </label>
+        <label>Ida — Vuelo <input id="ooFlight" placeholder="IB3478"></label>
+        <label>Ida — Fecha <input id="ooDate" type="date"></label>
+        <label>Ida — Salida <input id="ooDep" placeholder="10:30"></label>
+        <label>Ida — Llegada <input id="ooArr" placeholder="12:50"></label>
       </div>
       <div class="row" style="margin-top:6px">
-        <label>Vuelta — Vuelo
-          <input id="orFlight" placeholder="IB3479">
-        </label>
-        <label>Vuelta — Fecha
-          <input id="orDate" type="date">
-        </label>
-        <label>Vuelta — Salida
-          <input id="orDep" placeholder="17:20">
-        </label>
-        <label>Vuelta — Llegada
-          <input id="orArr" placeholder="19:35">
-        </label>
+        <label>Vuelta — Vuelo <input id="orFlight" placeholder="IB3479"></label>
+        <label>Vuelta — Fecha <input id="orDate" type="date"></label>
+        <label>Vuelta — Salida <input id="orDep" placeholder="17:20"></label>
+        <label>Vuelta — Llegada <input id="orArr" placeholder="19:35"></label>
       </div>
 
       <h2 style="margin-top:14px">Itinerario nuevo</h2>
       <div class="row">
-        <label>Ida — Vuelo
-          <input id="noFlight" placeholder="UX1234">
-        </label>
-        <label>Ida — Fecha
-          <input id="noDate" type="date">
-        </label>
-        <label>Ida — Salida
-          <input id="noDep" placeholder="11:15">
-        </label>
-        <label>Ida — Llegada
-          <input id="noArr" placeholder="13:40">
-        </label>
+        <label>Ida — Vuelo <input id="noFlight" placeholder="UX1234"></label>
+        <label>Ida — Fecha <input id="noDate" type="date"></label>
+        <label>Ida — Salida <input id="noDep" placeholder="11:15"></label>
+        <label>Ida — Llegada <input id="noArr" placeholder="13:40"></label>
       </div>
       <div class="row" style="margin-top:6px">
-        <label>Vuelta — Vuelo
-          <input id="nrFlight" placeholder="UX1235">
-        </label>
-        <label>Vuelta — Fecha
-          <input id="nrDate" type="date">
-        </label>
-        <label>Vuelta — Salida
-          <input id="nrDep" placeholder="18:10">
-        </label>
-        <label>Vuelta — Llegada
-          <input id="nrArr" placeholder="20:30">
-        </label>
+        <label>Vuelta — Vuelo <input id="nrFlight" placeholder="UX1235"></label>
+        <label>Vuelta — Fecha <input id="nrDate" type="date"></label>
+        <label>Vuelta — Salida <input id="nrDep" placeholder="18:10"></label>
+        <label>Vuelta — Llegada <input id="nrArr" placeholder="20:30"></label>
       </div>
 
       <h2 style="margin-top:14px">Costes</h2>
       <div class="row-3">
-        <label>Penalización
-          <input id="penalty" placeholder="150,00">
-        </label>
-        <label>Fee servicio
-          <input id="fee" placeholder="30,00">
-        </label>
-        <label>Diferencia de tarifa
-          <input id="fareDiff" placeholder="45,50">
-        </label>
+        <label>Penalización <input id="penalty" placeholder="150,00"></label>
+        <label>Fee servicio <input id="fee" placeholder="30,00"></label>
+        <label>Diferencia de tarifa <input id="fareDiff" placeholder="45,50"></label>
       </div>
 
       <h2 style="margin-top:14px">Hotel</h2>
       <div class="row">
-        <label>Cadena
-          <select id="chainSelect"></select>
-        </label>
-        <label>Hotel
-          <select id="hotelSelect"></select>
-        </label>
+        <label>Cadena <select id="chainSelect"></select></label>
+        <label>Hotel <select id="hotelSelect"></select></label>
       </div>
 
       <div style="display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap">
         <label style="display:flex;gap:8px;align-items:center">
           <input type="checkbox" id="ncAgree">
-          <span class="tiny" id="ncText">
-            Confirmo que este material es informativo y <b>no</b> tiene fines comerciales.
-          </span>
+          <span class="tiny">Confirmo que este material es informativo y <b>no</b> tiene fines comerciales.</span>
         </label>
         <div class="grow"></div>
-        <div class="tiny" id="noteCORS" style="text-align:right">
-          Puedes exportar o hacer una captura de pantalla.
-        </div>
+        <div class="tiny" id="noteCORS">Puedes exportar o hacer una captura de pantalla.</div>
       </div>
 
       <div style="display:flex;gap:12px;align-items:center;margin-top:10px">
         <button id="btnPng" class="btn" disabled>Exportar PNG</button>
       </div>
 
-      <!-- Opciones avanzadas -->
       <details id="adv" style="margin-top:12px">
-        <summary id="advSummary">Opciones avanzadas</summary>
+        <summary>Opciones avanzadas</summary>
         <div class="row" style="margin-top:8px">
-          <label>Logos aerolíneas (base URL)
-            <input id="airlineBase" value="">
-          </label>
-          <label>Logo Maarlab horizontal (URL)
-            <input id="maarlabURL" value="">
-          </label>
+          <label>Logos aerolíneas (base URL) <input id="airlineBase" value=""></label>
+          <label>Logo Maarlab horizontal (URL) <input id="maarlabURL" value=""></label>
         </div>
         <div class="row" style="margin-top:8px">
-          <label>Logo “M” Maarlab (URL)
-            <input id="maarlabMarkURL" value="">
-          </label>
+          <label>Logo “M” Maarlab (URL) <input id="maarlabMarkURL" value=""></label>
           <label style="display:flex;align-items:center;gap:8px">
-            <input type="checkbox" id="fxEnable"> <span id="fxLabel">Convertir desde EUR</span>
+            <input type="checkbox" id="fxEnable"> <span>Convertir desde EUR</span>
           </label>
         </div>
         <div class="row" style="margin-top:8px">
-          <label>1 EUR = USD
-            <input id="fxUSD" value="1.08">
-          </label>
-          <label>1 EUR = MXN
-            <input id="fxMXN" value="19.00">
-          </label>
+          <label>1 EUR = USD <input id="fxUSD" value="1.08"></label>
+          <label>1 EUR = MXN <input id="fxMXN" value="19.00"></label>
         </div>
       </details>
     </div>
 
-    <!-- Tarjeta exportable -->
+    <!-- Tarjeta -->
     <div class="card" id="cardWrap" style="position:relative">
       <div class="band"></div>
       <div class="badge-nc">PREVIEW · Uso no comercial</div>
 
-      <!-- Cabecera -->
       <div class="flex" style="justify-content:space-between;align-items:center;gap:12px">
         <div class="logos" id="airlineLogos"></div>
         <div style="text-align:center;flex:1">
@@ -292,70 +195,37 @@
         </div>
       </div>
 
-      <!-- Rutas -->
       <div class="flex" style="gap:18px;margin-top:12px;justify-content:center">
         <div class="tiny" id="routeOut">IDA · XXX → XXX</div>
         <div class="tiny" id="routeRet">VUELTA · XXX → XXX</div>
       </div>
 
-      <!-- Columnas de itinerarios -->
       <div class="itins">
-        <!-- Anterior -->
         <div class="itinCol itinOld">
           <div style="font:700 14px Poppins">Itinerario anterior</div>
-
           <div class="leg">
-            <div class="hdrL">
-              <div class="rt" id="ooRt">IDA · XXX → XXX</div>
-              <div class="meta" id="ooMeta">Vuelo — Fecha</div>
-            </div>
-            <div class="times">
-              <div><div class="tiny">Salida</div><div class="big" id="ooDepLabel">--:--</div></div>
-              <div><div class="tiny">Llegada</div><div class="big" id="ooArrLabel">--:--</div></div>
-            </div>
+            <div class="hdrL"><div class="rt" id="ooRt">IDA · XXX → XXX</div><div class="meta" id="ooMeta">Vuelo — Fecha</div></div>
+            <div class="times"><div><div class="tiny">Salida</div><div class="big" id="ooDepLabel">--:--</div></div><div><div class="tiny">Llegada</div><div class="big" id="ooArrLabel">--:--</div></div></div>
           </div>
-
           <div class="leg">
-            <div class="hdrL">
-              <div class="rt" id="orRt">VUELTA · XXX → XXX</div>
-              <div class="meta" id="orMeta">Vuelo — Fecha</div>
-            </div>
-            <div class="times">
-              <div><div class="tiny">Salida</div><div class="big" id="orDepLabel">--:--</div></div>
-              <div><div class="tiny">Llegada</div><div class="big" id="orArrLabel">--:--</div></div>
-            </div>
+            <div class="hdrL"><div class="rt" id="orRt">VUELTA · XXX → XXX</div><div class="meta" id="orMeta">Vuelo — Fecha</div></div>
+            <div class="times"><div><div class="tiny">Salida</div><div class="big" id="orDepLabel">--:--</div></div><div><div class="tiny">Llegada</div><div class="big" id="orArrLabel">--:--</div></div></div>
           </div>
         </div>
 
-        <!-- Nuevo -->
         <div class="itinCol itinNew">
           <div style="font:700 14px Poppins">Itinerario nuevo</div>
-
           <div class="leg">
-            <div class="hdrL">
-              <div class="rt" id="noRt">IDA · XXX → XXX</div>
-              <div class="meta" id="noMeta">Vuelo — Fecha</div>
-            </div>
-            <div class="times">
-              <div><div class="tiny">Salida</div><div class="big" id="noDepLabel">--:--</div></div>
-              <div><div class="tiny">Llegada</div><div class="big" id="noArrLabel">--:--</div></div>
-            </div>
+            <div class="hdrL"><div class="rt" id="noRt">IDA · XXX → XXX</div><div class="meta" id="noMeta">Vuelo — Fecha</div></div>
+            <div class="times"><div><div class="tiny">Salida</div><div class="big" id="noDepLabel">--:--</div></div><div><div class="tiny">Llegada</div><div class="big" id="noArrLabel">--:--</div></div></div>
           </div>
-
           <div class="leg">
-            <div class="hdrL">
-              <div class="rt" id="nrRt">VUELTA · XXX → XXX</div>
-              <div class="meta" id="nrMeta">Vuelo — Fecha</div>
-            </div>
-            <div class="times">
-              <div><div class="tiny">Salida</div><div class="big" id="nrDepLabel">--:--</div></div>
-              <div><div class="tiny">Llegada</div><div class="big" id="nrArrLabel">--:--</div></div>
-            </div>
+            <div class="hdrL"><div class="rt" id="nrRt">VUELTA · XXX → XXX</div><div class="meta" id="nrMeta">Vuelo — Fecha</div></div>
+            <div class="times"><div><div class="tiny">Salida</div><div class="big" id="nrDepLabel">--:--</div></div><div><div class="tiny">Llegada</div><div class="big" id="nrArrLabel">--:--</div></div></div>
           </div>
         </div>
       </div>
 
-      <!-- Precios -->
       <div class="prices">
         <div class="pill"><div class="tiny" id="penLabel">Penalización</div><div class="v" id="penVal">€0,00</div></div>
         <div class="pill"><div class="tiny" id="feeLabel">Fee servicio</div><div class="v" id="feeVal">€0,00</div></div>
@@ -363,7 +233,6 @@
         <div class="pill" style="background:#e6f7ff"><div class="tiny" id="totLabel">Total a cobrar</div><div class="v" id="totVal">€0,00</div></div>
       </div>
 
-      <!-- Hotel + contacto -->
       <div class="foot">
         <div class="flex" style="align-items:center;gap:10px">
           <div class="logoBoxSq"><img id="hotelLogo" alt="hotel" crossorigin="anonymous"></div>
@@ -374,311 +243,233 @@
     </div>
   </div>
 
-<!-- libs -->
 <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
-  // ===== Defaults ocultos =====
-  const DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
-  const DEFAULT_MAARLAB_LOGO = "https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png";
-  const DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
+/* ========= util ========= */
+const $ = (id)=>document.getElementById(id);
 
-  // ===== Hoteles demo =====
-  const HOTEL_CHAINS = {
-    "Spring Hoteles": {
-      hotels: [
-        { name: "Spring Hoteles (cadena)", logo: "https://www.viafirma.com/wp-content/uploads/2024/04/5f_d9oY_400x400-1.jpg" }
-      ]
-    },
-    "Landmar": {
-      hotels: [
-        { name: "Landmar Costa Los Gigantes", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwXfh7P_vQa0CGmUDaOW3SO8AX287iOFc0TiZsuM2kdacfeZEcWx6IIUlDHRYOg7OdaI&usqp=CAU" },
-        { name: "Landmar Playa La Arena", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwQaloIdtf8_if2DFl-M8ONyuOQgT6ryxX2Kp3Eqa9tsY40wiYT4t7UKWYGWVjUXxgbZc&usqp=CAU" }
-      ]
-    },
-    "Park Royal Hotels & Resorts": {
-      hotels: [
-        { name: "Park Royal (cadena)", logo: "https://media.licdn.com/dms/image/v2/D4E0BAQHPYGg5SDVKOg/company-logo_200_200/company-logo_200_200/0/1730599344107/park_royal_hotels__resorts_logo?e=2147483647&v=beta&t=_-ZlXi2uHA1rIThUFZwkbuAS9AwNrGVZ5TFvR0n0TC4" }
-      ]
-    }
-  };
+/* ========= datos ========= */
+const DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
+const DEFAULT_MAARLAB_LOGO = "https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png";
+const DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
 
-  // ===== IATA → Ciudad (muestra inicial, amplía cuando quieras) =====
-  const IATA_DB = {
-    "TFN":"Tenerife Norte","TFS":"Tenerife Sur","LPA":"Gran Canaria","ACE":"Lanzarote","FUE":"Fuerteventura",
-    "MAD":"Madrid","BCN":"Barcelona","AGP":"Málaga","SVQ":"Sevilla","BIO":"Bilbao","VLC":"Valencia","PMI":"Palma de Mallorca","IBZ":"Ibiza",
-    "LIS":"Lisboa","OPO":"Oporto","FAO":"Faro",
-    "CDG":"París (Charles de Gaulle)","ORY":"París (Orly)","NCE":"Niza","LYS":"Lyon",
-    "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Londres (Luton)","STN":"Londres (Stansted)","MAN":"Mánchester","EDI":"Edimburgo",
-    "FRA":"Fráncfort","MUC":"Múnich","BER":"Berlín","DUS":"Düsseldorf","HAM":"Hamburgo",
-    "AMS":"Ámsterdam","BRU":"Bruselas","ZRH":"Zúrich","VIE":"Viena","DUB":"Dublín","CPH":"Copenhague","OSL":"Oslo","ARN":"Estocolmo",
-    "ROM":"Roma","FCO":"Roma (Fiumicino)","CIA":"Roma (Ciampino)","MXP":"Milán (Malpensa)","LIN":"Milán (Linate)","VCE":"Venecia",
-    "IST":"Estambul","ATH":"Atenas",
-    "MEX":"Ciudad de México","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","TIJ":"Tijuana","PVR":"Puerto Vallarta","SJD":"Los Cabos","CZM":"Cozumel","MID":"Mérida",
-    "BOG":"Bogotá","MDE":"Medellín","CLO":"Cali","CTG":"Cartagena","PTY":"Ciudad de Panamá","SJO":"San José","SAL":"San Salvador","GUA":"Ciudad de Guatemala",
-    "UIO":"Quito","GYE":"Guayaquil","LIM":"Lima","SCL":"Santiago de Chile","EZE":"Buenos Aires","GRU":"Sao Paulo (Guarulhos)","GIG":"Río de Janeiro",
-    "JFK":"Nueva York (JFK)","EWR":"Nueva York (Newark)","MIA":"Miami","LAX":"Los Ángeles","SFO":"San Francisco","ORD":"Chicago","DFW":"Dallas","IAH":"Houston","ATL":"Atlanta"
-  };
+const HOTEL_CHAINS = {
+  "Spring Hoteles": { hotels:[{ name:"Spring Hoteles (cadena)", logo:"https://www.viafirma.com/wp-content/uploads/2024/04/5f_d9oY_400x400-1.jpg" }] },
+  "Landmar": { hotels:[
+    { name:"Landmar Costa Los Gigantes", logo:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwXfh7P_vQa0CGmUDaOW3SO8AX287iOFc0TiZsuM2kdacfeZEcWx6IIUlDHRYOg7OdaI&usqp=CAU" },
+    { name:"Landmar Playa La Arena", logo:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwQaloIdtf8_if2DFl-M8ONyuOQgT6ryxX2Kp3Eqa9tsY40wiYT4t7UKWYGWVjUXxgbZc&usqp=CAU" }
+  ]},
+  "Park Royal Hotels & Resorts": { hotels:[
+    { name:"Park Royal (cadena)", logo:"https://media.licdn.com/dms/image/v2/D4E0BAQHPYGg5SDVKOg/company-logo_200_200/company-logo_200_200/0/1730599344107/park_royal_hotels__resorts_logo?e=2147483647&v=beta&t=_-ZlXi2uHA1rIThUFZwkbuAS9AwNrGVZ5TFvR0n0TC4" }
+  ]}
+};
 
-  // ===== i18n =====
-  const STR = {
-    es: {title:"Visualizador de Cambios RT · Maarlab",
-      sub:"Cambio de vuelo · Round Trip",
-      prev:"Itinerario anterior", next:"Itinerario nuevo",
-      out:"IDA", ret:"VUELTA", dep:"Salida", arr:"Llegada",
-      penalty:"Penalización", fee:"Fee servicio", fareDiff:"Diferencia de tarifa", totalDiff:"Total a cobrar",
-      hotel:"Hotel", generated:"Generado por", contact:"Contacto",
-      note:"Si al exportar faltan logos, activa CORS en tu CDN o usa imágenes del mismo dominio.",
-      adv:"Opciones avanzadas", fx:"Convertir desde EUR",
-      dates2:(o1,n1,o2,n2)=>`Ida: ${o1||'—'} → ${n1||'—'} · Vuelta: ${o2||'—'} → ${n2||'—'}`
-    },
-    en: {title:"RT Change Visualizer · Maarlab",
-      sub:"Flight change · Round Trip",
-      prev:"Previous itinerary", next:"New itinerary",
-      out:"OUTBOUND", ret:"RETURN", dep:"Departure", arr:"Arrival",
-      penalty:"Penalty", fee:"Service fee", fareDiff:"Fare difference", totalDiff:"Total to charge",
-      hotel:"Hotel", generated:"Generated by", contact:"Contact",
-      note:"If PNG export omits logos, enable CORS on your CDN or host images on the same domain.",
-      adv:"Advanced options", fx:"Convert from EUR",
-      dates2:(o1,n1,o2,n2)=>`Out: ${o1||'—'} → ${n1||'—'} · Return: ${o2||'—'} → ${n2||'—'}`
-    }
-  };
-  let LANG = "es";
-  let CUR = "EUR"; // EUR / USD / MXN
+const IATA_DB = {
+  "TFN":"Tenerife Norte","TFS":"Tenerife Sur","LPA":"Gran Canaria","ACE":"Lanzarote","FUE":"Fuerteventura",
+  "MAD":"Madrid","BCN":"Barcelona","AGP":"Málaga","SVQ":"Sevilla","BIO":"Bilbao","VLC":"Valencia","PMI":"Palma de Mallorca","IBZ":"Ibiza",
+  "LIS":"Lisboa","OPO":"Oporto","FAO":"Faro","CDG":"París (Charles de Gaulle)","ORY":"París (Orly)","NCE":"Niza","LYS":"Lyon",
+  "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Londres (Luton)","STN":"Londres (Stansted)","MAN":"Mánchester","EDI":"Edimburgo",
+  "FRA":"Fráncfort","MUC":"Múnich","BER":"Berlín","DUS":"Düsseldorf","HAM":"Hamburgo","AMS":"Ámsterdam","BRU":"Bruselas",
+  "ZRH":"Zúrich","VIE":"Viena","DUB":"Dublín","CPH":"Copenhague","OSL":"Oslo","ARN":"Estocolmo","FCO":"Roma (Fiumicino)","MXP":"Milán (Malpensa)",
+  "IST":"Estambul","ATH":"Atenas","MEX":"Ciudad de México","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","PVR":"Puerto Vallarta",
+  "SJD":"Los Cabos","CZM":"Cozumel","MID":"Mérida","BOG":"Bogotá","PTY":"Ciudad de Panamá","SJO":"San José","SAL":"San Salvador",
+  "UIO":"Quito","GYE":"Guayaquil","LIM":"Lima","SCL":"Santiago de Chile","EZE":"Buenos Aires","GRU":"Sao Paulo (Guarulhos)","GIG":"Río de Janeiro",
+  "JFK":"Nueva York (JFK)","EWR":"Newark","MIA":"Miami","LAX":"Los Ángeles","SFO":"San Francisco","ORD":"Chicago","DFW":"Dallas","ATL":"Atlanta"
+};
 
-  // ===== helpers =====
-  const fmtIntl = (cur, lang) => new Intl.NumberFormat(lang==="en"?"en-US":"es-ES",{style:"currency",currency:cur,minimumFractionDigits:2,maximumFractionDigits:2});
-  let fmt = fmtIntl(CUR, LANG);
-  const parseMoney = s => { const t = String(s||"").replace(/\./g,"").replace(",","."); const n = parseFloat(t); return isFinite(n)?n:0; };
-  const parseFlight = txt => {
-    const s = String(txt||"").toUpperCase().replace(/\s+/g,"");
-    const m = s.match(/^([A-Z]{2,3})(\d+[A-Z]?)$/);
-    return m ? {code:m[1], number:m[2]} : {code:"", number:s};
-  };
-  const AIRLINES = {"AA":"American Airlines","AF":"Air France","AC":"Air Canada","KL":"KLM","AM":"Aeroméxico","AR":"Aerolíneas Argentinas","AS":"Alaska Airlines","AV":"Avianca","AY":"Finnair","AZ":"ITA Airways","BA":"British Airways","B6":"JetBlue","CM":"Copa Airlines","DL":"Delta Air Lines","EI":"Aer Lingus","FR":"Ryanair","IB":"Iberia","LA":"LATAM Airlines","LH":"Lufthansa","LO":"LOT Polish Airlines","LS":"Jet2","LX":"SWISS","NK":"Spirit Airlines","NT":"Binter Canarias","QR":"Qatar Airways","TP":"TAP Air Portugal","UA":"United Airlines","U2":"easyJet","UX":"Air Europa","VB":"VivaAerobus","VS":"Virgin Atlantic","VY":"Vueling","W6":"Wizz Air","X3":"TUI fly Deutschland","2W":"World2Fly","3U":"Sichuan Airlines","5U":"TAG Airlines","7W":"Windrose Airlines"};
+/* ========= estado ========= */
+let LANG="es";
+let CUR="EUR";
+let fmt = new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2});
 
-  // ===== elements =====
-  const el = id => document.getElementById(id);
-  const card = el("cardWrap");
-  const ids = ["outFrom","outFromCity","outTo","outToCity","retFrom","retFromCity","retTo","retToCity",
-    "ooFlight","ooDate","ooDep","ooArr","orFlight","orDate","orDep","orArr",
-    "noFlight","noDate","noDep","noArr","nrFlight","nrDate","nrDep","nrArr",
-    "penalty","fee","fareDiff","airlineBase","maarlabURL","maarlabMarkURL",
-    "chainSelect","hotelSelect","fxEnable","fxUSD","fxMXN","ncAgree"];
-  ids.forEach(id=>{ if(!el(id)) console.warn("missing", id); });
+/* ========= helpers ========= */
+const nf = (cur,lang)=>new Intl.NumberFormat(lang==="en"?"en-US":"es-ES",{style:"currency",currency:cur,minimumFractionDigits:2,maximumFractionDigits:2});
+const parseMoney = s => { const t=String(s||"").replace(/\./g,"").replace(",","."); const n=parseFloat(t); return isFinite(n)?n:0; };
+const parseFlight = t => { const s=String(t||"").toUpperCase().replace(/\s+/g,""); const m=s.match(/^([A-Z]{2,3})(\d+[A-Z]?)$/); return m?{code:m[1],number:m[2]}:{code:"",number:s}; };
 
-  // defaults ocultos
-  el("airlineBase").value = DEFAULT_AIRLINE_BASE;
-  el("maarlabURL").value = DEFAULT_MAARLAB_LOGO;
-  el("maarlabMarkURL").value = DEFAULT_MAARLAB_MARK;
+/* ========= inicialización ========= */
+function initChains(){
+  const cs = $("chainSelect"), hs = $("hotelSelect");
+  if(!cs || !hs) return;
+  cs.innerHTML = "";
+  Object.keys(HOTEL_CHAINS).forEach(k=>{
+    const o=document.createElement("option"); o.value=k; o.textContent=k; cs.appendChild(o);
+  });
+  cs.addEventListener("change", ()=>buildHotels());
+  hs.addEventListener("change", ()=>refresh());
+  buildHotels();
+}
+function buildHotels(){
+  const cs=$("chainSelect"), hs=$("hotelSelect");
+  hs.innerHTML="";
+  const data = HOTEL_CHAINS[cs.value];
+  if(!data) return;
+  data.hotels.forEach(h=>{
+    const o=document.createElement("option"); o.value=h.name; o.textContent=h.name; o.dataset.logo=h.logo; hs.appendChild(o);
+  });
+  refresh();
+}
 
-  // cadenas/hoteles
-  const chainSel = el("chainSelect"), hotelSel = el("hotelSelect");
-  function buildChains(){
-    chainSel.innerHTML = "";
-    Object.keys(HOTEL_CHAINS).forEach((k,i)=>{
-      const o = document.createElement("option"); o.value = k; o.textContent = k; chainSel.appendChild(o);
+function iataAutoBind(){
+  document.querySelectorAll('input[data-iata]').forEach(inp=>{
+    inp.addEventListener("input", ()=>{
+      const city = $(inp.dataset.iata);
+      const code = (inp.value||"").toUpperCase().trim();
+      if(city && code.length>=3 && IATA_DB[code]) city.value = IATA_DB[code];
+      refresh();
     });
-    buildHotels();
-  }
-  function buildHotels(){
-    hotelSel.innerHTML = "";
-    const ch = HOTEL_CHAINS[chainSel.value];
-    if(!ch) return;
-    ch.hotels.forEach(h=>{
-      const o = document.createElement("option"); o.value = h.name; o.textContent = h.name; o.dataset.logo = h.logo; hotelSel.appendChild(o);
+    inp.addEventListener("blur", ()=>{
+      const city = $(inp.dataset.iata);
+      const code = (inp.value||"").toUpperCase().trim();
+      if(city && IATA_DB[code]) city.value = IATA_DB[code];
+      refresh();
     });
-    refresh();
-  }
-  chainSel.addEventListener("change", buildHotels);
-  hotelSel.addEventListener("change", refresh);
-  buildChains();
+  });
+}
 
-  // currency toggle
-  document.getElementById("chipCurrency").addEventListener("click",(e)=>{
+function safeBindInputs(){
+  // cualquier input/select refresca
+  document.querySelectorAll("#panel input, #panel select").forEach(el=>{
+    el.addEventListener("input", refresh);
+    el.addEventListener("change", refresh);
+  });
+  const chip = $("chipCurrency");
+  if (chip) chip.addEventListener("click", e=>{
     const b = e.target.closest("button"); if(!b) return;
     CUR = b.dataset.cur;
-    [...e.currentTarget.querySelectorAll("button")].forEach(x=>x.classList.toggle("active", x===b));
-    fmt = fmtIntl(CUR, LANG);
+    chip.querySelectorAll("button").forEach(x=>x.classList.toggle("active", x===b));
+    fmt = nf(CUR, LANG);
     refresh();
   });
+  const es=$("btnES"), en=$("btnEN");
+  if (es) es.addEventListener("click", ()=>{LANG="es"; es.classList.add("active"); en.classList.remove("active"); fmt=nf(CUR,LANG); refresh();});
+  if (en) en.addEventListener("click", ()=>{LANG="en"; en.classList.add("active"); es.classList.remove("active"); fmt=nf(CUR,LANG); refresh();});
 
-  // i18n toggle
-  el("btnES").onclick = ()=>{LANG="es"; el("btnES").classList.add("active"); el("btnEN").classList.remove("active"); refreshTexts(); refresh();};
-  el("btnEN").onclick = ()=>{LANG="en"; el("btnEN").classList.add("active"); el("btnES").classList.remove("active"); refreshTexts(); refresh();};
+  const agree = $("ncAgree");
+  const btn = $("btnPng");
+  if (agree && btn) agree.addEventListener("change", ()=>{ btn.disabled = !agree.checked; });
+}
 
-  function refreshTexts(){
-    document.title = STR[LANG].title;
-    el("title").textContent = STR[LANG].title;
-    el("hdr-sub").textContent = STR[LANG].sub;
-    el("penLabel").textContent = STR[LANG].penalty;
-    el("feeLabel").textContent = STR[LANG].fee;
-    el("fareLabel").textContent = STR[LANG].fareDiff;
-    el("totLabel").textContent = STR[LANG].totalDiff;
-    el("hotelLabel").textContent = STR[LANG].hotel;
-    el("genLabel").textContent = STR[LANG].generated;
-    el("contactLabel").textContent = STR[LANG].contact;
-    el("advSummary").textContent = STR[LANG].adv;
-    el("fxLabel").textContent = STR[LANG].fx;
-    el("noteCORS").textContent = STR[LANG].note + " " + (LANG==="es"?"También puedes hacer captura de pantalla.":"You can also take a screenshot.");
+function setHiddenDefaults(){
+  const ab=$("airlineBase"), mh=$("maarlabURL"), mm=$("maarlabMarkURL");
+  if (ab) ab.value ||= DEFAULT_AIRLINE_BASE;
+  if (mh) mh.value ||= DEFAULT_MAARLAB_LOGO;
+  if (mm) mm.value ||= DEFAULT_MAARLAB_MARK;
+}
+
+/* ========= render ========= */
+function renderAirlineLogos(codes){
+  const base = ($("airlineBase")?.value||DEFAULT_AIRLINE_BASE).replace(/\/$/,"");
+  const box = $("airlineLogos"); if(!box) return;
+  box.innerHTML="";
+  [...new Set(codes.filter(Boolean))].slice(0,4).forEach(code=>{
+    const wrap=document.createElement("div"); wrap.className="logoBox";
+    const img=document.createElement("img"); img.crossOrigin="anonymous"; img.alt=code; img.src=`${base}/${code}.png`;
+    img.onerror=()=>img.removeAttribute("src");
+    wrap.appendChild(img); box.appendChild(wrap);
+  });
+}
+
+function moneyOut(n){
+  const fx = $("fxEnable")?.checked;
+  let v = Number(n)||0;
+  if(fx && CUR!=="EUR"){
+    const usd = Number($("fxUSD")?.value||1.08);
+    const mxn = Number($("fxMXN")?.value||19.0);
+    if(CUR==="USD") v*=usd;
+    if(CUR==="MXN") v*=mxn;
   }
-  refreshTexts();
+  return fmt.format(v);
+}
 
-  // airline logos container
-  const airlinesBox = el("airlineLogos");
-  function setAirlineLogos(codes){
-    airlinesBox.innerHTML = "";
-    [...new Set(codes.filter(Boolean))].slice(0,4).forEach(code=>{
-      const box = document.createElement("div"); box.className = "logoBox";
-      const img = document.createElement("img");
-      img.crossOrigin = "anonymous";
-      img.alt = code;
-      img.src = el("airlineBase").value.replace(/\/$/,"") + "/" + code + ".png";
-      box.appendChild(img); airlinesBox.appendChild(box);
-    });
-  }
+function refresh(){
+  // rutas
+  const outFrom = $("outFrom")?.value || "XXX";
+  const outTo   = $("outTo")?.value   || "XXX";
+  const retFrom = $("retFrom")?.value || "XXX";
+  const retTo   = $("retTo")?.value   || "XXX";
+  $("routeOut").textContent = `${LANG==="es"?"IDA":"OUTBOUND"} · ${outFrom} → ${outTo}`;
+  $("routeRet").textContent = `${LANG==="es"?"VUELTA":"RETURN"} · ${retFrom} → ${retTo}`;
 
-  // header maarlab logos
-  function setBrand(){
-    const h = el("maarlabLogoH"); const m = el("maarlabLogoM");
-    h.src = el("maarlabURL").value || DEFAULT_MAARLAB_LOGO;
-    m.src = el("maarlabMarkURL").value || DEFAULT_MAARLAB_MARK;
-  }
+  // logos aerolínea
+  const codes = [parseFlight($("ooFlight")?.value).code, parseFlight($("orFlight")?.value).code, parseFlight($("noFlight")?.value).code, parseFlight($("nrFlight")?.value).code]
+    .map(c=>(c||"").toUpperCase());
+  renderAirlineLogos(codes);
 
-  // value helpers
-  function moneyOut(n){
-    const fx = el("fxEnable").checked;
-    let v = Number(n)||0;
-    if(fx && CUR!=="EUR"){
-      const usd = Number(el("fxUSD").value||1.08);
-      const mxn = Number(el("fxMXN").value||19.0);
-      if(CUR==="USD") v = v*usd;
-      if(CUR==="MXN") v = v*mxn;
-    }
-    return fmt.format(v);
-  }
+  // cabecera fechas
+  $("hdr-dates").textContent = `${LANG==="es"?"Ida":"Out"}: ${$("ooDate")?.value||"—"} → ${$("noDate")?.value||"—"} · ${LANG==="es"?"Vuelta":"Return"}: ${$("orDate")?.value||"—"} → ${$("nrDate")?.value||"—"}`;
 
-  // ===== Autocompletar IATA → ciudad =====
-  function attachIataAuto(){
-    document.querySelectorAll('input[data-iata]').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
-        const cityField = document.getElementById(inp.dataset.iata);
-        const code = (inp.value||"").toUpperCase().trim();
-        if(code.length>=3 && IATA_DB[code]) cityField.value = IATA_DB[code];
-        refresh();
-      });
-      inp.addEventListener('blur', ()=>{
-        const cityField = document.getElementById(inp.dataset.iata);
-        const code = (inp.value||"").toUpperCase().trim();
-        if(IATA_DB[code]) cityField.value = IATA_DB[code];
-        refresh();
-      });
-    });
-  }
-  attachIataAuto();
+  // anterior
+  $("ooRt").textContent = `${LANG==="es"?"IDA":"OUTBOUND"} · ${outFrom} → ${outTo}`;
+  $("orRt").textContent = `${LANG==="es"?"VUELTA":"RETURN"} · ${retFrom} → ${retTo}`;
+  $("ooMeta").textContent = `${$("ooFlight")?.value||"—"} · ${$("ooDate")?.value||"—"}`;
+  $("orMeta").textContent = `${$("orFlight")?.value||"—"} · ${$("orDate")?.value||"—"}`;
+  $("ooDepLabel").textContent = $("ooDep")?.value||"--:--";
+  $("ooArrLabel").textContent = $("ooArr")?.value||"--:--";
+  $("orDepLabel").textContent = $("orDep")?.value||"--:--";
+  $("orArrLabel").textContent = $("orArr")?.value||"--:--";
 
-  // habilitar export solo si acepta no-comercial
-  el("ncAgree").addEventListener("change", ()=>{ el("btnPng").disabled = !el("ncAgree").checked; });
+  // nuevo
+  $("noRt").textContent = `${LANG==="es"?"IDA":"OUTBOUND"} · ${outFrom} → ${outTo}`;
+  $("nrRt").textContent = `${LANG==="es"?"VUELTA":"RETURN"} · ${retFrom} → ${retTo}`;
+  $("noMeta").textContent = `${$("noFlight")?.value||"—"} · ${$("noDate")?.value||"—"}`;
+  $("nrMeta").textContent = `${$("nrFlight")?.value||"—"} · ${$("nrDate")?.value||"—"}`;
+  $("noDepLabel").textContent = $("noDep")?.value||"--:--";
+  $("noArrLabel").textContent = $("noArr")?.value||"--:--";
+  $("nrDepLabel").textContent = $("nrDep")?.value||"--:--";
+  $("nrArrLabel").textContent = $("nrArr")?.value||"--:--";
 
-  function refresh(){
-    setBrand();
+  // precios
+  const p=parseMoney($("penalty")?.value), f=parseMoney($("fee")?.value), d=parseMoney($("fareDiff")?.value);
+  $("penVal").textContent = moneyOut(p);
+  $("feeVal").textContent = moneyOut(f);
+  $("fareVal").textContent = moneyOut(d);
+  $("totVal").textContent = moneyOut(p+f+d);
 
-    // rutas
-    const outFrom = el("outFrom").value || "XXX";
-    const outTo   = el("outTo").value   || "XXX";
-    const retFrom = el("retFrom").value || "XXX";
-    const retTo   = el("retTo").value   || "XXX";
-    el("routeOut").textContent = `${LANG==="es"?"IDA":"OUTBOUND"} · ${outFrom} → ${outTo}`;
-    el("routeRet").textContent = `${LANG==="es"?"VUELTA":"RETURN"} · ${retFrom} → ${retTo}`;
+  // hotel
+  const hs = $("hotelSelect");
+  const opt = hs && hs.selectedOptions && hs.selectedOptions[0];
+  $("hotelVal").textContent = opt ? opt.value : "—";
+  const hImg = $("hotelLogo"); if (hImg) { hImg.src = opt?.dataset.logo || ""; hImg.onerror = ()=>hImg.removeAttribute("src"); }
 
-    // airlines (hasta 4)
-    const codes = [
-      parseFlight(el("ooFlight").value).code,
-      parseFlight(el("orFlight").value).code,
-      parseFlight(el("noFlight").value).code,
-      parseFlight(el("nrFlight").value).code
-    ].map(c=>c||"").map(c=>c.toUpperCase());
-    setAirlineLogos(codes);
+  // logos maarlab
+  const mh=$("maarlabURL")?.value||DEFAULT_MAARLAB_LOGO;
+  const mm=$("maarlabMarkURL")?.value||DEFAULT_MAARLAB_MARK;
+  const mhImg=$("maarlabLogoH"), mmImg=$("maarlabLogoM");
+  if(mhImg){ mhImg.src=mh; mhImg.onerror=()=>mhImg.removeAttribute("src"); }
+  if(mmImg){ mmImg.src=mm; mmImg.onerror=()=>mmImg.removeAttribute("src"); }
+}
 
-    // header fechas
-    el("hdr-dates").textContent = STR[LANG].dates2(
-      el("ooDate").value, el("noDate").value,
-      el("orDate").value, el("nrDate").value
-    );
-
-    // legs anterior
-    el("ooRt").textContent = `${LANG==="es"?"IDA":"OUTBOUND"} · ${outFrom} → ${outTo}`;
-    el("orRt").textContent = `${LANG==="es"?"VUELTA":"RETURN"} · ${retFrom} → ${retTo}`;
-    const ooCode = parseFlight(el("ooFlight").value).code;
-    const orCode = parseFlight(el("orFlight").value).code;
-    el("ooMeta").textContent = `${el("ooFlight").value||"—"} · ${AIRLINES[ooCode]||"—"} · ${el("ooDate").value||"—"}`;
-    el("orMeta").textContent = `${el("orFlight").value||"—"} · ${AIRLINES[orCode]||"—"} · ${el("orDate").value||"—"}`;
-    el("ooDepLabel").textContent = el("ooDep").value||"--:--";
-    el("ooArrLabel").textContent = el("ooArr").value||"--:--";
-    el("orDepLabel").textContent = el("orDep").value||"--:--";
-    el("orArrLabel").textContent = el("orArr").value||"--:--";
-
-    // legs nuevo
-    el("noRt").textContent = `${LANG==="es"?"IDA":"OUTBOUND"} · ${outFrom} → ${outTo}`;
-    el("nrRt").textContent = `${LANG==="es"?"VUELTA":"RETURN"} · ${retFrom} → ${retTo}`;
-    const noCode = parseFlight(el("noFlight").value).code;
-    const nrCode = parseFlight(el("nrFlight").value).code;
-    el("noMeta").textContent = `${el("noFlight").value||"—"} · ${AIRLINES[noCode]||"—"} · ${el("noDate").value||"—"}`;
-    el("nrMeta").textContent = `${el("nrFlight").value||"—"} · ${AIRLINES[nrCode]||"—"} · ${el("nrDate").value||"—"}`;
-    el("noDepLabel").textContent = el("noDep").value||"--:--";
-    el("noArrLabel").textContent = el("noArr").value||"--:--";
-    el("nrDepLabel").textContent = el("nrDep").value||"--:--";
-    el("nrArrLabel").textContent = el("nrArr").value||"--:--";
-
-    // precios
-    const p = parseMoney(el("penalty").value);
-    const f = parseMoney(el("fee").value);
-    const d = parseMoney(el("fareDiff").value);
-    el("penVal").textContent = moneyOut(p);
-    el("feeVal").textContent = moneyOut(f);
-    el("fareVal").textContent = moneyOut(d);
-    el("totVal").textContent = moneyOut(p+f+d);
-
-    // hotel
-    const opt = hotelSel.selectedOptions[0];
-    el("hotelVal").textContent = opt ? opt.value : "—";
-    el("hotelLogo").src = opt && opt.dataset.logo ? opt.dataset.logo : "";
-    el("hotelLogo").onerror = ()=>{el("hotelLogo").removeAttribute("src");};
-  }
-
-  // bindings
-  [
-    "outFrom","outFromCity","outTo","outToCity","retFrom","retFromCity","retTo","retToCity",
-    "ooFlight","ooDate","ooDep","ooArr","orFlight","orDate","orDep","orArr",
-    "noFlight","noDate","noDep","noArr","nrFlight","nrDate","nrDep","nrArr",
-    "penalty","fee","fareDiff","airlineBase","maarlabURL","maarlabMarkURL",
-    "fxEnable","fxUSD","fxMXN"
-  ].forEach(id=>el(id).addEventListener("input", refresh));
-
-  // export
-  el("btnPng").onclick = async()=>{
-    if(!el("ncAgree").checked){
-      alert(LANG==="es"
-        ? "Debes confirmar que el uso es informativo y no comercial."
-        : "Please confirm this is for informational, non-commercial use.");
+/* ========= export ========= */
+function bindExport(){
+  const btn=$("btnPng");
+  if(!btn) return;
+  btn.addEventListener("click", async ()=>{
+    if(!$("ncAgree")?.checked){
+      alert("Debes confirmar que el uso es informativo y no comercial.");
       return;
     }
     try{
-      const dataUrl = await htmlToImage.toPng(el("cardWrap"), {pixelRatio:2, cacheBust:true});
-      const out = el("outFrom").value||"XXX"; const to = el("outTo").value||"XXX";
-      const r1  = el("retFrom").value||"XXX"; const r2 = el("retTo").value||"XXX";
-      const when = el("nrDate").value || el("noDate").value || el("orDate").value || el("ooDate").value || "date";
-      const a = document.createElement("a");
-      a.href = dataUrl; a.download = `${out}-${to}_${r1}-${r2}-${when}.png`.replace(/\s+/g,"_"); a.click();
+      const dataUrl = await htmlToImage.toPng($("cardWrap"), {pixelRatio:2, cacheBust:true});
+      const out=$("outFrom")?.value||"XXX", to=$("outTo")?.value||"XXX", r1=$("retFrom")?.value||"XXX", r2=$("retTo")?.value||"XXX";
+      const when = $("nrDate")?.value || $("noDate")?.value || $("orDate")?.value || $("ooDate")?.value || "date";
+      const a=document.createElement("a"); a.href=dataUrl; a.download=`${out}-${to}_${r1}-${r2}-${when}.png`.replace(/\s+/g,"_"); a.click();
     }catch(e){
-      alert(LANG==="es"
-        ? "No se pudo exportar. Puedes hacer una captura de pantalla. Para PNG con logos remotos, activa CORS en tu CDN o sirve las imágenes desde el mismo dominio."
-        : "Export failed. You can take a screenshot. For PNG with remote logos, enable CORS on your CDN or host images on the same domain.");
+      alert("No se pudo exportar. Puedes hacer captura de pantalla. Para PNG con logos remotos, activa CORS o sirve imágenes desde el mismo dominio.");
       console.error(e);
     }
-  };
+  });
+}
 
-  // init
-  refresh();
+/* ========= start ========= */
+(function start(){
+  setHiddenDefaults();
+  initChains();
+  iataAutoBind();
+  safeBindInputs();
+  bindExport();
+  refresh(); // primer render
+})();
 </script>
 </body>
 </html>
