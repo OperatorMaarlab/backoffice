@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8" />
@@ -24,6 +24,7 @@
   .flex{display:flex;gap:12px;align-items:center}
   .grow{flex:1}
   .btn{border:0;border-radius:12px;padding:10px 14px;color:#0b2a5a;background:linear-gradient(135deg,var(--accent),var(--accent2));cursor:pointer;font-weight:600}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
   .chip{display:inline-flex;border:1px solid var(--border);border-radius:12px;overflow:hidden}
   .chip button{padding:6px 10px;border:0;background:#f1f5f9;cursor:pointer;color:#0b2a5a}
   .chip button.active{background:#fff}
@@ -68,6 +69,13 @@
   .foot{display:flex;justify-content:space-between;gap:12px;margin-top:16px;color:#64748b;font-size:12px;align-items:center}
   details{margin-top:10px;font-size:12px}
   details summary{cursor:pointer;color:#0b2a5a;font-weight:600}
+
+  /* Badge de no-comercial dentro de la tarjeta (se exporta en el PNG) */
+  .badge-nc{
+    position:absolute; top:10px; right:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#0b2a5a; font:700 11px Inter; padding:4px 8px; border-radius:10px; border:1px solid #ffffffa0;
+  }
 </style>
 </head>
 <body>
@@ -106,13 +114,13 @@
       <h2>Ruta (ida)</h2>
       <div class="row">
         <label>Origen (IATA)
-          <input id="outFrom" placeholder="TFN">
+          <input id="outFrom" placeholder="TFN" data-iata="outFromCity">
         </label>
         <label>Ciudad origen
           <input id="outFromCity" placeholder="Tenerife Norte">
         </label>
         <label>Destino (IATA)
-          <input id="outTo" placeholder="MAD">
+          <input id="outTo" placeholder="MAD" data-iata="outToCity">
         </label>
         <label>Ciudad destino
           <input id="outToCity" placeholder="Madrid">
@@ -122,13 +130,13 @@
       <h2 style="margin-top:12px">Ruta (vuelta)</h2>
       <div class="row">
         <label>Origen (IATA)
-          <input id="retFrom" placeholder="MAD">
+          <input id="retFrom" placeholder="MAD" data-iata="retFromCity">
         </label>
         <label>Ciudad origen
           <input id="retFromCity" placeholder="Madrid">
         </label>
         <label>Destino (IATA)
-          <input id="retTo" placeholder="TFN">
+          <input id="retTo" placeholder="TFN" data-iata="retToCity">
         </label>
         <label>Ciudad destino
           <input id="retToCity" placeholder="Tenerife Norte">
@@ -218,14 +226,25 @@
         </label>
       </div>
 
-      <div style="display:flex;gap:12px;align-items:center;margin-top:14px">
-        <button id="btnPng" class="btn">Descargar PNG</button>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap">
+        <label style="display:flex;gap:8px;align-items:center">
+          <input type="checkbox" id="ncAgree">
+          <span class="tiny" id="ncText">
+            Confirmo que este material es informativo y <b>no</b> tiene fines comerciales.
+          </span>
+        </label>
         <div class="grow"></div>
-        <div class="tiny" id="noteCORS" style="text-align:right"></div>
+        <div class="tiny" id="noteCORS" style="text-align:right">
+          Puedes exportar o hacer una captura de pantalla.
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-top:10px">
+        <button id="btnPng" class="btn" disabled>Exportar PNG</button>
       </div>
 
       <!-- Opciones avanzadas -->
-      <details id="adv">
+      <details id="adv" style="margin-top:12px">
         <summary id="advSummary">Opciones avanzadas</summary>
         <div class="row" style="margin-top:8px">
           <label>Logos aerolíneas (base URL)
@@ -257,6 +276,7 @@
     <!-- Tarjeta exportable -->
     <div class="card" id="cardWrap" style="position:relative">
       <div class="band"></div>
+      <div class="badge-nc">PREVIEW · Uso no comercial</div>
 
       <!-- Cabecera -->
       <div class="flex" style="justify-content:space-between;align-items:center;gap:12px">
@@ -382,6 +402,23 @@
     }
   };
 
+  // ===== IATA → Ciudad (muestra inicial, amplía cuando quieras) =====
+  const IATA_DB = {
+    "TFN":"Tenerife Norte","TFS":"Tenerife Sur","LPA":"Gran Canaria","ACE":"Lanzarote","FUE":"Fuerteventura",
+    "MAD":"Madrid","BCN":"Barcelona","AGP":"Málaga","SVQ":"Sevilla","BIO":"Bilbao","VLC":"Valencia","PMI":"Palma de Mallorca","IBZ":"Ibiza",
+    "LIS":"Lisboa","OPO":"Oporto","FAO":"Faro",
+    "CDG":"París (Charles de Gaulle)","ORY":"París (Orly)","NCE":"Niza","LYS":"Lyon",
+    "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Londres (Luton)","STN":"Londres (Stansted)","MAN":"Mánchester","EDI":"Edimburgo",
+    "FRA":"Fráncfort","MUC":"Múnich","BER":"Berlín","DUS":"Düsseldorf","HAM":"Hamburgo",
+    "AMS":"Ámsterdam","BRU":"Bruselas","ZRH":"Zúrich","VIE":"Viena","DUB":"Dublín","CPH":"Copenhague","OSL":"Oslo","ARN":"Estocolmo",
+    "ROM":"Roma","FCO":"Roma (Fiumicino)","CIA":"Roma (Ciampino)","MXP":"Milán (Malpensa)","LIN":"Milán (Linate)","VCE":"Venecia",
+    "IST":"Estambul","ATH":"Atenas",
+    "MEX":"Ciudad de México","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","TIJ":"Tijuana","PVR":"Puerto Vallarta","SJD":"Los Cabos","CZM":"Cozumel","MID":"Mérida",
+    "BOG":"Bogotá","MDE":"Medellín","CLO":"Cali","CTG":"Cartagena","PTY":"Ciudad de Panamá","SJO":"San José","SAL":"San Salvador","GUA":"Ciudad de Guatemala",
+    "UIO":"Quito","GYE":"Guayaquil","LIM":"Lima","SCL":"Santiago de Chile","EZE":"Buenos Aires","GRU":"Sao Paulo (Guarulhos)","GIG":"Río de Janeiro",
+    "JFK":"Nueva York (JFK)","EWR":"Nueva York (Newark)","MIA":"Miami","LAX":"Los Ángeles","SFO":"San Francisco","ORD":"Chicago","DFW":"Dallas","IAH":"Houston","ATL":"Atlanta"
+  };
+
   // ===== i18n =====
   const STR = {
     es: {title:"Visualizador de Cambios RT · Maarlab",
@@ -426,7 +463,7 @@
     "ooFlight","ooDate","ooDep","ooArr","orFlight","orDate","orDep","orArr",
     "noFlight","noDate","noDep","noArr","nrFlight","nrDate","nrDep","nrArr",
     "penalty","fee","fareDiff","airlineBase","maarlabURL","maarlabMarkURL",
-    "chainSelect","hotelSelect","fxEnable","fxUSD","fxMXN"];
+    "chainSelect","hotelSelect","fxEnable","fxUSD","fxMXN","ncAgree"];
   ids.forEach(id=>{ if(!el(id)) console.warn("missing", id); });
 
   // defaults ocultos
@@ -482,7 +519,7 @@
     el("contactLabel").textContent = STR[LANG].contact;
     el("advSummary").textContent = STR[LANG].adv;
     el("fxLabel").textContent = STR[LANG].fx;
-    el("noteCORS").textContent = STR[LANG].note;
+    el("noteCORS").textContent = STR[LANG].note + " " + (LANG==="es"?"También puedes hacer captura de pantalla.":"You can also take a screenshot.");
   }
   refreshTexts();
 
@@ -519,6 +556,28 @@
     }
     return fmt.format(v);
   }
+
+  // ===== Autocompletar IATA → ciudad =====
+  function attachIataAuto(){
+    document.querySelectorAll('input[data-iata]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const cityField = document.getElementById(inp.dataset.iata);
+        const code = (inp.value||"").toUpperCase().trim();
+        if(code.length>=3 && IATA_DB[code]) cityField.value = IATA_DB[code];
+        refresh();
+      });
+      inp.addEventListener('blur', ()=>{
+        const cityField = document.getElementById(inp.dataset.iata);
+        const code = (inp.value||"").toUpperCase().trim();
+        if(IATA_DB[code]) cityField.value = IATA_DB[code];
+        refresh();
+      });
+    });
+  }
+  attachIataAuto();
+
+  // habilitar export solo si acepta no-comercial
+  el("ncAgree").addEventListener("change", ()=>{ el("btnPng").disabled = !el("ncAgree").checked; });
 
   function refresh(){
     setBrand();
@@ -597,9 +656,14 @@
 
   // export
   el("btnPng").onclick = async()=>{
+    if(!el("ncAgree").checked){
+      alert(LANG==="es"
+        ? "Debes confirmar que el uso es informativo y no comercial."
+        : "Please confirm this is for informational, non-commercial use.");
+      return;
+    }
     try{
       const dataUrl = await htmlToImage.toPng(el("cardWrap"), {pixelRatio:2, cacheBust:true});
-      // filename: IATAout-IATAret + fecha nueva vuelta
       const out = el("outFrom").value||"XXX"; const to = el("outTo").value||"XXX";
       const r1  = el("retFrom").value||"XXX"; const r2 = el("retTo").value||"XXX";
       const when = el("nrDate").value || el("noDate").value || el("orDate").value || el("ooDate").value || "date";
@@ -607,8 +671,8 @@
       a.href = dataUrl; a.download = `${out}-${to}_${r1}-${r2}-${when}.png`.replace(/\s+/g,"_"); a.click();
     }catch(e){
       alert(LANG==="es"
-        ? "No se pudo exportar. Activa CORS en tu CDN o usa logos del mismo dominio (GitHub Pages)."
-        : "Export failed. Enable CORS on your CDN or host images on the same domain.");
+        ? "No se pudo exportar. Puedes hacer una captura de pantalla. Para PNG con logos remotos, activa CORS en tu CDN o sirve las imágenes desde el mismo dominio."
+        : "Export failed. You can take a screenshot. For PNG with remote logos, enable CORS on your CDN or host images on the same domain.");
       console.error(e);
     }
   };
