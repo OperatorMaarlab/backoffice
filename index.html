@@ -11,20 +11,21 @@
     --card:#ffffff; --ink:#0b2a5a; --sub:#475569; --border:#e2e8f0;
     --accent:#2bd9a7; --accent2:#40c8ff;
     --old:#fff5f5; --new:#ecfdf5; --muted:#eef2f7;
+    --good:#16a34a; --bad:#ef4444; --warn:#f59e0b;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{margin:0;color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,Roboto;background:#fff;}
-  /* Fondo Maarlab con velo más bajo (más color) */
+  /* Fondo Maarlab con velo aún más suave (más color visible) */
   body::before{content:"";position:fixed;inset:0;z-index:-2;
     background:linear-gradient(135deg,var(--accent),var(--accent2));}
   body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-    background:linear-gradient(to bottom, rgba(255,255,255,.55) 0%, rgba(255,255,255,.68) 45%, rgba(255,255,255,.90) 100%);}
+    background:linear-gradient(to bottom, rgba(255,255,255,.45) 0%, rgba(255,255,255,.65) 45%, rgba(255,255,255,.88) 100%);}
 
   h1{font:700 22px/1.2 Poppins;margin:0}
   h2{font:700 16px/1.2 Poppins;margin:0 0 6px}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
-  .bar{position:sticky;top:0;background:#ffffffc0;backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:20}
+  .bar{position:sticky;top:0;background:#ffffffbf;backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:20}
   .flex{display:flex;gap:12px;align-items:center}
   .grow{flex:1}
   .btn{border:0;border-radius:12px;padding:10px 14px;color:#0b2a5a;background:linear-gradient(135deg,var(--accent),var(--accent2));cursor:pointer;font-weight:600}
@@ -38,6 +39,7 @@
   label{font-size:12px;color:#334155;display:block;margin-bottom:8px}
   input,select{width:100%;padding:10px;border:1px solid var(--border);border-radius:12px;background:#fff;color:#0b2a5a}
   input[placeholder]{text-transform:uppercase}
+  input.invalid{border-color:var(--bad)!important;background:#fff1f2}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   .band{position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
@@ -56,6 +58,9 @@
   .meta{font-size:12px;color:#475569}
   .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .big{font:700 18px Inter}
+  .dim{font-size:12px;color:#334155;margin-top:6px}
+  .delta span{font-weight:700}
+  .delta .pos{color:var(--bad)} .delta .neg{color:var(--good)} .delta .zero{color:#64748b}
 
   .prices{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
   .pill{border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;background:var(--muted)}
@@ -92,29 +97,29 @@
     <div class="card" id="panel">
       <h2 id="hOut">Ruta (ida)</h2>
       <div class="row">
-        <label id="lblOutFrom">Origen (IATA) <input id="outFrom" placeholder="TFN" data-iata="outFromCity"></label>
+        <label id="lblOutFrom">Origen (IATA) <input id="outFrom" list="iataList" placeholder="TFN" data-iata="outFromCity"></label>
         <label id="lblOutFromCity">Ciudad origen <input id="outFromCity" placeholder="Tenerife Norte"></label>
-        <label id="lblOutTo">Destino (IATA) <input id="outTo" placeholder="MAD" data-iata="outToCity"></label>
+        <label id="lblOutTo">Destino (IATA) <input id="outTo" list="iataList" placeholder="MAD" data-iata="outToCity"></label>
         <label id="lblOutToCity">Ciudad destino <input id="outToCity" placeholder="Madrid"></label>
       </div>
 
       <h2 id="hRet" style="margin-top:12px">Ruta (vuelta)</h2>
       <div class="row">
-        <label id="lblRetFrom">Origen (IATA) <input id="retFrom" placeholder="MAD" data-iata="retFromCity"></label>
+        <label id="lblRetFrom">Origen (IATA) <input id="retFrom" list="iataList" placeholder="MAD" data-iata="retFromCity"></label>
         <label id="lblRetFromCity">Ciudad origen <input id="retFromCity" placeholder="Madrid"></label>
-        <label id="lblRetTo">Destino (IATA) <input id="retTo" placeholder="TFN" data-iata="retToCity"></label>
+        <label id="lblRetTo">Destino (IATA) <input id="retTo" list="iataList" placeholder="TFN" data-iata="retToCity"></label>
         <label id="lblRetToCity">Ciudad destino <input id="retToCity" placeholder="Tenerife Norte"></label>
       </div>
 
       <h2 id="hPrev" style="margin-top:14px">Itinerario anterior</h2>
       <div class="row">
-        <label><span id="lblOOAirTxt">Ida — Aerolínea (código)</span> <input id="ooAir" placeholder="IB" maxlength="3"></label>
+        <label><span id="lblOOAirTxt">Ida — Aerolínea (código)</span> <input id="ooAir" list="airlineCodes" placeholder="IB" maxlength="3"></label>
         <label><span id="lblOONumTxt">Ida — N.º vuelo</span> <input id="ooNum" placeholder="3478"></label>
         <label id="lblOODep"><span>Ida — Salida</span> <input id="ooDep" placeholder="10:30"></label>
         <label id="lblOOArr"><span>Ida — Llegada</span> <input id="ooArr" placeholder="12:50"></label>
       </div>
       <div class="row" style="margin-top:6px">
-        <label><span id="lblORAirTxt">Vuelta — Aerolínea (código)</span> <input id="orAir" placeholder="IB" maxlength="3"></label>
+        <label><span id="lblORAirTxt">Vuelta — Aerolínea (código)</span> <input id="orAir" list="airlineCodes" placeholder="IB" maxlength="3"></label>
         <label><span id="lblORNumTxt">Vuelta — N.º vuelo</span> <input id="orNum" placeholder="3479"></label>
         <label id="lblORDep"><span>Vuelta — Salida</span> <input id="orDep" placeholder="17:20"></label>
         <label id="lblORArr"><span>Vuelta — Llegada</span> <input id="orArr" placeholder="19:35"></label>
@@ -126,13 +131,13 @@
 
       <h2 id="hNew" style="margin-top:14px">Itinerario nuevo</h2>
       <div class="row">
-        <label><span id="lblNOAirTxt">Ida — Aerolínea (código)</span> <input id="noAir" placeholder="UX" maxlength="3"></label>
+        <label><span id="lblNOAirTxt">Ida — Aerolínea (código)</span> <input id="noAir" list="airlineCodes" placeholder="UX" maxlength="3"></label>
         <label><span id="lblNONumTxt">Ida — N.º vuelo</span> <input id="noNum" placeholder="1234"></label>
         <label id="lblNODep"><span>Ida — Salida</span> <input id="noDep" placeholder="11:15"></label>
         <label id="lblNOArr"><span>Ida — Llegada</span> <input id="noArr" placeholder="13:40"></label>
       </div>
       <div class="row" style="margin-top:6px">
-        <label><span id="lblNRAirTxt">Vuelta — Aerolínea (código)</span> <input id="nrAir" placeholder="UX" maxlength="3"></label>
+        <label><span id="lblNRAirTxt">Vuelta — Aerolínea (código)</span> <input id="nrAir" list="airlineCodes" placeholder="UX" maxlength="3"></label>
         <label><span id="lblNRNumTxt">Vuelta — N.º vuelo</span> <input id="nrNum" placeholder="1235"></label>
         <label id="lblNRDep"><span>Vuelta — Salida</span> <input id="nrDep" placeholder="18:10"></label>
         <label id="lblNRArr"><span>Vuelta — Llegada</span> <input id="nrArr" placeholder="20:30"></label>
@@ -173,7 +178,7 @@
       </details>
     </div>
 
-    <!-- TARJETA -->
+    <!-- TARJETA (ÁREA A EXPORTAR: incluye precios) -->
     <div class="card" id="cardWrap" style="position:relative">
       <div id="exportArea">
         <div class="band"></div>
@@ -187,6 +192,7 @@
         </div>
 
         <div class="itins">
+          <!-- Anterior -->
           <div class="itinCol itinOld">
             <div style="font:700 14px Poppins" id="prevTitle">Itinerario anterior</div>
 
@@ -204,6 +210,7 @@
                 <div><div class="tiny" id="lblDep1">Salida</div><div class="big" id="ooDepLabel">--:--</div></div>
                 <div><div class="tiny" id="lblArr1">Llegada</div><div class="big" id="ooArrLabel">--:--</div></div>
               </div>
+              <div class="dim" id="ooDur">Duración: —</div>
             </div>
 
             <!-- Old Return -->
@@ -220,9 +227,11 @@
                 <div><div class="tiny" id="lblDep2">Salida</div><div class="big" id="orDepLabel">--:--</div></div>
                 <div><div class="tiny" id="lblArr2">Llegada</div><div class="big" id="orArrLabel">--:--</div></div>
               </div>
+              <div class="dim" id="orDur">Duración: —</div>
             </div>
           </div>
 
+          <!-- Nuevo -->
           <div class="itinCol itinNew">
             <div style="font:700 14px Poppins" id="newTitle">Itinerario nuevo</div>
 
@@ -240,6 +249,8 @@
                 <div><div class="tiny" id="lblDep3">Salida</div><div class="big" id="noDepLabel">--:--</div></div>
                 <div><div class="tiny" id="lblArr3">Llegada</div><div class="big" id="noArrLabel">--:--</div></div>
               </div>
+              <div class="dim" id="noDur">Duración: —</div>
+              <div class="dim delta" id="noDelta">Cambios: <span class="zero">—</span></div>
             </div>
 
             <!-- New Return -->
@@ -256,23 +267,30 @@
                 <div><div class="tiny" id="lblDep4">Salida</div><div class="big" id="nrDepLabel">--:--</div></div>
                 <div><div class="tiny" id="lblArr4">Llegada</div><div class="big" id="nrArrLabel">--:--</div></div>
               </div>
+              <div class="dim" id="nrDur">Duración: —</div>
+              <div class="dim delta" id="nrDelta">Cambios: <span class="zero">—</span></div>
             </div>
           </div>
         </div>
+
+        <!-- PRECIOS (incluidos en exportación) -->
+        <div class="prices" id="pricesBlock">
+          <div class="pill"><div class="tiny" id="penLabel">Penalización</div><div class="v" id="penVal">€0,00</div></div>
+          <div class="pill"><div class="tiny" id="feeLabel">Fee servicio</div><div class="v" id="feeVal">€0,00</div></div>
+          <div class="pill"><div class="tiny" id="fareLabel">Diferencia de tarifa</div><div class="v" id="fareVal">€0,00</div></div>
+          <div class="pill" style="background:#e6f7ff"><div class="tiny" id="totLabel">Total a cobrar</div><div class="v" id="totVal">€0,00</div></div>
+        </div>
       </div><!-- /exportArea -->
 
-      <!-- Costes y pie (no entran en la exportación) -->
-      <div class="prices">
-        <div class="pill"><div class="tiny" id="penLabel">Penalización</div><div class="v" id="penVal">€0,00</div></div>
-        <div class="pill"><div class="tiny" id="feeLabel">Fee servicio</div><div class="v" id="feeVal">€0,00</div></div>
-        <div class="pill"><div class="tiny" id="fareLabel">Diferencia de tarifa</div><div class="v" id="fareVal">€0,00</div></div>
-        <div class="pill" style="background:#e6f7ff"><div class="tiny" id="totLabel">Total a cobrar</div><div class="v" id="totVal">€0,00</div></div>
-      </div>
       <div class="foot">
         <div class="tiny" id="footerText">Generado por Maarlab · Contacto: booking@maarlab.com</div>
       </div>
     </div>
   </div>
+
+<!-- DATALISTS -->
+<datalist id="airlineCodes"></datalist>
+<datalist id="iataList"></datalist>
 
 <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
@@ -284,26 +302,28 @@ const STR = {
       pageSub:"Itinerario anterior/nuevo · 4 vuelos · EUR/USD/MXN · PNG",
       hdrSub:"Cambio de vuelos · Round Trip",hdrTitle:"Cambio de vuelos",
       outTitle:"Ruta (ida)",retTitle:"Ruta (vuelta)",prev:"Itinerario anterior",next:"Itinerario nuevo",
-      dep:"Salida",arr:"Llegada",
+      dep:"Salida",arr:"Llegada", duration:"Duración", changes:"Cambios",
       acode:"Aerolínea (código)", fnum:"N.º vuelo",
       costs:"Costes", penalty:"Penalización", fee:"Fee servicio", fare:"Diferencia de tarifa", total:"Total a cobrar",
       baseUrl:"Logos aerolíneas (base URL)", adv:"Opciones avanzadas", fx:"Convertir desde EUR",
       nc:"Confirmo que este material es informativo y no tiene fines comerciales. Puedes exportar o hacer captura.",
       footer:"Generado por Maarlab · Contacto: booking@maarlab.com",
       exportWarn:"Debes confirmar uso informativo / no comercial.",
-      exportFail:"No se pudo exportar. Puedes hacer una captura. Para PNG con logos remotos, activa CORS o sirve imágenes desde el mismo dominio."},
+      exportFail:"No se pudo exportar. Puedes hacer una captura. Para PNG con logos remotos, activa CORS o sirve imágenes desde el mismo dominio.",
+      depDelta:"Δ Salida", arrDelta:"Δ Llegada"},
   en:{docTitle:"Flight change · Maarlab",pageTitle:"Flight change · Maarlab",
       pageSub:"Previous/new itinerary · 4 flights · EUR/USD/MXN · PNG",
       hdrSub:"Flight change · Round Trip",hdrTitle:"Flight change",
       outTitle:"Outbound",retTitle:"Return",prev:"Previous itinerary",next:"New itinerary",
-      dep:"Departure",arr:"Arrival",
+      dep:"Departure",arr:"Arrival", duration:"Duration", changes:"Changes",
       acode:"Airline code", fnum:"Flight no.",
       costs:"Costs", penalty:"Penalty", fee:"Service fee", fare:"Fare difference", total:"Total to charge",
       baseUrl:"Airline logos (base URL)", adv:"Advanced options", fx:"Convert from EUR",
       nc:"I confirm this is informational and non-commercial. You may export or take a screenshot.",
       footer:"Generated by Maarlab · Contact: booking@maarlab.com",
       exportWarn:"Please confirm non-commercial use.",
-      exportFail:"Export failed. You can take a screenshot. For PNG with remote logos, enable CORS or host images on the same domain."}
+      exportFail:"Export failed. You can take a screenshot. For PNG with remote logos, enable CORS or host images on the same domain.",
+      depDelta:"Δ Dep", arrDelta:"Δ Arr"}
 };
 let LANG="es";
 
@@ -311,14 +331,14 @@ let LANG="es";
 const DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
 const DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
 
-/* Aerolíneas (ampliado + alias) */
+/* Aerolíneas (ampliado + alias U→U2) */
 const AIRLINES = {
   // alias
   "U":"easyJet","U2":"easyJet",
   // MX / LATAM
   "AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
   "AV":"Avianca","G3":"GOL","H2":"Sky Airline","QP":"Amaszonas","VE":"EasyFly",
-  // Europa principales
+  // Europa
   "IB":"Iberia","I2":"Iberia Express","VY":"Vueling","UX":"Air Europa","NT":"Binter Canarias","FR":"Ryanair",
   "W6":"Wizz Air","W4":"Wizz Air Malta","TO":"Transavia France","HV":"Transavia","BA":"British Airways",
   "KL":"KLM","AF":"Air France","LH":"Lufthansa","LX":"SWISS","OS":"Austrian","SN":"Brussels Airlines","LO":"LOT",
@@ -330,11 +350,11 @@ const AIRLINES = {
   // USA / Canadá
   "AA":"American Airlines","UA":"United","DL":"Delta","B6":"JetBlue","WN":"Southwest","NK":"Spirit",
   "F9":"Frontier","AS":"Alaska Airlines","HA":"Hawaiian","AC":"Air Canada","WS":"WestJet","TS":"Air Transat",
-  // UK/IE complementos
+  // UK/IE
   "EI":"Aer Lingus","LS":"Jet2","BE":"Flybe"
 };
 
-/* IATA → ciudad (ampliado; incluye los que pediste) */
+/* IATA → ciudad (incluye TQO, CZM, HUX, PVR, ACA, DFW, EWR, LPL, EMA y muchas más) */
 const IATA_DB = {
   // España
   "MAD":"Madrid","BCN":"Barcelona","VLC":"Valencia","AGP":"Málaga","SVQ":"Sevilla","BIO":"Bilbao","PMI":"Palma de Mallorca",
@@ -372,7 +392,7 @@ const IATA_DB = {
   "PXM":"Puerto Escondido","PBC":"Puebla","QRO":"Querétaro","BJX":"León/Del Bajío","ZIH":"Ixtapa-Zihuatanejo","ZLO":"Manzanillo",
   "CEN":"Ciudad Obregón","CUU":"Chihuahua","CJS":"Ciudad Juárez","REX":"Reynosa","NLD":"Nuevo Laredo","SLW":"Saltillo",
   "MXL":"Mexicali","CPE":"Campeche","VSA":"Villahermosa","ACA":"Acapulco","TQO":"Tulum (Felipe Carrillo Puerto)",
-  // USA (incluye DFW y EWR junto a muchos hubs)
+  // USA (incluye DFW y EWR + hubs)
   "ATL":"Atlanta","JFK":"Nueva York (JFK)","LGA":"Nueva York (LaGuardia)","EWR":"Newark",
   "BOS":"Boston","PHL":"Filadelfia","IAD":"Washington Dulles","DCA":"Washington National","BWI":"Baltimore",
   "MIA":"Miami","FLL":"Fort Lauderdale","PBI":"West Palm Beach","MCO":"Orlando","TPA":"Tampa","RSW":"Fort Myers","JAX":"Jacksonville",
@@ -396,6 +416,12 @@ const normalizeLogoCode = c => (c==="U"?"U2":(c||"").toUpperCase());
 const airlineLogo = code => ( ($("airlineBase")?.value || DEFAULT_AIRLINE_BASE).replace(/\/$/,"") + "/" + normalizeLogoCode(code) + ".png" );
 const fmtDate = (val)=>{ if(!val) return "—"; const [y,m,d]=String(val).split("-"); return (y&&m&&d)?`${d}/${m}/${y}`:val; };
 const flightStr = (code,num)=>{ const cc=(code||"").toUpperCase(); const nn=(num||"").toUpperCase(); return (cc||nn)?`${cc}${nn}`:"—"; };
+
+const HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const tMin = (hm)=> HM_RE.test(hm) ? (parseInt(hm.slice(0,2),10)*60 + parseInt(hm.slice(3),10)) : NaN;
+const durMin = (dep,arr)=>{ const d=tMin(dep), a=tMin(arr); if(!isFinite(d)||!isFinite(a)) return NaN; let m=a-d; if(m<0) m+=1440; return m; };
+const fmtH = (m)=> isFinite(m)?(`${Math.floor(Math.abs(m)/60)}h ${Math.abs(m)%60}m`):"—";
+const fmtSigned = (m)=> !isFinite(m)?"—":((m===0)?"±0m":((m>0?"+":"-")+fmtH(m)));
 
 function moneyOut(v){
   if(CUR==="EUR") return fmt.format(v);
@@ -425,7 +451,7 @@ function applyI18n(){
   $("advSummary").textContent=S.adv; $("lblBaseUrl").childNodes[0].textContent=S.baseUrl+" ";
   $("fxLabel").textContent=S.fx; $("ncText").textContent=S.nc; $("footerText").textContent=S.footer;
 
-  // textos de etiquetas nuevas
+  // etiquetas
   $("lblOOAirTxt").textContent = `${LANG==="es"?"Ida —": "Out —"} ${S.acode}`;
   $("lblOONumTxt").textContent = `${LANG==="es"?"Ida —": "Out —"} ${S.fnum}`;
   $("lblORAirTxt").textContent = `${LANG==="es"?"Vuelta —": "Return —"} ${S.acode}`;
@@ -441,11 +467,14 @@ function applyI18n(){
 
 /* ===== binds ===== */
 function bindAll(){
+  // inputs
   document.querySelectorAll("#panel input, #panel select").forEach(el=>{
     el.addEventListener("input", (e)=>{
-      // Uppercase para códigos de aerolínea e IATA
-      if(/(Air|outFrom|outTo|retFrom|retTo)$/i.test(e.target.id)){
-        e.target.value = e.target.value.toUpperCase();
+      // Uppercase para códigos e IATA
+      if(/(Air|outFrom|outTo|retFrom|retTo)$/i.test(e.target.id)){ e.target.value = e.target.value.toUpperCase(); }
+      // Validación HH:MM
+      if(/(Dep|Arr)$/i.test(e.target.id)){
+        e.target.classList.toggle("invalid", !HM_RE.test(e.target.value));
       }
       refresh();
     });
@@ -467,6 +496,12 @@ function bindAll(){
   // defaults
   $("airlineBase").value ||= DEFAULT_AIRLINE_BASE;
   $("maarlabLogoM").src ||= DEFAULT_MAARLAB_MARK;
+
+  // datalists
+  const dlAir = $("airlineCodes"); dlAir.innerHTML="";
+  Object.keys(AIRLINES).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); });
+  const dlIata = $("iataList"); dlIata.innerHTML="";
+  Object.keys(IATA_DB).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlIata.appendChild(o); });
 }
 
 /* ===== render ===== */
@@ -475,6 +510,15 @@ function setLegLogo(imgId, code){
   const c = normalizeLogoCode(code);
   if(c){ img.src=airlineLogo(c); img.style.visibility="visible"; img.onerror=()=>{img.style.visibility="hidden"; img.removeAttribute("src");}; }
   else { img.style.visibility="hidden"; img.removeAttribute("src"); }
+}
+
+function deltaSpan(label, mins){
+  const span = document.createElement("span");
+  if(!isFinite(mins)){ span.className="zero"; span.textContent=`${label}: —`; return span; }
+  if(mins===0){ span.className="zero"; span.textContent=`${label}: ±0m`; return span; }
+  span.className = mins>0 ? "pos" : "neg";
+  span.textContent = `${label}: ${fmtSigned(mins)}`;
+  return span;
 }
 
 function refresh(){
@@ -508,7 +552,12 @@ function refresh(){
   // logos
   setLegLogo("logo-oo", ooC); setLegLogo("logo-or", orC); setLegLogo("logo-no", noC); setLegLogo("logo-nr", nrC);
 
-  // horas
+  // horas + validación
+  const oodm = durMin($("ooDep").value, $("ooArr").value);
+  const ordm = durMin($("orDep").value, $("orArr").value);
+  const nodm = durMin($("noDep").value, $("noArr").value);
+  const nrdm = durMin($("nrDep").value, $("nrArr").value);
+
   $("ooDepLabel").textContent=$("ooDep").value||"--:--";
   $("ooArrLabel").textContent=$("ooArr").value||"--:--";
   $("orDepLabel").textContent=$("orDep").value||"--:--";
@@ -518,6 +567,38 @@ function refresh(){
   $("nrDepLabel").textContent=$("nrDep").value||"--:--";
   $("nrArrLabel").textContent=$("nrArr").value||"--:--";
 
+  // Duraciones
+  $("ooDur").textContent = `${STR[LANG].duration}: ${fmtH(oodm)}`;
+  $("orDur").textContent = `${STR[LANG].duration}: ${fmtH(ordm)}`;
+  $("noDur").textContent = `${STR[LANG].duration}: ${fmtH(nodm)}`;
+  $("nrDur").textContent = `${STR[LANG].duration}: ${fmtH(nrdm)}`;
+
+  // Deltas horario (nuevo vs anterior) por tramo
+  const depOutDelta = tMin($("noDep").value) - tMin($("ooDep").value);
+  const arrOutDelta = tMin($("noArr").value) - tMin($("ooArr").value);
+  const depRetDelta = tMin($("nrDep").value) - tMin($("orDep").value);
+  const arrRetDelta = tMin($("nrArr").value) - tMin($("orArr").value);
+
+  // normaliza a rango -720..+720 para que +23:00 vs 00:10 muestre -0:50, etc.
+  function normalizeDelta(m){
+    if(!isFinite(m)) return NaN;
+    if(m>720) m-=1440;
+    if(m<-720) m+=1440;
+    return m;
+  }
+  const nDepOut = normalizeDelta(depOutDelta), nArrOut = normalizeDelta(arrOutDelta);
+  const nDepRet = normalizeDelta(depRetDelta), nArrRet = normalizeDelta(arrRetDelta);
+
+  const noDelta = $("noDelta"); noDelta.textContent = STR[LANG].changes + ": ";
+  noDelta.appendChild(deltaSpan(STR[LANG].depDelta, nDepOut));
+  noDelta.append(" · ");
+  noDelta.appendChild(deltaSpan(STR[LANG].arrDelta, nArrOut));
+
+  const nrDelta = $("nrDelta"); nrDelta.textContent = STR[LANG].changes + ": ";
+  nrDelta.appendChild(deltaSpan(STR[LANG].depDelta, nDepRet));
+  nrDelta.append(" · ");
+  nrDelta.appendChild(deltaSpan(STR[LANG].arrDelta, nArrRet));
+
   // precios
   const p=parseMoney($("penalty").value), f=parseMoney($("fee").value), d=parseMoney($("fareDiff").value);
   $("penVal").textContent=moneyOut(p);
@@ -526,7 +607,7 @@ function refresh(){
   $("totVal").textContent=moneyOut(p+f+d);
 }
 
-/* ===== export solo bloque superior ===== */
+/* ===== export (incluye itinerarios + precios) ===== */
 async function exportPNG(){
   if(!$("ncAgree").checked){ alert(STR[LANG].exportWarn); return; }
   try{
