@@ -8,21 +8,17 @@
 <style>
   :root{
     --card:#fff; --ink:#0b2a5a; --sub:#475569; --border:#d7ddea;
-    --accent:#15c79b; --accent2:#2ca9ff; /* tonos un poco más profundos */
-    --oldA:#ffd3da; --oldB:#ffaab8; --oldBorder:#991b1b;   /* rojo más oscuro */
-    --newA:#daf5e7; --newB:#bff0d2; --newBorder:#14532d;   /* verde más oscuro */
+    --accent:#15c79b; --accent2:#2ca9ff;
+    --oldA:#ffd3da; --oldB:#ffaab8; --oldBorder:#991b1b;
+    --newA:#daf5e7; --newB:#bff0d2; --newBorder:#14532d;
     --muted:#eef2f7;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0; color:var(--ink);
-    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
-    background:#0a223f; /* fallback */
-  }
-  /* Fondo Maarlab más oscuro */
+  body{margin:0;color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;background:#0a223f}
+  /* Fondo Maarlab más oscuro con velo */
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
-  body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.18),rgba(255,255,255,.28) 45%,rgba(255,255,255,.78))}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.16),rgba(255,255,255,.24) 45%,rgba(255,255,255,.74))}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
 
   /* Barra superior */
@@ -53,11 +49,7 @@
   /* Visualizador */
   #exportArea{position:relative}
   .wm{position:absolute;inset:0;pointer-events:none;display:none}
-  .wm.show::before{
-    content:attr(data-text); position:absolute; top:50%; left:50%;
-    transform:translate(-50%,-50%) rotate(-16deg);
-    font:700 64px/1 Poppins,system-ui; color:#0b2a5a; opacity:.08; white-space:nowrap;
-  }
+  .wm.show::before{content:attr(data-text);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-16deg);font:700 64px/1 Poppins,system-ui;color:#0b2a5a;opacity:.08;white-space:nowrap}
   .headerRow{display:flex;justify-content:space-between;align-items:center;gap:12px}
   #hdr-title{font:700 32px/1.1 Poppins, -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui}
 
@@ -66,7 +58,7 @@
   .logoCard img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 
   /* Encabezado confirmación */
-  .confirmHeader{margin-top:10px;border:1px solid var(--border);border-radius:14px;background:#fff; padding:10px 12px;}
+  .confirmHeader{margin-top:10px;border:1px solid var(--border);border-radius:14px;background:#fff;padding:10px 12px}
   .confirmGrid{display:grid;gap:8px}
   @media(min-width:800px){.confirmGrid{grid-template-columns:2fr 1fr 1fr 1fr 1fr}}
   .confItem{font-size:12px;color:#334155}
@@ -484,7 +476,7 @@
   var DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
   var DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
 
-  /* Aerolíneas (incluye F8→F9 y U→U2 fallback) */
+  /* Aerolíneas (con fallback F8→F9 y U→U2) */
   var AIRLINES = {
     "U":"easyJet","U2":"easyJet",
     "AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
@@ -498,7 +490,7 @@
   };
   var LOGO_FALLBACK = {"F8":"F9","U":"U2"};
 
-  /* IATA → ciudad (ampliado básico) */
+  /* IATA → ciudad y husos */
   var IATA_DB = {
     "MAD":"Madrid","TFN":"Tenerife Norte","TFS":"Tenerife Sur","BCN":"Barcelona","VLC":"Valencia","AGP":"Málaga","SVQ":"Sevilla","PMI":"Palma",
     "IBZ":"Ibiza","ALC":"Alicante","LIS":"Lisboa","CDG":"París (CDG)","ORY":"París (Orly)","FRA":"Fráncfort","AMS":"Ámsterdam",
@@ -728,21 +720,10 @@
         $("chIssued").textContent    = issued ? fmtDate(issued) : "—";
         $("chAgent").textContent     = ( ($("confAgent").value)||"—" );
       }
-    }catch(e){ console.error(e); $("err").textContent="⚠️ Error: "+e.message; $("err").style.display="block"; setTimeout(function(){ $("err").style.display="none"); },4000); }
-  }
-
-  function applyModeUI(){
-    // nada especial (ya solo PDF); mantenemos refresh para etiquetas
-    refresh();
-  }
-
-  function defaultConfirmId(){
-    var d = new Date();
-    var y = d.getFullYear();
-    var mm = String(d.getMonth()+1).padStart(2,"0");
-    var dd = String(d.getDate()).padStart(2,"0");
-    var rand = Math.floor(Math.random()*9000+1000);
-    return "MLB-"+y+mm+dd+"-"+rand;
+    }catch(e){
+      console.error(e);
+      if ($("err")){ $("err").textContent="⚠️ Error: "+e.message; $("err").style.display="block"; setTimeout(function(){ $("err").style.display="none"; },4000); }
+    }
   }
 
   function setDefaultsConfirm(){
@@ -750,39 +731,49 @@
     if ($("confIssued") && !$("confIssued").value){
       var d = new Date(); var iso = d.toISOString().slice(0,10); $("confIssued").value = iso;
     }
-    if ($("confId") && !$("confId").value) $("confId").value = defaultConfirmId();
+    if ($("confId") && !$("confId").value){
+      var dt = new Date(), y = dt.getFullYear(), mm=String(dt.getMonth()+1).padStart(2,"0"), dd=String(dt.getDate()).padStart(2,"0"), r=Math.floor(Math.random()*9000+1000);
+      $("confId").value = "MLB-"+y+mm+dd+"-"+r;
+    }
   }
 
   function bindAll(){
+    // Cambios de inputs (realtime)
     var inputs = document.querySelectorAll("#panel input, #panel select");
-    for(var i=0;i<inputs.length;i++){
-      (function(el){
-        el.addEventListener("input", function(){
-          if(/(outFrom|outTo|retFrom|retTo|Stop|Air)$/i.test(el.id)){ el.value = el.value.toUpperCase(); }
-          if(/(Dep|Arr|StopArr|StopDep)$/i.test(el.id)){
-            var ok = (!el.value) || /^([01]\d|2[0-3]):[0-5]\d$/.test(el.value);
-            if(!ok) el.classList.add("invalid"); else el.classList.remove("invalid");
-          }
-          var targetId = el.getAttribute("data-iata");
-          if(targetId){
-            var cityEl=$(targetId), c=el.value.toUpperCase().trim();
-            if(cityEl && c.length>=3 && IATA_DB[c]) cityEl.value = IATA_DB[c];
-          }
-          refresh();
-        });
-        el.addEventListener("change", refresh);
-        el.addEventListener("keyup", refresh);
-      })(inputs[i]);
-    }
+    inputs.forEach(function(el){
+      var handler = function(){
+        // Uppercase en campos de códigos y IATA
+        if(/(outFrom|outTo|retFrom|retTo|Stop|Air)$/i.test(el.id)){ el.value = (el.value||"").toUpperCase(); }
+        // Validación HH:MM
+        if(/(Dep|Arr|StopArr|StopDep)$/i.test(el.id)){
+          var ok = (!el.value) || /^([01]\d|2[0-3]):[0-5]\d$/.test(el.value);
+          el.classList.toggle("invalid", !ok);
+        }
+        // Autocompletar ciudad desde IATA
+        var targetId = el.getAttribute("data-iata");
+        if(targetId){
+          var cityEl=$(targetId), c=(el.value||"").toUpperCase().trim();
+          if(cityEl && c.length>=3 && IATA_DB[c]) cityEl.value = IATA_DB[c];
+        }
+        refresh();
+      };
+      el.addEventListener("input", handler);
+      el.addEventListener("change", handler);
+      el.addEventListener("keyup", handler);
+    });
 
+    // Logo hotel desde archivo
     if($("hotelLogoFile")){
       $("hotelLogoFile").addEventListener("change", function(e){
         var f = e.target.files && e.target.files[0];
         if(!f){ hotelLogoData=""; refresh(); return; }
-        var r=new FileReader(); r.onload=function(){ hotelLogoData = r.result; refresh(); }; r.readAsDataURL(f);
+        var r=new FileReader();
+        r.onload=function(){ hotelLogoData = r.result; refresh(); };
+        r.readAsDataURL(f);
       });
     }
 
+    // Idioma
     if($("langSelect")){
       $("langSelect").addEventListener("change", function(){
         LANG = this.value || "es";
@@ -790,21 +781,22 @@
       });
     }
 
+    // Moneda
     if($("chipCurrency")){
       $("chipCurrency").addEventListener("click", function(e){
         var b=e.target.closest("button"); if(!b) return;
         CUR = b.getAttribute("data-cur");
-        var btns = $("chipCurrency").querySelectorAll("button"); for(var i=0;i<btns.length;i++){ btns[i].classList.toggle("active", btns[i]===b); }
+        Array.from($("chipCurrency").querySelectorAll("button")).forEach(function(x){ x.classList.toggle("active", x===b); });
         refresh();
       });
     }
 
+    // Modo (Cotización/Confirmación)
     if ($("chipMode")) {
       $("chipMode").addEventListener("click", function(e){
         var b = e.target.closest("button"); if(!b) return;
         MODE = b.getAttribute("data-mode") || "quote";
-        var btns = $("chipMode").querySelectorAll("button");
-        for (var i=0;i<btns.length;i++){ btns[i].classList.toggle("active", btns[i]===b); }
+        Array.from($("chipMode").querySelectorAll("button")).forEach(function(x){ x.classList.toggle("active", x===b); });
         if(MODE==="confirm") setDefaultsConfirm();
         applyI18n();
       });
@@ -819,10 +811,12 @@
       });
     });
 
+    // Defaults
     if($("airlineBase")) $("airlineBase").value = DEFAULT_AIRLINE_BASE;
     if($("maarlabLogoMTop")) $("maarlabLogoMTop").src = DEFAULT_MAARLAB_MARK;
     if($("maarlabLogoMCard")) $("maarlabLogoMCard").src = DEFAULT_MAARLAB_MARK;
 
+    // Datalists
     var dlAir=$("airlineCodes"); if(dlAir){ dlAir.innerHTML=""; Object.keys(AIRLINES).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); }); }
     var dlI=$("iataList"); if(dlI){ dlI.innerHTML=""; Object.keys(IATA_DB).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlI.appendChild(o); }); }
   }
@@ -830,8 +824,8 @@
   document.addEventListener("DOMContentLoaded", function(){
     try{
       bindAll();
-      applyI18n();
-      refresh();
+      applyI18n();  // esto a su vez llama a refresh()
+      refresh();    // llamada extra por si acaso
     }catch(e){
       console.error(e);
       if ($("err")){ $("err").textContent="⚠️ Error inicializando: "+e.message; $("err").style.display="block"; }
