@@ -4,17 +4,15 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Cambio de vuelos · Maarlab</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet"/>
 
 <style>
   :root{
     --card:#fff; --ink:#0b2a5a; --sub:#475569; --border:#e2e8f0;
     --accent:#2bd9a7; --accent2:#40c8ff;
-    --oldA:#fff3f4; --oldB:#ffdede; --oldBorder:#e65252; /* rojo más oscuro */
-    --newA:#eafaf1; --newB:#d8f5e2; --newBorder:#22c55e; /* verde más oscuro */
+    --oldA:#fff3f4; --oldB:#ffdede; --oldBorder:#d93c3c; /* rojo más oscuro */
+    --newA:#eafaf1; --newB:#d8f5e2; --newBorder:#16a34a; /* verde más oscuro */
     --muted:#eef2f7;
-    --good:#16a34a; --bad:#ef4444; --warn:#f59e0b;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
@@ -23,9 +21,9 @@
     font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,Inter,Roboto,"Segoe UI",system-ui,sans-serif;
     background:#fff;
   }
-  /* Fondo Maarlab + velo blanco (sutil) */
+  /* Fondo Maarlab + velo blanco (muy sutil) */
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
-  body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.34),rgba(255,255,255,.56) 45%,rgba(255,255,255,.88))}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.38),rgba(255,255,255,.6) 45%,rgba(255,255,255,.9))}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
   .bar{position:sticky;top:0;background:#ffffffbf;backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:20}
   .flex{display:flex;gap:12px;align-items:center}
@@ -46,21 +44,22 @@
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
-  .mlogoH{height:30px}
+  .mlogoH{height:32px}
   .logoBoxSq{width:48px;height:48px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .logoBoxSq img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 
   /* ===== Visualizador (izquierda) ===== */
   #exportArea{position:relative; font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,Inter,Roboto,"Segoe UI",system-ui,sans-serif;}
   .headerRow{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  #hdr-title{font:700 26px Poppins,-apple-system,"Helvetica Neue",Arial}
   .itins{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
   .itinCol{border:1px solid var(--border);border-radius:14px;padding:12px;min-height:300px}
   .itinOld{background:linear-gradient(180deg,var(--oldA),var(--oldB));border-color:var(--oldBorder)}
   .itinNew{background:linear-gradient(180deg,var(--newA),var(--newB));border-color:var(--newBorder)}
-  .leg{border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffc4;margin-top:10px}
+  .leg{border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffc8;margin-top:10px}
   .legHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
   .codes{font-weight:700;font-size:18px}
-  .airLogoBox{height:40px;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:110px}
+  .airLogoBox{height:42px;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:120px}
   .airLogoBox img{max-height:100%;width:auto;display:block}
   .meta{font-size:12px;color:#475569;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .badges{display:flex;gap:6px;flex-wrap:wrap}
@@ -79,6 +78,11 @@
   .notes{margin-top:12px;border:1px dashed var(--border);border-radius:12px;background:#fff;padding:10px;min-height:60px}
   .foot{display:flex;justify-content:space-between;gap:12px;margin-top:12px;color:#64748b;font-size:12px;align-items:center}
 
+  /* Hotel opcional */
+  .hotelBox{display:none;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffc8}
+  .hotelLogo{width:56px;height:56px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
+  .hotelLogo img{max-width:100%;max-height:100%;object-fit:contain}
+
   /* ===== Print (PDF nativo) ===== */
   @media print{
     body{background:#fff}
@@ -93,12 +97,18 @@
   <!-- TOP -->
   <div class="bar">
     <div class="wrap flex">
-      <img class="mlogoH" alt="Maarlab" src="https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png" crossorigin="anonymous" referrerpolicy="no-referrer">
+      <!-- Logo largo Maarlab -->
+      <img class="mlogoH" alt="Maarlab" src="https://www.ifema.es/fitur/img/logo-maarlab/logo-maarlab.webp" crossorigin="anonymous" referrerpolicy="no-referrer">
       <div style="flex:1"></div>
+      <!-- Idiomas -->
       <div class="chip" id="chipLang" style="margin-right:8px">
         <button data-lang="es" class="active">ES</button>
         <button data-lang="en">EN</button>
+        <button data-lang="fr">FR</button>
+        <button data-lang="it">IT</button>
+        <button data-lang="de">DE</button>
       </div>
+      <!-- Monedas -->
       <div class="chip" id="chipCurrency" style="margin-right:8px">
         <button data-cur="EUR" class="active">EUR</button>
         <button data-cur="USD">USD</button>
@@ -114,7 +124,7 @@
         <div class="headerRow">
           <div>
             <div class="tiny" id="hdr-sub">Cambio de vuelos · Round Trip</div>
-            <div style="font:700 20px Poppins, -apple-system,'Helvetica Neue',Arial" id="hdr-title">Cambio de vuelos</div>
+            <div id="hdr-title">Cambio de vuelos</div>
             <div class="tiny" id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
             <div class="badges" id="locBadges"></div>
           </div>
@@ -183,6 +193,15 @@
               <div class="dim" id="nrDur">Duración: —</div>
             </div>
           </div>
+        </div>
+
+        <!-- Hotel (opcional: nombre + logo local) -->
+        <div class="hotelBox" id="hotelBox">
+          <div>
+            <div class="tiny" id="hotelCaption">Hotel</div>
+            <div class="big" id="hotelName">—</div>
+          </div>
+          <div class="hotelLogo"><img id="hotelLogoImg" alt="hotel-logo"></div>
         </div>
 
         <!-- Precios -->
@@ -292,7 +311,7 @@
       <h2 style="margin-top:14px" id="hHotel">Hotel (opcional)</h2>
       <div class="row">
         <label id="lblHotelName">Nombre de hotel <input id="hotelNameInput" placeholder="Spring Arona Gran"></label>
-        <div></div>
+        <label>Logo del hotel (archivo) <input id="hotelLogoFile" type="file" accept="image/*"></label>
       </div>
 
       <h2 style="margin-top:14px" id="hRefs">Localizadores (opcional)</h2>
@@ -327,7 +346,7 @@
         <div class="row" style="margin-top:8px">
           <label id="lblBaseUrl">Logos aerolíneas (base URL) <input id="airlineBase"></label>
           <label style="display:flex;align-items:center;gap:8px">
-            <input type="checkbox" id="fxEnable"> <span id="fxLabel">Convertir desde EUR</span>
+            <input type="checkbox" id="fxEnable" checked> <span id="fxLabel">Convertir desde EUR</span>
           </label>
         </div>
         <div class="row" style="margin-top:8px">
@@ -373,14 +392,47 @@ const STR = {
       exportWarn:"Please confirm non-commercial use.",
       exportFail:"Export failed. It will export without logos if the server blocks CORS.",
       stops:"Stops (optional)",
-      badges:{plusDays:"+{n} day(s)", tz:"ΔTZ {h}h", dst:"DST", odd:"Odd duration"}}
+      badges:{plusDays:"+{n} day(s)", tz:"ΔTZ {h}h", dst:"DST", odd:"Odd duration"}},
+  fr:{hdrSub:"Changement de vols · Aller-retour",hdrTitle:"Changement de vols",
+      outTitle:"Aller",retTitle:"Retour",prev:"Itinéraire précédent",next:"Nouvel itinéraire",
+      dep:"Départ",arr:"Arrivée",arrStop:"Arrivée escale",depStop:"Départ escale",duration:"Durée", layover:"Escale",
+      costs:"Coûts",penalty:"Pénalité",fee:"Frais de service",fare:"Différence tarifaire",total:"Total à payer", perPax:"Total par pax",
+      baseUrl:"Logos compagnies (base URL)",adv:"Options avancées",fx:"Convertir depuis EUR",
+      nc:"Je confirme l'usage informatif et non commercial. Export ou capture autorisé.",
+      footer:"Généré par Maarlab · Contact : booking@maarlab.com",
+      exportWarn:"Veuillez confirmer l'usage non commercial.",
+      exportFail:"Échec d'exportation. Export sans logos si CORS est bloqué.",
+      stops:"Escales (optionnel)",
+      badges:{plusDays:"+{n} jour(s)", tz:"ΔTZ {h}h", dst:"Heure d'été", odd:"Durée inhabituelle"}},
+  it:{hdrSub:"Cambio voli · Andata/Ritorno",hdrTitle:"Cambio voli",
+      outTitle:"Andata",retTitle:"Ritorno",prev:"Itinerario precedente",next:"Nuovo itinerario",
+      dep:"Partenza",arr:"Arrivo",arrStop:"Arrivo scalo",depStop:"Partenza scalo",duration:"Durata", layover:"Scalo",
+      costs:"Costi",penalty:"Penale",fee:"Costo servizio",fare:"Differenza tariffa",total:"Totale da pagare", perPax:"Totale per pax",
+      baseUrl:"Loghi compagnie (URL base)",adv:"Opzioni avanzate",fx:"Convertire da EUR",
+      nc:"Confermo uso informativo e non commerciale. Puoi esportare o fare screenshot.",
+      footer:"Generato da Maarlab · Contatto: booking@maarlab.com",
+      exportWarn:"Conferma uso non commerciale.",
+      exportFail:"Esportazione fallita. Esporterà senza loghi se CORS è bloccato.",
+      stops:"Scali (opzionali)",
+      badges:{plusDays:"+{n} giorno/i", tz:"ΔTZ {h}h", dst:"Ora legale", odd:"Durata insolita"}},
+  de:{hdrSub:"Flugänderung · Hin- und Rückflug",hdrTitle:"Flugänderung",
+      outTitle:"Hinflug",retTitle:"Rückflug",prev:"Bisherige Reiseroute",next:"Neue Reiseroute",
+      dep:"Abflug",arr:"Ankunft",arrStop:"Ankunft Zwischenstopp",depStop:"Abflug Zwischenstopp",duration:"Dauer", layover:"Zwischenstopp",
+      costs:"Kosten",penalty:"Strafgebühr",fee:"Servicegebühr",fare:"Tarifdifferenz",total:"Gesamt zu zahlen", perPax:"Gesamt pro Pax",
+      baseUrl:"Airline-Logos (Basis-URL)",adv:"Erweiterte Optionen",fx:"Von EUR umrechnen",
+      nc:"Ich bestätige den informativen, nicht-kommerziellen Zweck. Export/Screenshot erlaubt.",
+      footer:"Erstellt von Maarlab · Kontakt: booking@maarlab.com",
+      exportWarn:"Bitte nicht-kommerzielle Nutzung bestätigen.",
+      exportFail:"Export fehlgeschlagen. Export ohne Logos wenn CORS blockiert.",
+      stops:"Stopps (optional)",
+      badges:{plusDays:"+{n} Tag(e)", tz:"ΔTZ {h}h", dst:"Sommerzeit", odd:"Ungewöhnliche Dauer"}}
 };
 let LANG="es";
 
 /* ===== datos ===== */
 const DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
 const DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
-/* Aerolíneas (incl. F8/F9 y alias U→U2) */
+/* Aerolíneas (incluye F8/F9 y alias U→U2) */
 const AIRLINES = {
   "U":"easyJet","U2":"easyJet",
   "AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
@@ -398,7 +450,7 @@ const AIRLINES = {
 };
 const LOGO_FALLBACK = { "F8":"F9", "U":"U2" };
 
-/* IATA → ciudad (muestra ampliada) */
+/* IATA → ciudad (resumen ampliado) */
 const IATA_DB = {
   "MAD":"Madrid","BCN":"Barcelona","VLC":"Valencia","AGP":"Málaga","SVQ":"Sevilla","BIO":"Bilbao","PMI":"Palma de Mallorca",
   "IBZ":"Ibiza","ALC":"Alicante","TFN":"Tenerife Norte","TFS":"Tenerife Sur","LPA":"Gran Canaria","ACE":"Lanzarote","FUE":"Fuerteventura",
@@ -444,17 +496,22 @@ const TZ_DB = {
 /* ===== formato / helpers ===== */
 let CUR="EUR";
 let fmt = new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2});
-const nf = (cur,lang)=>new Intl.NumberFormat(lang==="en"?"en-US":"es-ES",{style:"currency",currency:cur,minimumFractionDigits:2,maximumFractionDigits:2});
+const nf = (cur,lang)=>new Intl.NumberFormat(
+  lang==="en"?"en-US":lang==="fr"?"fr-FR":lang==="it"?"it-IT":lang==="de"?"de-DE":"es-ES",
+  {style:"currency",currency:cur,minimumFractionDigits:2,maximumFractionDigits:2}
+);
 const parseMoney = s => { const t=String(s||"").replace(/\./g,"").replace(",","."); const n=parseFloat(t); return isFinite(n)?n:0; };
 const normalizeCode = c => (c||"").toUpperCase();
 const airlineLogoUrl = code => ( ($("airlineBase")?.value || DEFAULT_AIRLINE_BASE).replace(/\/$/,"") + "/" + code + ".png" );
 const fmtDate = (val)=>{ if(!val) return "—"; const [y,m,d]=String(val).split("-"); return (y&&m&&d)?`${d}/${m}/${y}`:val; };
 const HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const { DateTime } = luxon;
+let hotelLogoData = ""; // dataURL de logo hotel local
 
 function dayOfWeek(dateISO){
   if(!dateISO) return "";
-  const locale = (LANG==="en"?"en":"es");
+  const map = {es:"es",en:"en",fr:"fr",it:"it",de:"de"};
+  const locale = map[LANG] || "es";
   try{ return DateTime.fromISO(dateISO).setLocale(locale).toFormat("cccc"); }catch{ return ""; }
 }
 function zonedDT(dateISO, hm, iata){
@@ -482,7 +539,7 @@ const fmtHM = m => isFinite(m)?(`${Math.floor(Math.abs(m)/60)}h ${Math.abs(m)%60
 
 /* Precios / moneda */
 function moneyOut(v){
-  if(CUR==="EUR") return fmt.format(v);
+  if(CUR==="EUR") return nf("EUR",LANG).format(v);
   const fx = $("fxEnable")?.checked;
   if(!fx) return nf(CUR,LANG).format(v);
   const usd = Number($("fxUSD").value||1.08);
@@ -501,12 +558,12 @@ function applyI18n(){
   $("#hOut").textContent = S.outTitle; $("#hRet").textContent=S.retTitle;
   $("#hCosts").textContent=S.costs; $("#penLabel").textContent=S.penalty; $("#feeLabel").textContent=S.fee;
   $("#fareLabel").textContent=S.fare; $("#ppLabel").textContent=S.perPax; $("#totLabel").textContent=S.total;
-  $("#advSummary").textContent=S.adv; $("#lblBaseUrl").childNodes[0].textContent=S.baseUrl+" ";
+  $("#advSummary").textContent=S.adv; 
+  const lblBase = $("#lblBaseUrl"); if(lblBase && lblBase.firstChild) lblBase.firstChild.textContent = S.baseUrl + " ";
   $("#fxLabel").textContent=S.fx; $("#ncText").textContent=S.nc; $("#footerText").textContent=S.footer;
   $("#stopsSummary").textContent=S.stops;
   document.querySelectorAll("#btnPdf,#btnPdf2").forEach(b=>b.textContent="PDF");
   document.querySelectorAll("#btnPng,#btnPng2").forEach(b=>b.textContent="PNG");
-  fmt = nf(CUR,LANG);
   refresh();
 }
 
@@ -529,7 +586,7 @@ function buildBadges(dateISO, depHM, arrHM, fromIata, toIata){
   return badges;
 }
 
-/* Logos */
+/* Logos aerolínea */
 function setLegLogo(imgId, code){
   const img=$(imgId); if(!img) return;
   const raw = normalizeCode(code);
@@ -614,7 +671,8 @@ function refresh(){
 
   const ood=fmtDate($("#ooDate").value), ord=fmtDate($("#orDate").value), nod=fmtDate($("#noDate").value), nrd=fmtDate($("#nrDate").value);
   const oodD=dayOfWeek($("#ooDate").value), ordD=dayOfWeek($("#orDate").value), nodD=dayOfWeek($("#noDate").value), nrdD=dayOfWeek($("#nrDate").value);
-  $("#hdr-dates").textContent = `${LANG==="es"?"Ida":"Out"}: ${oodD?oodD+" ":""}${ood} → ${nodD?nodD+" ":""}${nod} · ${LANG==="es"?"Vuelta":"Return"}: ${ordD?ordD+" ":""}${ord} → ${nrdD?nrdD+" ":""}${nrd}`;
+  const S=STR[LANG];
+  $("#hdr-dates").textContent = `${LANG==="es"? "Ida":LANG==="fr"?"Aller":LANG==="it"?"Andata":LANG==="de"?"Hinflug":"Out"}: ${oodD?oodD+" ":""}${ood} → ${nodD?nodD+" ":""}${nod} · ${LANG==="es"?"Vuelta":LANG==="fr"?"Retour":LANG==="it"?"Ritorno":LANG==="de"?"Rückflug":"Return"}: ${ordD?ordD+" ":""}${ord} → ${nrdD?nrdD+" ":""}${nrd}`;
 
   renderLeg("oo", outFrom, outTo, outFromCity, outToCity);
   renderLeg("or", retFrom, retTo, retFromCity, retToCity);
@@ -635,10 +693,19 @@ function refresh(){
   const c = $("#locBadges"); c.innerHTML="";
   if(locs){ const b=document.createElement("span"); b.className="badge"; b.textContent=`PNR: ${locs}`; c.appendChild(b); }
   if(ml){ const b=document.createElement("span"); b.className="badge"; b.textContent=`Maarlab: ${ml}`; c.appendChild(b); }
+
+  // Hotel opcional (nombre + logo)
+  const hname = ($("#hotelNameInput").value||"").trim();
+  const showLogo = !!hotelLogoData;
+  $("#hotelName").textContent = hname || "—";
+  $("#hotelBox").style.display = (hname || showLogo) ? "flex" : "none";
+  const img = $("#hotelLogoImg");
+  if(showLogo){ img.src = hotelLogoData; img.style.display="block"; } else { img.removeAttribute("src"); img.style.display="none"; }
 }
 
 /* Binds */
 function bindAll(){
+  // inputs -> refresco en tiempo real
   document.querySelectorAll("#panel input, #panel select, #notesBox").forEach(el=>{
     const isTime = /(Dep|Arr|StopArr|StopDep)$/i.test(el.id);
     const isIata = /(outFrom|outTo|retFrom|retTo|Stop)$/i.test(el.id);
@@ -654,8 +721,33 @@ function bindAll(){
     });
     el.addEventListener("change", refresh);
   });
-  $("#chipCurrency")?.addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b) return; CUR=b.dataset.cur; document.querySelectorAll("#chipCurrency button").forEach(x=>x.classList.toggle("active",x===b)); fmt=nf(CUR,LANG); refresh(); });
-  $("#chipLang")?.addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b) return; LANG=b.dataset.lang; document.querySelectorAll("#chipLang button").forEach(x=>x.classList.toggle("active",x===b)); applyI18n(); });
+
+  // Hotel logo local
+  $("#hotelLogoFile")?.addEventListener("change", (e)=>{
+    const f = e.target.files && e.target.files[0];
+    if(!f) { hotelLogoData=""; refresh(); return; }
+    const r = new FileReader();
+    r.onload = () => { hotelLogoData = r.result; refresh(); };
+    r.readAsDataURL(f);
+  });
+
+  // Moneda
+  $("#chipCurrency")?.addEventListener("click",(e)=>{
+    const b=e.target.closest("button"); if(!b) return;
+    CUR=b.dataset.cur;
+    document.querySelectorAll("#chipCurrency button").forEach(x=>x.classList.toggle("active",x===b));
+    // Si no es EUR, activamos conversión por defecto
+    if(CUR!=="EUR") $("#fxEnable").checked = true;
+    refresh();
+  });
+
+  // Idioma
+  $("#chipLang")?.addEventListener("click",(e)=>{
+    const b=e.target.closest("button"); if(!b) return;
+    LANG=b.dataset.lang;
+    document.querySelectorAll("#chipLang button").forEach(x=>x.classList.toggle("active",x===b));
+    applyI18n();
+  });
 
   // Export
   const enable = ()=>{ const on=$("#ncAgree").checked; ["btnPng","btnPdf","btnPng2","btnPdf2"].forEach(id=>{ const b=$(id); if(b) b.disabled=!on; }); };
@@ -664,6 +756,7 @@ function bindAll(){
   ["btnPng","btnPng2"].forEach(id=>$(id)&&$(id).addEventListener("click", exportPNG));
   ["btnPdf","btnPdf2"].forEach(id=>$(id)&&$(id).addEventListener("click", ()=>window.print()));
 
+  // Defaults
   $("#airlineBase").value = DEFAULT_AIRLINE_BASE;
   $("#maarlabLogoM").src = DEFAULT_MAARLAB_MARK;
 
