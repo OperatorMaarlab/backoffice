@@ -5,31 +5,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Cambio de vuelos · Maarlab</title>
 
-<!-- Poppins (opcional). Siempre hay fallback a system font para evitar Times. -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet"/>
 
 <style>
   :root{
     --card:#fff; --ink:#0b2a5a; --sub:#475569; --border:#e2e8f0;
     --accent:#2bd9a7; --accent2:#40c8ff;
-    --oldTint:#ffdede; --oldBorder:#e65252; /* rojo más oscuro */
-    --newTint:#d8f5e2; --newBorder:#22c55e; /* verde más oscuro */
+    --oldA:#fff3f4; --oldB:#ffdede; --oldBorder:#e65252; /* rojo más oscuro */
+    --newA:#eafaf1; --newB:#d8f5e2; --newBorder:#22c55e; /* verde más oscuro */
     --muted:#eef2f7;
     --good:#16a34a; --bad:#ef4444; --warn:#f59e0b;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0;
-    color:var(--ink);
+    margin:0; color:var(--ink);
     font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,Inter,Roboto,"Segoe UI",system-ui,sans-serif;
     background:#fff;
   }
-  /* Fondo Maarlab con velo blanco (colores visibles pero legible) */
+  /* Fondo Maarlab + velo blanco (sutil) */
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
   body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.34),rgba(255,255,255,.56) 45%,rgba(255,255,255,.88))}
-  h1{font:700 22px/1.2 Poppins, -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;margin:0}
-  h2{font:700 16px/1.2 Poppins, -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;margin:0 0 6px}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
   .bar{position:sticky;top:0;background:#ffffffbf;backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:20}
   .flex{display:flex;gap:12px;align-items:center}
@@ -42,6 +38,7 @@
   .chip button.active{background:#fff}
   .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px}
   .tiny{font-size:11px;color:#64748b}
+  h2{font:700 16px/1.2 Poppins, -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;margin:0 0 6px}
   label{font-size:12px;color:#334155;display:block;margin-bottom:8px}
   input,select,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:12px;background:#fff;color:#0b2a5a}
   input[placeholder]{text-transform:uppercase}
@@ -49,20 +46,21 @@
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
+  .mlogoH{height:30px}
   .logoBoxSq{width:48px;height:48px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .logoBoxSq img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 
   /* ===== Visualizador (izquierda) ===== */
   #exportArea{position:relative; font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,Inter,Roboto,"Segoe UI",system-ui,sans-serif;}
-  .band{position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .headerRow{display:flex;justify-content:space-between;align-items:center;gap:12px}
   .itins{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
   .itinCol{border:1px solid var(--border);border-radius:14px;padding:12px;min-height:300px}
-  .itinOld{background:var(--oldTint);border-color:var(--oldBorder)}
-  .itinNew{background:var(--newTint);border-color:var(--newBorder)}
-  .leg{border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffb3;margin-top:10px}
+  .itinOld{background:linear-gradient(180deg,var(--oldA),var(--oldB));border-color:var(--oldBorder)}
+  .itinNew{background:linear-gradient(180deg,var(--newA),var(--newB));border-color:var(--newBorder)}
+  .leg{border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffc4;margin-top:10px}
   .legHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
   .codes{font-weight:700;font-size:18px}
-  .airLogoBox{height:38px;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:100px}
+  .airLogoBox{height:40px;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:110px}
   .airLogoBox img{max-height:100%;width:auto;display:block}
   .meta{font-size:12px;color:#475569;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .badges{display:flex;gap:6px;flex-wrap:wrap}
@@ -71,12 +69,13 @@
   .times.stop{grid-template-columns:repeat(4,1fr)}
   .big{font-weight:700;font-size:18px}
   .dim{font-size:12px;color:#334155;margin-top:6px}
-  .prices{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+
+  .icon{width:14px;height:14px;opacity:.55;vertical-align:-2px;margin-right:6px;filter:grayscale(100%) brightness(0.65) contrast(.9)}
+  .prices{display:grid;grid-template-columns:repeat(4,1fr) 1.2fr;gap:12px;margin-top:14px}
   .pill{border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;background:var(--muted)}
   .pill .v{font-weight:700}
-  .hotelBox{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffb3}
-  .hotelLogo{height:42px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:110px;padding:6px 10px}
-  .hotelLogo img{max-height:100%;width:auto;display:block}
+  .totalPill{background:linear-gradient(135deg,#e7f3ff,#ecfbff);border-color:#93c5fd}
+  .totalPill .v{font-size:22px}
   .notes{margin-top:12px;border:1px dashed var(--border);border-radius:12px;background:#fff;padding:10px;min-height:60px}
   .foot{display:flex;justify-content:space-between;gap:12px;margin-top:12px;color:#64748b;font-size:12px;align-items:center}
 
@@ -85,6 +84,7 @@
     body{background:#fff}
     .bar, #panel, .btnPdfHide{display:none!important}
     #exportArea{page-break-inside:avoid}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
     @page{size:A4 landscape;margin:10mm}
   }
 </style>
@@ -93,10 +93,7 @@
   <!-- TOP -->
   <div class="bar">
     <div class="wrap flex">
-      <div>
-        <h1 id="pageTitle">Cambio de vuelos · Maarlab</h1>
-        <div class="tiny" id="pageSubtitle">Itinerario anterior/nuevo · 4 vuelos · EUR/USD/MXN · PNG/PDF</div>
-      </div>
+      <img class="mlogoH" alt="Maarlab" src="https://maarlab.com/wp-content/uploads/2024/09/Logo-web.png" crossorigin="anonymous" referrerpolicy="no-referrer">
       <div style="flex:1"></div>
       <div class="chip" id="chipLang" style="margin-right:8px">
         <button data-lang="es" class="active">ES</button>
@@ -107,7 +104,6 @@
         <button data-cur="USD">USD</button>
         <button data-cur="MXN">MXN</button>
       </div>
-      <div class="logoBoxSq"><img src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg" alt="M" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
     </div>
   </div>
 
@@ -115,12 +111,12 @@
     <!-- ===== Visualizador (izquierda) ===== -->
     <section class="card" id="cardWrap">
       <div id="exportArea">
-        <div class="band"></div>
-        <div class="flex" style="justify-content:space-between;align-items:center">
+        <div class="headerRow">
           <div>
             <div class="tiny" id="hdr-sub">Cambio de vuelos · Round Trip</div>
-            <div style="font:700 22px Poppins, -apple-system,'Helvetica Neue',Arial" id="hdr-title">Cambio de vuelos</div>
+            <div style="font:700 20px Poppins, -apple-system,'Helvetica Neue',Arial" id="hdr-title">Cambio de vuelos</div>
             <div class="tiny" id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
+            <div class="badges" id="locBadges"></div>
           </div>
           <div class="logoBoxSq"><img id="maarlabLogoM" alt="M" crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg"></div>
         </div>
@@ -129,7 +125,7 @@
           <!-- Anterior -->
           <div class="itinCol itinOld">
             <div style="font:700 14px Poppins, -apple-system,'Helvetica Neue',Arial" id="prevTitle">Itinerario anterior</div>
-            <!-- Old Outbound -->
+
             <div class="leg" id="leg-oo">
               <div class="legHead">
                 <div>
@@ -142,7 +138,7 @@
               <div class="times" id="ooTimes"></div>
               <div class="dim" id="ooDur">Duración: —</div>
             </div>
-            <!-- Old Return -->
+
             <div class="leg" id="leg-or">
               <div class="legHead">
                 <div>
@@ -160,7 +156,7 @@
           <!-- Nuevo -->
           <div class="itinCol itinNew">
             <div style="font:700 14px Poppins, -apple-system,'Helvetica Neue',Arial" id="newTitle">Itinerario nuevo</div>
-            <!-- New Outbound -->
+
             <div class="leg" id="leg-no">
               <div class="legHead">
                 <div>
@@ -173,7 +169,7 @@
               <div class="times" id="noTimes"></div>
               <div class="dim" id="noDur">Duración: —</div>
             </div>
-            <!-- New Return -->
+
             <div class="leg" id="leg-nr">
               <div class="legHead">
                 <div>
@@ -189,33 +185,24 @@
           </div>
         </div>
 
-        <!-- Hotel asociado -->
-        <div class="hotelBox">
-          <div>
-            <div class="tiny" id="hotelCaption">Hotel asociado</div>
-            <div class="big" id="hotelName">—</div>
-          </div>
-          <div class="hotelLogo"><img id="hotelLogo" alt="hotel" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
-        </div>
-
         <!-- Precios -->
         <div class="prices">
           <div class="pill"><div class="tiny" id="penLabel">Penalización</div><div class="v" id="penVal">€0,00</div></div>
           <div class="pill"><div class="tiny" id="feeLabel">Fee servicio</div><div class="v" id="feeVal">€0,00</div></div>
           <div class="pill"><div class="tiny" id="fareLabel">Diferencia de tarifa</div><div class="v" id="fareVal">€0,00</div></div>
-          <div class="pill" style="background:#e6f7ff"><div class="tiny" id="ppLabel">Total por pax</div><div class="v" id="ppVal">€0,00</div></div>
-          <div class="pill" style="background:#e0f2fe"><div class="tiny" id="totLabel">Total grupo</div><div class="v" id="totVal">€0,00</div></div>
+          <div class="pill"><div class="tiny" id="ppLabel">Total por pax</div><div class="v" id="ppVal">€0,00</div></div>
+          <div class="pill totalPill"><div class="tiny" id="totLabel">Total a pagar</div><div class="v" id="totVal">€0,00</div></div>
         </div>
 
-        <!-- Notas (incluidas en exportación) -->
+        <!-- Notas -->
         <div class="notes" contenteditable="true" id="notesBox">Notas / Notes…</div>
       </div>
 
       <div class="foot">
         <div class="tiny" id="footerText">Generado por Maarlab · Contacto: booking@maarlab.com</div>
         <div class="btnPdfHide" style="display:flex;gap:8px">
-          <button id="btnPng" class="btn" disabled>Exportar PNG</button>
-          <button id="btnPdf" class="btn" disabled>Exportar PDF</button>
+          <button id="btnPng" class="btn" disabled>PNG</button>
+          <button id="btnPdf" class="btn" disabled>PDF</button>
         </div>
       </div>
     </section>
@@ -276,7 +263,6 @@
 
       <details style="margin-top:8px">
         <summary id="stopsSummary">Escalas (opcionales)</summary>
-        <!-- Escalas para cada tramo -->
         <div class="row" style="margin-top:8px">
           <label>Old Out — Stop (IATA) <input id="ooStop" list="iataList" placeholder="BCN"></label>
           <label>Arrive stop (HH:MM) <input id="ooStopArr" placeholder="11:20"></label>
@@ -303,18 +289,16 @@
         </div>
       </details>
 
-      <h2 style="margin-top:14px" id="hHotel">Hotel</h2>
+      <h2 style="margin-top:14px" id="hHotel">Hotel (opcional)</h2>
       <div class="row">
-        <label id="lblChain">Cadena
-          <select id="hotelChain"></select>
-        </label>
-        <label id="lblHotel">Hotel
-          <select id="hotelSelect"></select>
-        </label>
+        <label id="lblHotelName">Nombre de hotel <input id="hotelNameInput" placeholder="Spring Arona Gran"></label>
+        <div></div>
       </div>
-      <div class="row" style="margin-top:6px">
-        <label id="lblHotelName">Nombre visible <input id="hotelNameInput" placeholder="Spring Arona Gran"></label>
-        <label id="lblHotelLogo">Logo (URL cuadrada) <input id="hotelLogoInput" placeholder="https://..."></label>
+
+      <h2 style="margin-top:14px" id="hRefs">Localizadores (opcional)</h2>
+      <div class="row">
+        <label id="lblBkRef">Localizador reserva <input id="bookingRef" placeholder="ABC123"></label>
+        <label id="lblMlRef">Localizador Maarlab <input id="maarlabRef" placeholder="MLB-0001"></label>
       </div>
 
       <h2 id="hCosts" style="margin-top:14px">Costes</h2>
@@ -334,8 +318,8 @@
           <span class="tiny" id="ncText">Confirmo que este material es informativo y <b>no</b> tiene fines comerciales. Puedes exportar o hacer captura.</span>
         </label>
         <div style="flex:1"></div>
-        <button id="btnPng2" class="btn" disabled>Exportar PNG</button>
-        <button id="btnPdf2" class="btn" disabled>Exportar PDF</button>
+        <button id="btnPng2" class="btn" disabled>PNG</button>
+        <button id="btnPdf2" class="btn" disabled>PDF</button>
       </div>
 
       <details id="adv" style="margin-top:12px">
@@ -358,43 +342,37 @@
   <datalist id="airlineCodes"></datalist>
   <datalist id="iataList"></datalist>
 
-<!-- libs -->
 <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
 const $ = id=>document.getElementById(id);
+/* iconos */
+const ICON_DEP = "https://cdn-icons-png.flaticon.com/512/565/565514.png";
+const ICON_ARR = "https://www.svgrepo.com/show/352351/plane-arrival.svg";
 
 /* ===== i18n ===== */
 const STR = {
-  es:{docTitle:"Cambio de vuelos · Maarlab",pageTitle:"Cambio de vuelos · Maarlab",
-      pageSub:"Itinerario anterior/nuevo · 4 vuelos · EUR/USD/MXN · PNG/PDF",
-      hdrSub:"Cambio de vuelos · Round Trip",hdrTitle:"Cambio de vuelos",
+  es:{hdrSub:"Cambio de vuelos · Round Trip",hdrTitle:"Cambio de vuelos",
       outTitle:"Ruta (ida)",retTitle:"Ruta (vuelta)",prev:"Itinerario anterior",next:"Itinerario nuevo",
       dep:"Salida",arr:"Llegada",arrStop:"Llegada escala",depStop:"Salida escala",duration:"Duración", layover:"Escala",
-      acode:"Aerolínea (código)",fnum:"N.º vuelo",
-      costs:"Costes",penalty:"Penalización",fee:"Fee servicio",fare:"Diferencia de tarifa",total:"Total grupo", perPax:"Total por pax",
+      costs:"Costes",penalty:"Penalización",fee:"Fee servicio",fare:"Diferencia de tarifa",total:"Total a pagar", perPax:"Total por pax",
       baseUrl:"Logos aerolíneas (base URL)",adv:"Opciones avanzadas",fx:"Convertir desde EUR",
       nc:"Confirmo que este material es informativo y no tiene fines comerciales. Puedes exportar o hacer captura.",
       footer:"Generado por Maarlab · Contacto: booking@maarlab.com",
       exportWarn:"Debes confirmar uso informativo / no comercial.",
       exportFail:"No se pudo exportar. Se exportará sin logos si el servidor bloquea CORS.",
-      hotel:"Hotel",chain:"Cadena",hotelField:"Hotel",hotelName:"Nombre visible",hotelLogo:"Logo (URL cuadrada)",hotelAssoc:"Hotel asociado",
-      stops:"Escalas (opcionales)", pdf:"Exportar PDF", png:"Exportar PNG",
+      stops:"Escalas (opcionales)",
       badges:{plusDays:"+{n} día(s)", tz:"ΔTZ {h}h", dst:"DST", odd:"Duración inusual"}},
-  en:{docTitle:"Flight change · Maarlab",pageTitle:"Flight change · Maarlab",
-      pageSub:"Previous/new itinerary · 4 flights · EUR/USD/MXN · PNG/PDF",
-      hdrSub:"Flight change · Round Trip",hdrTitle:"Flight change",
+  en:{hdrSub:"Flight change · Round Trip",hdrTitle:"Flight change",
       outTitle:"Outbound",retTitle:"Return",prev:"Previous itinerary",next:"New itinerary",
       dep:"Departure",arr:"Arrival",arrStop:"Arrive stop",depStop:"Depart stop",duration:"Duration", layover:"Layover",
-      acode:"Airline code",fnum:"Flight no.",
-      costs:"Costs",penalty:"Penalty",fee:"Service fee",fare:"Fare difference",total:"Group total", perPax:"Per pax total",
+      costs:"Costs",penalty:"Penalty",fee:"Service fee",fare:"Fare difference",total:"Total to pay", perPax:"Per pax total",
       baseUrl:"Airline logos (base URL)",adv:"Advanced options",fx:"Convert from EUR",
       nc:"I confirm this is informational and non-commercial. You may export or take a screenshot.",
       footer:"Generated by Maarlab · Contact: booking@maarlab.com",
       exportWarn:"Please confirm non-commercial use.",
       exportFail:"Export failed. It will export without logos if the server blocks CORS.",
-      hotel:"Hotel",chain:"Chain",hotelField:"Hotel",hotelName:"Display name",hotelLogo:"Logo (square URL)",hotelAssoc:"Linked hotel",
-      stops:"Stops (optional)", pdf:"Export PDF", png:"Export PNG",
+      stops:"Stops (optional)",
       badges:{plusDays:"+{n} day(s)", tz:"ΔTZ {h}h", dst:"DST", odd:"Odd duration"}}
 };
 let LANG="es";
@@ -402,8 +380,7 @@ let LANG="es";
 /* ===== datos ===== */
 const DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
 const DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
-
-/* Aerolíneas (F8/F9 Frontier, alias U→U2) */
+/* Aerolíneas (incl. F8/F9 y alias U→U2) */
 const AIRLINES = {
   "U":"easyJet","U2":"easyJet",
   "AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
@@ -421,23 +398,8 @@ const AIRLINES = {
 };
 const LOGO_FALLBACK = { "F8":"F9", "U":"U2" };
 
-/* Hoteles */
-const HOTEL_CHAINS = {
-  "Spring Hoteles": {
-    "Spring Arona Gran": "https://www.viafirma.com/wp-content/uploads/2024/04/5f_d9oY_400x400-1.jpg"
-  },
-  "Landmar": {
-    "Landmar Costa Los Gigantes": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwXfh7P_vQa0CGmUDaOW3SO8AX287iOFc0TiZsuM2kdacfeZEcWx6IIUlDHRYOg7OdaI&usqp=CAU",
-    "Landmar Playa La Arena": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwQaloIdtf8_if2DFl-M8ONyuOQgT6ryxX2Kp3Eqa9tsY40wiYT4t7UKWYGWVjUXxgbZc&usqp=CAU"
-  },
-  "Park Royal Hotels & Resorts": {
-    "Park Royal (genérico)": "https://media.licdn.com/dms/image/v2/D4E0BAQHPYGg5SDVKOg/company-logo_200_200/company-logo_200_200/0/1730599344107/park_royal_hotels__resorts_logo?e=2147483647&v=beta&t=_-ZlXi2uHA1rIThUFZwkbuAS9AwNrGVZ5TFvR0n0TC4"
-  }
-};
-
-/* IATA → ciudad (muestrario amplio + pedidas) */
+/* IATA → ciudad (muestra ampliada) */
 const IATA_DB = {
-  // ES/PT/FR/BE/NL/DE/IT/CH/AT
   "MAD":"Madrid","BCN":"Barcelona","VLC":"Valencia","AGP":"Málaga","SVQ":"Sevilla","BIO":"Bilbao","PMI":"Palma de Mallorca",
   "IBZ":"Ibiza","ALC":"Alicante","TFN":"Tenerife Norte","TFS":"Tenerife Sur","LPA":"Gran Canaria","ACE":"Lanzarote","FUE":"Fuerteventura",
   "LIS":"Lisboa","OPO":"Oporto","FAO":"Faro","FNC":"Madeira",
@@ -446,49 +408,35 @@ const IATA_DB = {
   "FRA":"Fráncfort","MUC":"Múnich","BER":"Berlín","DUS":"Düsseldorf","HAM":"Hamburgo","STR":"Stuttgart","CGN":"Colonia/Bonn",
   "VIE":"Viena","ZRH":"Zúrich","GVA":"Ginebra",
   "FCO":"Roma (Fiumicino)","CIA":"Roma (Ciampino)","MXP":"Milán (Malpensa)","LIN":"Milán (Linate)","BGY":"Bérgamo",
-  // UK/IE
   "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Londres (Luton)","STN":"Londres (Stansted)","LCY":"Londres (City)",
   "MAN":"Mánchester","LPL":"Liverpool","EMA":"East Midlands","DUB":"Dublín","EDI":"Edimburgo","GLA":"Glasgow",
-  // MX
   "MEX":"Ciudad de México","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","TQO":"Tulum (Felipe Carrillo Puerto)","CZM":"Cozumel",
   "HUX":"Huatulco","PVR":"Puerto Vallarta","ACA":"Acapulco","QRO":"Querétaro","BJX":"León/Guanajuato","TIJ":"Tijuana","SJD":"Los Cabos",
-  // US
   "DFW":"Dallas/Fort Worth","EWR":"Newark","JFK":"Nueva York (JFK)","LGA":"Nueva York (LGA)","LAX":"Los Ángeles","SFO":"San Francisco",
   "MIA":"Miami","ORD":"Chicago O'Hare","ATL":"Atlanta","SEA":"Seattle","BOS":"Boston","IAD":"Washington Dulles","DCA":"Washington National",
   "PHL":"Filadelfia","IAH":"Houston Intercontinental","HOU":"Houston Hobby","PHX":"Phoenix","DEN":"Denver","MSP":"Minneapolis",
-  // Others quick
   "IST":"Estambul","ATH":"Atenas","CPH":"Copenhague","OSL":"Oslo","ARN":"Estocolmo","HEL":"Helsinki","PRG":"Praga","WAW":"Varsovia"
 };
-
-/* IATA → Zona horaria IANA */
+/* IATA → TZ IANA */
 const TZ_DB = {
-  // ES/Islas
   "MAD":"Europe/Madrid","BCN":"Europe/Madrid","VLC":"Europe/Madrid","AGP":"Europe/Madrid","SVQ":"Europe/Madrid","BIO":"Europe/Madrid",
   "TFN":"Atlantic/Canary","TFS":"Atlantic/Canary","LPA":"Atlantic/Canary","ACE":"Atlantic/Canary","FUE":"Atlantic/Canary",
   "PMI":"Europe/Madrid","IBZ":"Europe/Madrid","ALC":"Europe/Madrid",
-  // PT
   "LIS":"Europe/Lisbon","OPO":"Europe/Lisbon","FAO":"Europe/Lisbon","FNC":"Atlantic/Madeira",
-  // FR/BE/NL
   "CDG":"Europe/Paris","ORY":"Europe/Paris","NCE":"Europe/Paris","LYS":"Europe/Paris","MRS":"Europe/Paris","BRU":"Europe/Brussels",
   "AMS":"Europe/Amsterdam","EIN":"Europe/Amsterdam","RTM":"Europe/Amsterdam",
-  // DE/AT/CH
   "FRA":"Europe/Berlin","MUC":"Europe/Berlin","BER":"Europe/Berlin","DUS":"Europe/Berlin","HAM":"Europe/Berlin","STR":"Europe/Berlin","CGN":"Europe/Berlin",
   "VIE":"Europe/Vienna","ZRH":"Europe/Zurich","GVA":"Europe/Zurich",
-  // IT
   "FCO":"Europe/Rome","CIA":"Europe/Rome","MXP":"Europe/Rome","LIN":"Europe/Rome","BGY":"Europe/Rome",
-  // UK/IE
   "LHR":"Europe/London","LGW":"Europe/London","LTN":"Europe/London","STN":"Europe/London","LCY":"Europe/London",
   "MAN":"Europe/London","LPL":"Europe/London","EMA":"Europe/London","DUB":"Europe/Dublin","EDI":"Europe/London","GLA":"Europe/London",
-  // MX
   "MEX":"America/Mexico_City","GDL":"America/Mexico_City","MTY":"America/Monterrey","CUN":"America/Cancun","TQO":"America/Cancun","CZM":"America/Cancun",
   "HUX":"America/Mexico_City","PVR":"America/Mexico_City","ACA":"America/Mexico_City","QRO":"America/Mexico_City","BJX":"America/Mexico_City",
   "TIJ":"America/Tijuana","SJD":"America/Mazatlan",
-  // US
   "DFW":"America/Chicago","EWR":"America/New_York","JFK":"America/New_York","LGA":"America/New_York","LAX":"America/Los_Angeles","SFO":"America/Los_Angeles",
   "MIA":"America/New_York","ORD":"America/Chicago","ATL":"America/New_York","SEA":"America/Los_Angeles","BOS":"America/New_York",
   "IAD":"America/New_York","DCA":"America/New_York","PHL":"America/New_York","IAH":"America/Chicago","HOU":"America/Chicago",
   "PHX":"America/Phoenix","DEN":"America/Denver","MSP":"America/Chicago",
-  // Others
   "IST":"Europe/Istanbul","ATH":"Europe/Athens","CPH":"Europe/Copenhagen","OSL":"Europe/Oslo","ARN":"Europe/Stockholm","HEL":"Europe/Helsinki",
   "PRG":"Europe/Prague","WAW":"Europe/Warsaw"
 };
@@ -504,6 +452,11 @@ const fmtDate = (val)=>{ if(!val) return "—"; const [y,m,d]=String(val).split(
 const HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const { DateTime } = luxon;
 
+function dayOfWeek(dateISO){
+  if(!dateISO) return "";
+  const locale = (LANG==="en"?"en":"es");
+  try{ return DateTime.fromISO(dateISO).setLocale(locale).toFormat("cccc"); }catch{ return ""; }
+}
 function zonedDT(dateISO, hm, iata){
   if(!dateISO || !HM_RE.test(hm) || !iata) return null;
   const z = TZ_DB[normalizeCode(iata)] || "UTC";
@@ -527,7 +480,7 @@ function layoverMinutes(dateISO, arrHM, depHM, stopIata){
 }
 const fmtHM = m => isFinite(m)?(`${Math.floor(Math.abs(m)/60)}h ${Math.abs(m)%60}m`):"—";
 
-/* Total y precios */
+/* Precios / moneda */
 function moneyOut(v){
   if(CUR==="EUR") return fmt.format(v);
   const fx = $("fxEnable")?.checked;
@@ -539,88 +492,44 @@ function moneyOut(v){
   return nf(CUR,LANG).format(v);
 }
 
-/* ===== i18n apply ===== */
+/* i18n */
 function applyI18n(){
   const S=STR[LANG];
-  document.title = S.docTitle;
-  $("pageTitle").textContent = S.pageTitle;
-  $("pageSubtitle").textContent = S.pageSub;
-  $("hdr-sub").textContent = S.hdrSub;
-  $("hdr-title").textContent = S.hdrTitle;
-  $("hOut").textContent = S.outTitle; $("hRet").textContent=S.retTitle;
-  $("prevTitle").textContent=S.prev; $("newTitle").textContent=S.next;
-  $("hCosts").textContent=S.costs; $("penLabel").textContent=S.penalty; $("feeLabel").textContent=S.fee;
-  $("fareLabel").textContent=S.fare; $("ppLabel").textContent=S.perPax; $("totLabel").textContent=S.total;
-  $("advSummary").textContent=S.adv; $("lblBaseUrl").childNodes[0].textContent=S.baseUrl+" ";
-  $("fxLabel").textContent=S.fx; $("ncText").textContent=S.nc; $("footerText").textContent=S.footer;
-  $("hHotel").textContent=S.hotel; $("lblChain").childNodes[0].textContent=S.chain+" "; $("lblHotel").childNodes[0].textContent=S.hotelField+" ";
-  $("lblHotelName").childNodes[0].textContent=S.hotelName+" "; $("lblHotelLogo").childNodes[0].textContent=S.hotelLogo+" ";
-  $("hotelCaption").textContent=S.hotelAssoc;
-  $("stopsSummary").textContent=S.stops;
-  document.querySelectorAll("#btnPdf,#btnPdf2").forEach(b=>b.textContent=S.pdf);
-  document.querySelectorAll("#btnPng,#btnPng2").forEach(b=>b.textContent=S.png);
+  $("#hdr-sub").textContent = S.hdrSub;
+  $("#hdr-title").textContent = S.hdrTitle;
+  $("#prevTitle").textContent=S.prev; $("#newTitle").textContent=S.next;
+  $("#hOut").textContent = S.outTitle; $("#hRet").textContent=S.retTitle;
+  $("#hCosts").textContent=S.costs; $("#penLabel").textContent=S.penalty; $("#feeLabel").textContent=S.fee;
+  $("#fareLabel").textContent=S.fare; $("#ppLabel").textContent=S.perPax; $("#totLabel").textContent=S.total;
+  $("#advSummary").textContent=S.adv; $("#lblBaseUrl").childNodes[0].textContent=S.baseUrl+" ";
+  $("#fxLabel").textContent=S.fx; $("#ncText").textContent=S.nc; $("#footerText").textContent=S.footer;
+  $("#stopsSummary").textContent=S.stops;
+  document.querySelectorAll("#btnPdf,#btnPdf2").forEach(b=>b.textContent="PDF");
+  document.querySelectorAll("#btnPng,#btnPng2").forEach(b=>b.textContent="PNG");
   fmt = nf(CUR,LANG);
   refresh();
 }
 
-/* ===== badges inteligentes ===== */
+/* Badges inteligentes */
 function buildBadges(dateISO, depHM, arrHM, fromIata, toIata){
   const S = STR[LANG].badges;
   const dep = zonedDT(dateISO, depHM, fromIata);
   const arr = zonedDT(dateISO, arrHM, toIata);
   if(!dep || !arr) return [];
   const badges = [];
-  // +N días en destino (local)
   const depLocal = dep.setZone(TZ_DB[fromIata]||dep.zoneName);
   const arrLocal = arr.setZone(TZ_DB[toIata]||arr.zoneName);
   const plusDays = Math.floor(arrLocal.startOf("day").diff(depLocal.startOf("day"), "days").days);
   if(plusDays>0) badges.push(S.plusDays.replace("{n}", plusDays));
-  // ΔTZ (offset)
   const deltaH = (arr.offset - dep.offset)/60;
   if(deltaH!==0) badges.push(S.tz.replace("{h}", (deltaH>0?"+":"")+deltaH));
-  // DST si misma zona y offset cambia
   if(dep.zoneName===arr.zoneName && dep.offset!==arr.offset) badges.push(S.dst);
-  // duración rara
   const m = segmentMinutes(dateISO, depHM, arrHM, fromIata, toIata);
   if(isFinite(m) && (m<30 || m>960)) badges.push(S.odd);
   return badges;
 }
 
-/* ===== HOTEL UI ===== */
-function loadHotels(){
-  const chainSel = $("hotelChain"), hotelSel = $("hotelSelect");
-  chainSel.innerHTML=""; hotelSel.innerHTML="";
-  const opt0 = new Option("—",""); chainSel.add(opt0,undefined);
-  for(const c of Object.keys(HOTEL_CHAINS)){ chainSel.add(new Option(c,c)); }
-  chainSel.addEventListener("change", ()=>{
-    hotelSel.innerHTML="";
-    const ch = chainSel.value;
-    const hotels = HOTEL_CHAINS[ch]||{};
-    hotelSel.add(new Option("—",""));
-    Object.keys(hotels).forEach(h=>hotelSel.add(new Option(h, h)));
-    refreshHotel();
-  });
-  hotelSel.addEventListener("change", refreshHotel);
-  $("hotelNameInput").addEventListener("input", refreshHotel);
-  $("hotelLogoInput").addEventListener("input", refreshHotel);
-}
-function refreshHotel(){
-  const ch = $("hotelChain").value;
-  const hotelKey = $("hotelSelect").value;
-  const hotels = HOTEL_CHAINS[ch]||{};
-  const fallbackName = hotelKey || $("hotelNameInput").value || "—";
-  const fallbackLogo = $("hotelLogoInput").value || (hotels[hotelKey]||"");
-  $("hotelName").textContent = fallbackName;
-  setImgSrc($("#hotelLogo"), fallbackLogo);
-}
-
-/* ===== LOGOS con fallback ===== */
-function setImgSrc(img, src){
-  if(!img) return;
-  if(!src){ img.style.visibility="hidden"; img.removeAttribute("src"); return; }
-  img.style.visibility="visible";
-  img.crossOrigin="anonymous"; img.referrerPolicy="no-referrer"; img.src = src;
-}
+/* Logos */
 function setLegLogo(imgId, code){
   const img=$(imgId); if(!img) return;
   const raw = normalizeCode(code);
@@ -640,106 +549,102 @@ function setLegLogo(imgId, code){
   img.src = airlineLogoUrl(raw);
 }
 
-/* ===== render de cada leg (con escala opcional) ===== */
+/* Render leg (con escala opcional y DOW en meta) */
 function renderLeg(prefix, fromIata, toIata, cityFrom, cityTo){
   const S=STR[LANG];
   const code = normalizeCode($(prefix+"Air").value);
   const num  = ($(prefix+"Num").value||"").toUpperCase();
-  const dateISO = $(prefix+"Date") ? $(prefix+"Date").value : (
-    prefix.startsWith("o") ? (prefix==="oo" ? $("ooDate").value : $("orDate").value)
-                           : (prefix==="no" ? $("noDate").value : $("nrDate").value)
-  );
-
-  // stop (opcionales)
+  const dateISO = (prefix.startsWith("o") ? (prefix==="oo" ? $("#ooDate").value : $("#orDate").value)
+                                         : (prefix==="no" ? $("#noDate").value : $("#nrDate").value));
+  const dow = dayOfWeek(dateISO);
   const stop = normalizeCode($(prefix+"Stop")?.value || "");
   const stopArr = $(prefix+"StopArr")?.value || "";
   const stopDep = $(prefix+"StopDep")?.value || "";
 
-  // Cabecera
-  $(prefix+"Codes").textContent = `${fromIata} → ${toIata}`;
-  $(prefix+"Cities").textContent = `${cityFrom} → ${cityTo}`;
-  $(prefix+"Meta").textContent = `${(code||"")}${(num||"")} · ${(AIRLINES[code]||"—")} · ${fmtDate(dateISO)}`;
+  $("#"+prefix+"Codes").textContent = `${fromIata} → ${toIata}`;
+  $("#"+prefix+"Cities").textContent = `${cityFrom} → ${cityTo}`;
+  const dateTxt = dateISO ? `${dow} ${fmtDate(dateISO)}` : "—";
+  $("#"+prefix+"Meta").textContent = `${(code||"")}${(num||"")} · ${(AIRLINES[code]||"—")} · ${dateTxt}`;
   setLegLogo("logo-"+prefix, code);
 
-  // Badges
-  const $badges = $(prefix+"Badges");
-  $badges.innerHTML="";
-  const addBadge = (txt)=>{ const b=document.createElement("span"); b.className="badge"; b.textContent=txt; $badges.appendChild(b); };
+  const $badges = $("#"+prefix+"Badges"); $badges.innerHTML="";
+  buildBadges(dateISO, $("#"+prefix+"Dep").value, $("#"+prefix+"Arr").value, fromIata, toIata).forEach(t=>{
+    const b=document.createElement("span"); b.className="badge"; b.textContent=t; $badges.appendChild(b);
+  });
 
-  // Times + duraciones
-  const depHM = $(prefix+"Dep").value, arrHM = $(prefix+"Arr").value;
-  const $times = $(prefix+"Times"); $times.innerHTML="";
+  const $times = $("#"+prefix+"Times"); $times.innerHTML="";
+  const cell = (lbl,val,kind)=>{
+    const w=document.createElement("div");
+    const l=document.createElement("div"); l.className="tiny";
+    const ic=document.createElement("img"); ic.className="icon"; ic.alt=kind||""; ic.crossOrigin="anonymous"; ic.referrerPolicy="no-referrer";
+    ic.src = (kind==="dep"||kind==="depStop")?ICON_DEP:ICON_ARR;
+    l.appendChild(ic); l.appendChild(document.createTextNode(lbl));
+    const v=document.createElement("div"); v.className="big"; v.textContent=val||"--:--";
+    w.appendChild(l); w.appendChild(v); return w;
+  };
+
   let totalM = NaN, layM = NaN;
-
-  function cell(lbl, val){
-    const wrap=document.createElement("div");
-    const l=document.createElement("div"); l.className="tiny"; l.textContent = lbl;
-    const v=document.createElement("div"); v.className="big"; v.textContent = val || "--:--";
-    wrap.appendChild(l); wrap.appendChild(v); return wrap;
-  }
+  const depHM = $("#"+prefix+"Dep").value, arrHM=$("#"+prefix+"Arr").value;
 
   if(stop && HM_RE.test(stopArr||"") && HM_RE.test(stopDep||"")){
     $times.classList.add("stop");
-    $times.appendChild(cell(S.dep, depHM));
-    $times.appendChild(cell(S.arrStop, stopArr));
-    $times.appendChild(cell(S.depStop, stopDep));
-    $times.appendChild(cell(S.arr, arrHM));
-
+    $times.appendChild(cell(S.dep, depHM, "dep"));
+    $times.appendChild(cell(S.arrStop, stopArr, "arrStop"));
+    $times.appendChild(cell(S.depStop, stopDep, "depStop"));
+    $times.appendChild(cell(S.arr, arrHM, "arr"));
     const seg1 = segmentMinutes(dateISO, depHM, stopArr, fromIata, stop);
     const seg2 = segmentMinutes(dateISO, stopDep, arrHM, stop, toIata);
     layM = layoverMinutes(dateISO, stopArr, stopDep, stop);
     totalM = (isFinite(seg1)?seg1:0) + (isFinite(seg2)?seg2:0);
-
-    // badges por segmentos extremos
-    buildBadges(dateISO, depHM, arrHM, fromIata, toIata).forEach(addBadge);
   }else{
     $times.classList.remove("stop");
-    $times.appendChild(cell(S.dep, depHM));
-    $times.appendChild(cell(S.arr, arrHM));
+    $times.appendChild(cell(S.dep, depHM, "dep"));
+    $times.appendChild(cell(S.arr, arrHM, "arr"));
     totalM = segmentMinutes(dateISO, depHM, arrHM, fromIata, toIata);
-    buildBadges(dateISO, depHM, arrHM, fromIata, toIata).forEach(addBadge);
   }
-
-  const durTxt = isFinite(totalM) ? `${S.duration}: ${fmtHM(totalM)}${isFinite(layM)?` · ${S.layover}: ${fmtHM(layM)}`:""}` : `${S.duration}: —`;
-  $(prefix+"Dur").textContent = durTxt;
+  $("#"+prefix+"Dur").textContent = `${S.duration}: ${isFinite(totalM)?fmtHM(totalM):"—"}${isFinite(layM)?` · ${S.layover}: ${fmtHM(layM)}`:""}`;
 }
 
-/* ===== refresh global ===== */
+/* Refresh global */
 function refresh(){
-  const outFrom=normalizeCode($("outFrom").value||"XXX"), outTo=normalizeCode($("outTo").value||"XXX");
-  const retFrom=normalizeCode($("retFrom").value||"XXX"), retTo=normalizeCode($("retTo").value||"XXX");
-  const outFromCity=$("outFromCity").value||"—", outToCity=$("outToCity").value||"—";
-  const retFromCity=$("retFromCity").value||"—", retToCity=$("retToCity").value||"—";
+  const outFrom=normalizeCode($("#outFrom").value||"XXX"), outTo=normalizeCode($("#outTo").value||"XXX");
+  const retFrom=normalizeCode($("#retFrom").value||"XXX"), retTo=normalizeCode($("#retTo").value||"XXX");
+  const outFromCity=$("#outFromCity").value||"—", outToCity=$("#outToCity").value||"—";
+  const retFromCity=$("#retFromCity").value||"—", retToCity=$("#retToCity").value||"—";
 
-  // Fechas cabecera (DD/MM/AAAA)
-  const ood=fmtDate($("ooDate").value), ord=fmtDate($("orDate").value), nod=fmtDate($("noDate").value), nrd=fmtDate($("nrDate").value);
-  $("hdr-dates").textContent = `${LANG==="es"?"Ida":"Out"}: ${ood} → ${nod} · ${LANG==="es"?"Vuelta":"Return"}: ${ord} → ${nrd}`;
+  const ood=fmtDate($("#ooDate").value), ord=fmtDate($("#orDate").value), nod=fmtDate($("#noDate").value), nrd=fmtDate($("#nrDate").value);
+  const oodD=dayOfWeek($("#ooDate").value), ordD=dayOfWeek($("#orDate").value), nodD=dayOfWeek($("#noDate").value), nrdD=dayOfWeek($("#nrDate").value);
+  $("#hdr-dates").textContent = `${LANG==="es"?"Ida":"Out"}: ${oodD?oodD+" ":""}${ood} → ${nodD?nodD+" ":""}${nod} · ${LANG==="es"?"Vuelta":"Return"}: ${ordD?ordD+" ":""}${ord} → ${nrdD?nrdD+" ":""}${nrd}`;
 
-  // Legs
   renderLeg("oo", outFrom, outTo, outFromCity, outToCity);
   renderLeg("or", retFrom, retTo, retFromCity, retToCity);
   renderLeg("no", outFrom, outTo, outFromCity, outToCity);
   renderLeg("nr", retFrom, retTo, retFromCity, retToCity);
 
-  // Precios
-  const p=parseMoney($("penalty").value), f=parseMoney($("fee").value), d=parseMoney($("fareDiff").value);
-  const pax = Math.max(1, parseInt($("pax").value||"1",10));
-  $("penVal").textContent=moneyOut(p);
-  $("feeVal").textContent=moneyOut(f);
-  $("fareVal").textContent=moneyOut(d);
-  $("ppVal").textContent=moneyOut(p+f+d);
-  $("totVal").textContent=moneyOut((p+f+d)*pax);
+  const p=parseMoney($("#penalty").value), f=parseMoney($("#fee").value), d=parseMoney($("#fareDiff").value);
+  const pax = Math.max(1, parseInt($("#pax").value||"1",10));
+  $("#penVal").textContent=moneyOut(p);
+  $("#feeVal").textContent=moneyOut(f);
+  $("#fareVal").textContent=moneyOut(d);
+  $("#ppVal").textContent=moneyOut(p+f+d);
+  $("#totVal").textContent=moneyOut((p+f+d)*pax);
+
+  // Localizadores → chips
+  const locs = ($("#bookingRef").value||"").trim();
+  const ml   = ($("#maarlabRef").value||"").trim();
+  const c = $("#locBadges"); c.innerHTML="";
+  if(locs){ const b=document.createElement("span"); b.className="badge"; b.textContent=`PNR: ${locs}`; c.appendChild(b); }
+  if(ml){ const b=document.createElement("span"); b.className="badge"; b.textContent=`Maarlab: ${ml}`; c.appendChild(b); }
 }
 
-/* ===== inputs/binds ===== */
+/* Binds */
 function bindAll(){
   document.querySelectorAll("#panel input, #panel select, #notesBox").forEach(el=>{
     const isTime = /(Dep|Arr|StopArr|StopDep)$/i.test(el.id);
     const isIata = /(outFrom|outTo|retFrom|retTo|Stop)$/i.test(el.id);
     el.addEventListener("input",(e)=>{
       if(isIata) e.target.value = e.target.value.toUpperCase();
-      if(isTime) e.target.classList.toggle("invalid", !!e.target.value && !HM_RE.test(e.target.value));
-      // autocompletar ciudad
+      if(isTime) e.target.classList.toggle("invalid", !!e.target.value && !/^([01]\d|2[0-3]):[0-5]\d$/.test(e.target.value));
       if(e.target.dataset.iata){
         const city=$(e.target.dataset.iata);
         const c=e.target.value.toUpperCase().trim();
@@ -749,31 +654,29 @@ function bindAll(){
     });
     el.addEventListener("change", refresh);
   });
-  $("chipCurrency")?.addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b) return; CUR=b.dataset.cur; document.querySelectorAll("#chipCurrency button").forEach(x=>x.classList.toggle("active",x===b)); fmt=nf(CUR,LANG); refresh(); });
-  $("chipLang")?.addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b) return; LANG=b.dataset.lang; document.querySelectorAll("#chipLang button").forEach(x=>x.classList.toggle("active",x===b)); applyI18n(); });
+  $("#chipCurrency")?.addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b) return; CUR=b.dataset.cur; document.querySelectorAll("#chipCurrency button").forEach(x=>x.classList.toggle("active",x===b)); fmt=nf(CUR,LANG); refresh(); });
+  $("#chipLang")?.addEventListener("click",(e)=>{ const b=e.target.closest("button"); if(!b) return; LANG=b.dataset.lang; document.querySelectorAll("#chipLang button").forEach(x=>x.classList.toggle("active",x===b)); applyI18n(); });
 
   // Export
-  const enable = ()=>{ const on=$("ncAgree").checked; ["btnPng","btnPdf","btnPng2","btnPdf2"].forEach(id=>{ const b=$(id); if(b) b.disabled=!on; }); };
-  $("ncAgree")?.addEventListener("change", enable);
+  const enable = ()=>{ const on=$("#ncAgree").checked; ["btnPng","btnPdf","btnPng2","btnPdf2"].forEach(id=>{ const b=$(id); if(b) b.disabled=!on; }); };
+  $("#ncAgree")?.addEventListener("change", enable);
   enable();
   ["btnPng","btnPng2"].forEach(id=>$(id)&&$(id).addEventListener("click", exportPNG));
   ["btnPdf","btnPdf2"].forEach(id=>$(id)&&$(id).addEventListener("click", ()=>window.print()));
 
-  // Defaults
-  $("airlineBase").value = DEFAULT_AIRLINE_BASE;
-  $("maarlabLogoM").src = DEFAULT_MAARLAB_MARK;
+  $("#airlineBase").value = DEFAULT_AIRLINE_BASE;
+  $("#maarlabLogoM").src = DEFAULT_MAARLAB_MARK;
 
   // Datalists
-  const dlAir = $("airlineCodes"); dlAir.innerHTML="";
+  const dlAir = $("#airlineCodes"); dlAir.innerHTML="";
   Object.keys(AIRLINES).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); });
-  const dlIata = $("iataList"); dlIata.innerHTML="";
+  const dlIata = $("#iataList"); dlIata.innerHTML="";
   Object.keys(IATA_DB).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlIata.appendChild(o); });
 
-  loadHotels();
-  refreshHotel();
+  refresh();
 }
 
-/* ===== incrustar imágenes (bypass CORS) ===== */
+/* Incrustar imágenes (bypass CORS para PNG) */
 async function inlineImgs(root){
   const imgs = Array.from(root.querySelectorAll("img"));
   const original = [];
@@ -784,9 +687,8 @@ async function inlineImgs(root){
       const res = await fetch(img.src, {mode:"cors", cache:"no-store"});
       if(!res.ok) throw new Error("fetch " + res.status);
       const blob = await res.blob();
-      const dataUrl = await new Promise((resolve)=>{
-        const r=new FileReader(); r.onload=()=>resolve(r.result); r.readAsDataURL(blob);
-      });
+      const r = new FileReader();
+      const dataUrl = await new Promise(resolve=>{ r.onload=()=>resolve(r.result); r.readAsDataURL(blob); });
       img.setAttribute("data-inline-src", img.src);
       img.src = dataUrl;
     }catch(e){
@@ -797,27 +699,23 @@ async function inlineImgs(root){
   return ()=>{ for(const [img,src,vis] of original){ if(img.getAttribute("data-inline-src")) img.src=src; img.style.visibility=vis||""; img.removeAttribute("data-inline-src"); img.removeAttribute("data-inline-failed"); } };
 }
 
-/* ===== export PNG (solo el área del visualizador) ===== */
+/* Export PNG (solo el visualizador) */
 async function exportPNG(){
-  if(!$("ncAgree").checked){ alert(STR[LANG].exportWarn); return; }
+  if(!$("#ncAgree").checked){ alert(STR[LANG].exportWarn); return; }
   try{
-    const restore = await inlineImgs($("exportArea"));
-    const dataUrl = await htmlToImage.toPng($("exportArea"), {pixelRatio:2, cacheBust:true});
+    const restore = await inlineImgs($("#exportArea"));
+    const dataUrl = await htmlToImage.toPng($("#exportArea"), {pixelRatio:2, cacheBust:true});
     restore();
-    const out=$("outFrom").value||"XXX", to=$("outTo").value||"XXX", r1=$("retFrom").value||"XXX", r2=$("retTo").value||"XXX";
-    const when = $("nrDate").value || $("noDate").value || $("orDate").value || $("ooDate").value || "date";
+    const out=$("#outFrom").value||"XXX", to=$("#outTo").value||"XXX", r1=$("#retFrom").value||"XXX", r2=$("#retTo").value||"XXX";
+    const when = $("#nrDate").value || $("#noDate").value || $("#orDate").value || $("#ooDate").value || "date";
     const a=document.createElement("a"); a.href=dataUrl; a.download=`${out}-${to}_${r1}-${r2}-${when}.png`.replace(/\s+/g,"_"); a.click();
   }catch(e){
-    alert(STR[LANG].exportFail);
-    console.error(e);
+    alert(STR[LANG].exportFail); console.error(e);
   }
 }
 
-/* ===== start ===== */
-(function start(){
-  bindAll();
-  applyI18n(); // hace refresh
-})();
+/* Start */
+(function start(){ bindAll(); applyI18n(); })();
 </script>
 </body>
 </html>
