@@ -9,8 +9,8 @@
   :root{
     --card:#fff; --ink:#0b2a5a; --sub:#475569; --border:#d7ddea;
     --accent:#15c79b; --accent2:#2ca9ff;
-    --oldA:#ffc7d0; --oldB:#ff9aa9; --oldBorder:#7f1d1d;  /* rojo un poco más oscuro */
-    --newA:#cfeedd; --newB:#aee6c8; --newBorder:#14532d;  /* verde un poco más oscuro */
+    --oldA:#ffc7d0; --oldB:#ff9aa9; --oldBorder:#7f1d1d;  /* rojo más oscuro */
+    --newA:#cfeedd; --newB:#aee6c8; --newBorder:#14532d;  /* verde más oscuro */
     --muted:#eef2f7;
   }
   *{box-sizing:border-box}
@@ -20,7 +20,7 @@
     font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
     background:#0a223f;
   }
-  /* Fondo Maarlab más oscuro con velo */
+  /* Fondo Maarlab oscuro con velo */
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
   body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.14),rgba(255,255,255,.22) 45%,rgba(255,255,255,.70))}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
@@ -96,21 +96,19 @@
   .hotelLogo{width:56px;height:56px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .hotelLogo img{max-width:100%;max-height:100%;object-fit:contain}
 
-  /* PRINT: 1 sola página A4 landscape con escala */
+  /* PRINT: 1 sola página A4 landscape */
   @media print{
     .bar,.sep,#panel,.btnPdfHide{display:none!important}
     *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
     @page{size:A4 landscape;margin:8mm}
     html,body{height:auto}
     .wrap{padding:0}
-    /* reducimos ligeramente tamaños para asegurar 1 página */
     body{font-size:12px}
     #hdr-title{font-size:26px}
     .codes{font-size:16px}
     .big{font-size:16px}
     .logoCard{width:28px;height:28px}
     .notes{min-height:40px}
-    /* escalado general */
     #exportArea{transform:scale(0.92);transform-origin:top left}
   }
 
@@ -205,7 +203,7 @@
             </div>
           </div>
 
-          <!-- Nuevos -->
+          <!-- Nuevos (rutas independientes) -->
           <div class="itinCol itinNew">
             <div style="font:700 14px Poppins,system-ui" id="newTitle">Vuelos nuevos</div>
 
@@ -269,7 +267,7 @@
 
     <!-- ===== Formulario (derecha) ===== -->
     <aside class="card" id="panel">
-      <h2 id="hOut">Ruta (ida)</h2>
+      <h2 id="hOut">Ruta (ida) — original</h2>
       <div class="row">
         <label>Origen (IATA) <input id="outFrom" list="iataList" placeholder="TFN" data-iata="outFromCity"></label>
         <label>Ciudad origen <input id="outFromCity" placeholder="Tenerife Norte"></label>
@@ -277,12 +275,28 @@
         <label>Ciudad destino <input id="outToCity" placeholder="Madrid"></label>
       </div>
 
-      <h2 id="hRet" style="margin-top:12px">Ruta (vuelta)</h2>
+      <h2 id="hRet" style="margin-top:12px">Ruta (vuelta) — original</h2>
       <div class="row">
         <label>Origen (IATA) <input id="retFrom" list="iataList" placeholder="MAD" data-iata="retFromCity"></label>
         <label>Ciudad origen <input id="retFromCity" placeholder="Madrid"></label>
         <label>Destino (IATA) <input id="retTo" list="iataList" placeholder="TFN" data-iata="retToCity"></label>
         <label>Ciudad destino <input id="retToCity" placeholder="Tenerife Norte"></label>
+      </div>
+
+      <h2 style="margin-top:14px">Ruta (ida) — NUEVA</h2>
+      <div class="row">
+        <label>Origen (IATA) <input id="newOutFrom" list="iataList" placeholder="(ej. TFS)" data-iata="newOutFromCity"></label>
+        <label>Ciudad origen <input id="newOutFromCity" placeholder=""></label>
+        <label>Destino (IATA) <input id="newOutTo" list="iataList" placeholder="(ej. LPA)" data-iata="newOutToCity"></label>
+        <label>Ciudad destino <input id="newOutToCity" placeholder=""></label>
+      </div>
+
+      <h2 style="margin-top:12px">Ruta (vuelta) — NUEVA</h2>
+      <div class="row">
+        <label>Origen (IATA) <input id="newRetFrom" list="iataList" placeholder="(ej. BIO)" data-iata="newRetFromCity"></label>
+        <label>Ciudad origen <input id="newRetFromCity" placeholder=""></label>
+        <label>Destino (IATA) <input id="newRetTo" list="iataList" placeholder="(ej. HEL)" data-iata="newRetToCity"></label>
+        <label>Ciudad destino <input id="newRetToCity" placeholder=""></label>
       </div>
 
       <h2 style="margin-top:14px">Vuelos anteriores</h2>
@@ -439,8 +453,6 @@
         badges:{plusDays:"+{n} Tag(e)", tz:"ΔTZ {h}h", dst:"Sommerzeit", odd:"Ungewöhnliche Dauer"}}
   };
   var LANG="es", CUR="EUR";
-
-  /* Modo (solo afecta textos/etiquetas) */
   var MODE = "quote"; // "quote" | "confirm"
   var W = {
     es:{confTitle:"Confirmación de cambio", totQuote:"Total a pagar", totConf:"Total pagado", seal:"CONFIRMADO"},
@@ -549,23 +561,17 @@
   }
 
   function applyI18n(){
-    var S = STR[LANG];
-    var M = W[LANG] || W.es;
-
+    var S = STR[LANG], M = W[LANG] || W.es;
     $("hdr-title").textContent = (MODE === "confirm") ? M.confTitle : S.hdrTitle;
     $("hdr-sub").textContent   = S.hdrSub;
     $("prevTitle").textContent = S.prev;
     $("newTitle").textContent  = S.next;
     $("footerText").textContent= S.footer;
     $("langLbl").textContent = LANG==="en"?"Language":LANG==="fr"?"Langue":LANG==="it"?"Lingua":LANG==="de"?"Sprache":"Idioma";
-
     var badgeText = (MODE==="confirm") ? S.badgeMode.confirm : S.badgeMode.quote;
     if ($("modeBadge")) $("modeBadge").textContent = badgeText;
-
     $("totLabel").textContent = (MODE==="confirm") ? M.totConf : M.totQuote;
-
     var wm = $("wm"); if(wm){ wm.dataset.text = (MODE==="confirm") ? (M.seal || "CONFIRMADO") : ""; wm.classList.toggle("show", MODE==="confirm"); }
-
     refresh();
   }
 
@@ -647,19 +653,32 @@
 
   function refresh(){
     try{
+      // Rutas originales
       var outFrom=normalizeCode(($("outFrom").value)||"XXX"), outTo=normalizeCode(($("outTo").value)||"XXX");
       var retFrom=normalizeCode(($("retFrom").value)||"XXX"), retTo=normalizeCode(($("retTo").value)||"XXX");
       var outFromCity=($("outFromCity").value)||"—", outToCity=($("outToCity").value)||"—";
       var retFromCity=($("retFromCity").value)||"—", retToCity=($("retToCity").value)||"—";
 
+      // Rutas NUEVAS (independientes, con fallback si están vacías)
+      var newOutFrom=normalizeCode(($("newOutFrom").value)||"") || outFrom;
+      var newOutTo  =normalizeCode(($("newOutTo").value)||"")   || outTo;
+      var newRetFrom=normalizeCode(($("newRetFrom").value)||"") || retFrom;
+      var newRetTo  =normalizeCode(($("newRetTo").value)||"")   || retTo;
+
+      var newOutFromCity = ($("newOutFromCity").value)|| outFromCity;
+      var newOutToCity   = ($("newOutToCity").value)|| outToCity;
+      var newRetFromCity = ($("newRetFromCity").value)|| retFromCity;
+      var newRetToCity   = ($("newRetToCity").value)|| retToCity;
+
       var ood=fmtDate(($("ooDate").value)||""), ord=fmtDate(($("orDate").value)||""), nod=fmtDate(($("noDate").value)||""), nrd=fmtDate(($("nrDate").value)||"");
       var oodD=dayOfWeek(($("ooDate").value)||""), ordD=dayOfWeek(($("orDate").value)||""), nodD=dayOfWeek(($("noDate").value)||""), nrdD=dayOfWeek(($("nrDate").value)||"");
       $("hdr-dates").textContent = "Ida: "+(oodD?oodD+" ":"")+ood+" → "+(nodD?nodD+" ":"")+nod+" · Vuelta: "+(ordD?ordD+" ":"")+ord+" → "+(nrdD?nrdD+" ":"")+nrd;
 
+      // Render
       renderLeg("oo", outFrom, outTo, outFromCity, outToCity);
       renderLeg("or", retFrom, retTo, retFromCity, retToCity);
-      renderLeg("no", outFrom, outTo, outFromCity, outToCity);
-      renderLeg("nr", retFrom, retTo, retFromCity, retToCity);
+      renderLeg("no", newOutFrom, newOutTo, newOutFromCity, newOutToCity);
+      renderLeg("nr", newRetFrom, newRetTo, newRetFromCity, newRetToCity);
 
       // Precios
       var p=parseMoney(($("penalty").value)||0), f=parseMoney(($("fee").value)||0), d=parseMoney(($("fareDiff").value)||0);
@@ -693,8 +712,10 @@
     var inputs = document.querySelectorAll("#panel input, #panel select");
     inputs.forEach(function(el){
       var handler = function(){
-        // Uppercase en códigos/IATA
-        if(/(outFrom|outTo|retFrom|retTo|Stop|Air)$/i.test(el.id)){ el.value = (el.value||"").toUpperCase(); }
+        // Uppercase sólo en campos de códigos/IATA
+        if(/(From|To)$/.test(el.id) || /Stop|Air$/i.test(el.id)){
+          el.value = (el.value||"").toUpperCase();
+        }
         // Validación HH:MM
         if(/(Dep|Arr|StopArr|StopDep)$/i.test(el.id)){
           var ok = (!el.value) || /^([01]\d|2[0-3]):[0-5]\d$/.test(el.value);
@@ -740,7 +761,7 @@
       });
     }
 
-    // Modo (Cotización/Confirmación) — solo cambia textos/etiquetas
+    // Modo (Cotización/Confirmación) — sólo textos/etiquetas
     if ($("chipMode")) {
       $("chipMode").addEventListener("click", function(e){
         var b = e.target.closest("button"); if(!b) return;
@@ -753,9 +774,7 @@
     // Botones PDF
     ["btnPdf","btnPdf2","btnPdfTop"].forEach(function(id){
       var el=$(id); if(!el) return;
-      el.addEventListener("click", function(){
-        window.print();
-      });
+      el.addEventListener("click", function(){ window.print(); });
     });
 
     // Defaults
