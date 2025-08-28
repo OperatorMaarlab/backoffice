@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Maarlab — Visualizador de Cambios (one-file)</title>
+<style>
+  :root{
+    --bg:#f7fafc; --card:#fff; --ink:#0f172a; --sub:#475569;
+    --accent:#60a5fa; --accent2:#22d3ee; --border:#e2e8f0;
+    --good:#16a34a; --bad:#ef4444; --old:#fee2e2; --new:#dcfce7;
+  }
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.25 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif}
+  h1{font-size:18px;margin:0}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  .bar{position:sticky;top:0;background:#ffffffb3;backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .flex{display:flex;gap:12px;align-items:center}
+  .grow{flex:1}
+  .btn{border:0;border-radius:12px;padding:10px 14px;color:#fff;background:var(--accent);cursor:pointer}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .chip{display:inline-flex;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .chip button{padding:6px 10px;border:0;background:#f1f5f9;cursor:pointer}
+  .chip button.active{background:#fff}
+  .grid{display:grid;gap:16px}
+  @media(min-width:1024px){.grid{grid-template-columns:360px 1fr}}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px}
+  label{font-size:12px;color:#334155;display:block;margin-bottom:8px}
+  input{width:100%;padding:10px;border:1px solid var(--border);border-radius:12px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pill{border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;background:#f8fafc}
+  .pill .v{font-weight:600}
+  .hdr{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:6px}
+  /* Logos horizontales */
+  .logoBox{
+    height:56px; padding:6px 12px;
+    border:1px solid var(--border); border-radius:14px;
+    background:#fff; display:inline-flex; align-items:center; justify-content:center;
+    overflow:hidden; max-width:240px;
+  }
+  .logoBox img{ max-height:100%; width:auto; display:block }
+  .tiny{font-size:11px;color:#64748b}
+  .route{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:center;margin-top:18px}
+  .iata{font-size:28px;font-weight:600}
+  .city{font-size:11px;color:#64748b}
+  .band{position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .times{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .box{border:1px solid var(--border);border-radius:14px;padding:12px}
+  .old{background:var(--old)} .new{background:var(--new)}
+  .prices{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+  .foot{display:flex;justify-content:space-between;margin-top:16px;color:#64748b;font-size:12px}
+  details{margin-top:10px;font-size:12px}
+  details summary{cursor:pointer;color:#475569}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="wrap flex">
+      <div class="flex" style="gap:8px">
+        <div style="width:28px;height:28px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2))"></div>
+        <div>
+          <h1 id="title">Visualizador de Cambios / Cotización · Maarlab</h1>
+          <div class="tiny">IATA + 2 decimales + export PNG</div>
+        </div>
+      </div>
+      <div class="grow"></div>
+      <div class="chip">
+        <button id="btnES" class="active">ES</button>
+        <button id="btnEN">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap grid">
+    <!-- Panel -->
+    <div class="card">
+      <div class="row">
+        <label>Vuelo (IATA+Nº)
+          <input id="flight" placeholder="IB3478">
+        </label>
+        <label>Código IATA
+          <input id="iata" placeholder="IB">
+        </label>
+        <label>Aerolínea
+          <input id="airline" placeholder="Iberia">
+        </label>
+        <label>Origen (IATA)
+          <input id="origin" placeholder="TFN">
+        </label>
+        <label>Ciudad Origen
+          <input id="originCity" placeholder="Tenerife Norte">
+        </label>
+        <label>Destino (IATA)
+          <input id="destination" placeholder="MAD">
+        </label>
+        <label>Ciudad Destino
+          <input id="destinationCity" placeholder="Madrid">
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <label>Fecha anterior
+          <input id="oldDate" type="date">
+        </label>
+        <label>Fecha nueva
+          <input id="newDate" type="date">
+        </label>
+        <label>Penalización (€)
+          <input id="penalty" placeholder="150,00">
+        </label>
+        <label>Fee servicio (€)
+          <input id="fee" placeholder="30,00">
+        </label>
+        <label>Diferencia de tarifa (€)
+          <input id="fareDiff" placeholder="45,50">
+        </label>
+        <label>Hotel
+          <input id="hotel" placeholder="H10 Conquistador">
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <label>Horarios anteriores — Salida
+          <input id="oldDep" placeholder="10:30">
+        </label>
+        <label>Horarios anteriores — Llegada
+          <input id="oldArr" placeholder="12:50">
+        </label>
+        <label>Horarios nuevos — Salida
+          <input id="newDep" placeholder="12:15">
+        </label>
+        <label>Horarios nuevos — Llegada
+          <input id="newArr" placeholder="14:30">
+        </label>
+      </div>
+
+      <div class="flex" style="margin-top:12px">
+        <button id="btnPng" class="btn">Descargar PNG</button>
+        <div class="grow"></div>
+        <div class="tiny" id="noteCORS" style="text-align:right"></div>
+      </div>
+
+      <!-- Oculto por defecto: URLs avanzadas -->
+      <details id="adv">
+        <summary id="advSummary">Opciones avanzadas (logos)</summary>
+        <div class="row" style="margin-top:8px">
+          <label>Logo base (aerolíneas)
+            <input id="airlineBase" value="">
+          </label>
+          <label>Logo Maarlab (URL)
+            <input id="maarlabURL" value="">
+          </label>
+        </div>
+      </details>
+    </div>
+
+    <!-- Tarjeta -->
+    <div class="card" id="cardWrap" style="position:relative">
+      <div class="band"></div>
+      <div class="hdr">
+        <div class="logoBox"><img id="airlineLogo" alt="airline" crossorigin="anonymous"></div>
+        <div style="text-align:center;flex:1">
+          <div class="tiny" id="hdr-sub">Cambio de vuelo / Cotización</div>
+          <div style="font-size:22px;font-weight:700" id="hdr-flight">AL0000</div>
+          <div class="tiny" id="hdr-dates">Fecha: —</div>
+          <div class="tiny" id="hdr-airline">Aerolínea</div>
+        </div>
+        <div class="logoBox"><img id="maarlabLogo" alt="maarlab" crossorigin="anonymous"></div>
+      </div>
+
+      <div class="route">
+        <div style="text-align:right">
+          <div class="iata" id="iataFrom">XXX</div>
+          <div class="city" id="cityFrom">Ciudad</div>
+        </div>
+        <div style="text-align:center">
+          <div class="city" id="routeText">XXX → XXX</div>
+        </div>
+        <div>
+          <div class="iata" id="iataTo">XXX</div>
+          <div class="city" id="cityTo">Ciudad</div>
+        </div>
+      </div>
+
+      <div class="times">
+        <div class="box old">
+          <div class="tiny" id="oldLabel">Horarios anteriores</div>
+          <div class="tiny" id="oldDateShow">Fecha: —</div>
+          <div class="row" style="margin-top:6px">
+            <div><div class="tiny" id="depLabel1">Salida</div><div id="oldDepShow" style="font-weight:600;font-size:18px">--:--</div></div>
+            <div><div class="tiny" id="arrLabel1">Llegada</div><div id="oldArrShow" style="font-weight:600;font-size:18px">--:--</div></div>
+          </div>
+        </div>
+        <div class="box new">
+          <div class="tiny" id="newLabel">Horarios nuevos</div>
+          <div class="tiny" id="newDateShow">Fecha: —</div>
+          <div class="row" style="margin-top:6px">
+            <div><div class="tiny" id="depLabel2">Salida</div><div id="newDepShow" style="font-weight:600;font-size:18px">--:--</div></div>
+            <div><div class="tiny" id="arrLabel2">Llegada</div><div id="newArrShow" style="font-weight:600;font-size:18px">--:--</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prices">
+        <div class="pill"><div class="tiny" id="penLabel">Penalización</div><div class="v" id="penVal">€0,00</div></div>
+        <div class="pill"><div class="tiny" id="feeLabel">Fee servicio</div><div class="v" id="feeVal">€0,00</div></div>
+        <div class="pill"><div class="tiny" id="fareLabel">Diferencia de tarifa</div><div class="v" id="fareVal">€0,00</div></div>
+        <div class="pill" style="background:#eff6ff"><div class="tiny" id="totLabel">Total a cobrar</div><div class="v" id="totVal">€0,00</div></div>
+      </div>
+
+      <div class="foot">
+        <div><span id="hotelLabel">Hotel</span>: <span id="hotelVal">Hotel</span></div>
+        <div><span id="genLabel">Generado por</span> Maarlab · <span id="contactLabel">Contacto</span>: booking@maarlab.com</div>
+      </div>
+    </div>
+  </div>
+
+<!-- libs -->
+<script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+  // Defaults ocultos (no se muestran las URLs)
+  const DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
+  const DEFAULT_MAARLAB_LOGO = "https://www.ithotelero.com/wp-content/uploads/2024/10/Logo-Maarlab-sin-fondo-e1729508570885.png";
+
+  // i18n
+  const STR = {
+    es: {title:"Visualizador de Cambios / Cotización · Maarlab", sub:"Cambio de vuelo / Cotización",
+      flight:"Vuelo (IATA+Nº)", iata:"Código IATA", airline:"Aerolínea",
+      origin:"Origen (IATA)", originCity:"Ciudad Origen", destination:"Destino (IATA)", destinationCity:"Ciudad Destino",
+      oldDate:"Fecha anterior", newDate:"Fecha nueva",
+      oldTimes:"Horarios anteriores", newTimes:"Horarios nuevos", dep:"Salida", arr:"Llegada",
+      penalty:"Penalización", fee:"Fee servicio", fareDiff:"Diferencia de tarifa", totalDiff:"Total a cobrar",
+      hotel:"Hotel", generated:"Generado por", contact:"Contacto",
+      datesHeader:(o,n)=>`Fecha: ${o||'—'} → ${n||'—'}`,
+      note:"Si al exportar faltan logos, activa CORS en tu CDN o usa imágenes del mismo dominio.",
+      adv:"Opciones avanzadas (logos)"},
+    en: {title:"Change / Quotation Viewer · Maarlab", sub:"Flight change / Quotation",
+      flight:"Flight (IATA+No)", iata:"IATA Code", airline:"Airline",
+      origin:"Origin (IATA)", originCity:"Origin City", destination:"Destination (IATA)", destinationCity:"Destination City",
+      oldDate:"Old date", newDate:"New date",
+      oldTimes:"Previous times", newTimes:"New times", dep:"Departure", arr:"Arrival",
+      penalty:"Penalty", fee:"Service fee", fareDiff:"Fare difference", totalDiff:"Total to charge",
+      hotel:"Hotel", generated:"Generated by", contact:"Contact",
+      datesHeader:(o,n)=>`Date: ${o||'—'} → ${n||'—'}`,
+      note:"If logos disappear in PNG, enable CORS on your CDN or host them on the same domain.",
+      adv:"Advanced options (logos)"}
+  };
+  let LANG = "es";
+
+  // helpers
+  const EUR = new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmt = n => EUR.format(isFinite(n)?n:0);
+  const parseMoney = s => { const t = String(s||"").replace(/\./g,"").replace(",","."); const n = parseFloat(t); return isFinite(n)?n:0; };
+  const parseFlight = txt => {
+    const s = String(txt||"").toUpperCase().replace(/\s+/g,"");
+    const m = s.match(/^([A-Z]{2,3})(\d+[A-Z]?)$/);
+    return m ? {code:m[1], number:m[2]} : {code:"", number:s};
+  };
+  const AIRLINES = {"AA":"American Airlines","AF":"Air France","AC":"Air Canada","KL":"KLM","AM":"Aeroméxico","AR":"Aerolíneas Argentinas","AS":"Alaska Airlines","AV":"Avianca","AY":"Finnair","AZ":"ITA Airways","BA":"British Airways","B6":"JetBlue","CM":"Copa Airlines","DL":"Delta Air Lines","EI":"Aer Lingus","FR":"Ryanair","IB":"Iberia","LA":"LATAM Airlines","LH":"Lufthansa","LO":"LOT Polish Airlines","LS":"Jet2","LX":"SWISS","NK":"Spirit Airlines","NT":"Binter Canarias","QR":"Qatar Airways","TP":"TAP Air Portugal","UA":"United Airlines","U2":"easyJet","UX":"Air Europa","VB":"VivaAerobus","VS":"Virgin Atlantic","VY":"Vueling","W6":"Wizz Air","X3":"TUI fly Deutschland","2W":"World2Fly","3U":"Sichuan Airlines","5U":"TAG Airlines","7W":"Windrose Airlines"};
+
+  // elements
+  const el = id => document.getElementById(id);
+  const card = el("cardWrap");
+  const fields = ["flight","iata","airline","origin","originCity","destination","destinationCity","oldDate","newDate","penalty","fee","fareDiff","hotel","oldDep","oldArr","newDep","newArr","airlineBase","maarlabURL"].map(el);
+  const [flight,iata,airline,origin,originCity,destination,destinationCity,oldDate,newDate,penalty,fee,fareDiff,hotel,oldDep,oldArr,newDep,newArr,airlineBase,maarlabURL] = fields;
+
+  // defaults ocultos
+  airlineBase.value = DEFAULT_AIRLINE_BASE;
+  maarlabURL.value = DEFAULT_MAARLAB_LOGO;
+
+  function refresh(){
+    // i18n header
+    document.title = STR[LANG].title;
+    el("title").textContent = STR[LANG].title;
+    el("advSummary").textContent = STR[LANG].adv;
+    el("noteCORS").textContent = STR[LANG].note;
+
+    // auto code & airline
+    const pf = parseFlight(flight.value);
+    if (pf.code && !iata.value) iata.value = pf.code;
+    if (pf.code && !airline.value && AIRLINES[pf.code]) airline.value = AIRLINES[pf.code];
+
+    // header center
+    const num = (flight.value||"").replace(/^[A-Z]{2,3}/,"") || "0000";
+    const code = (iata.value||"AL");
+    el("hdr-flight").textContent = code + num;
+    el("hdr-sub").textContent = STR[LANG].sub;
+    el("hdr-dates").textContent = STR[LANG].datesHeader(oldDate.value, newDate.value);
+    el("hdr-airline").textContent = airline.value || STR[LANG].airline;
+
+    // route
+    el("iataFrom").textContent = origin.value || "XXX";
+    el("cityFrom").textContent = originCity.value || (LANG==="es"?"Ciudad":"City");
+    el("iataTo").textContent = destination.value || "XXX";
+    el("cityTo").textContent = destinationCity.value || (LANG==="es"?"Ciudad":"City");
+    el("routeText").textContent = (origin.value||"XXX") + " → " + (destination.value||"XXX");
+
+    // boxes labels
+    el("oldLabel").textContent = STR[LANG].oldTimes;
+    el("newLabel").textContent = STR[LANG].newTimes;
+    el("depLabel1").textContent = STR[LANG].dep;
+    el("arrLabel1").textContent = STR[LANG].arr;
+    el("depLabel2").textContent = STR[LANG].dep;
+    el("arrLabel2").textContent = STR[LANG].arr;
+
+    // times + dates
+    el("oldDateShow").textContent = (LANG==="es"?"Fecha: ":"Date: ") + (oldDate.value || "—");
+    el("newDateShow").textContent = (LANG==="es"?"Fecha: ":"Date: ") + (newDate.value || "—");
+    el("oldDepShow").textContent = oldDep.value || "--:--";
+    el("oldArrShow").textContent = oldArr.value || "--:--";
+    el("newDepShow").textContent = newDep.value || "--:--";
+    el("newArrShow").textContent = newArr.value || "--:--";
+
+    // prices
+    el("penLabel").textContent  = STR[LANG].penalty;
+    el("feeLabel").textContent  = STR[LANG].fee;
+    el("fareLabel").textContent = STR[LANG].fareDiff;
+    el("totLabel").textContent  = STR[LANG].totalDiff;
+    const p = parseMoney(penalty.value), f = parseMoney(fee.value), d = parseMoney(fareDiff.value);
+    el("penVal").textContent = fmt(p);
+    el("feeVal").textContent = fmt(f);
+    el("fareVal").textContent = fmt(d);
+    el("totVal").textContent = fmt(p+f+d);
+
+    // hotel + footer
+    el("hotelLabel").textContent = STR[LANG].hotel;
+    el("genLabel").textContent   = STR[LANG].generated;
+    el("contactLabel").textContent = STR[LANG].contact;
+    el("hotelVal").textContent   = hotel.value || STR[LANG].hotel;
+
+    // logos (horizontales)
+    const airlineLogo = el("airlineLogo");
+    const maarlabLogo = el("maarlabLogo");
+    airlineLogo.src = iata.value ? (airlineBase.value.replace(/\/$/,"") + "/" + iata.value.toUpperCase() + ".png") : "";
+    airlineLogo.onerror = ()=>{airlineLogo.removeAttribute("src");};
+    maarlabLogo.src = maarlabURL.value || DEFAULT_MAARLAB_LOGO;
+    maarlabLogo.onerror = ()=>{maarlabLogo.removeAttribute("src");};
+  }
+
+  // bindings
+  ["flight","iata","airline","origin","originCity","destination","destinationCity","oldDate","newDate","penalty","fee","fareDiff","hotel","oldDep","oldArr","newDep","newArr","airlineBase","maarlabURL"].forEach(id=>{
+    el(id).addEventListener("input", refresh);
+  });
+
+  // lang toggle
+  el("btnES").onclick = ()=>{LANG="es"; el("btnES").classList.add("active"); el("btnEN").classList.remove("active"); refresh();};
+  el("btnEN").onclick = ()=>{LANG="en"; el("btnEN").classList.add("active"); el("btnES").classList.remove("active"); refresh();};
+
+  // export
+  el("btnPng").onclick = async()=>{
+    try{
+      const dataUrl = await htmlToImage.toPng(el("cardWrap"), {pixelRatio:2, cacheBust:true});
+      const code = (iata.value||"AL");
+      const num  = (flight.value||"").replace(/^[A-Z]{2,3}/,"") || "0000";
+      const when = (newDate.value || oldDate.value || "date");
+      const a = document.createElement("a");
+      a.href = dataUrl; a.download = `${code}${num}-${when}.png`.replace(/\s+/g,"_"); a.click();
+    }catch(e){
+      alert(LANG==="es"
+        ? "No se pudo exportar. Activa CORS en tu CDN o usa logos del mismo dominio (GitHub Pages)."
+        : "Export failed. Enable CORS on your CDN or host images on the same domain.");
+      console.error(e);
+    }
+  };
+
+  // init
+  refresh();
+</script>
+</body>
+</html>
