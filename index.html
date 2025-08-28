@@ -3,33 +3,40 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Cambio de vuelos · Maarlab</title>
+<title>Visualizador de cambios · Maarlab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet"/>
+
 <style>
   :root{
     --card:#fff; --ink:#0b2a5a; --sub:#475569; --border:#e2e8f0;
     --accent:#2bd9a7; --accent2:#40c8ff;
-    --oldA:#ffe8ea; --oldB:#ffd2d7; --oldBorder:#c62828;
-    --newA:#e7f7ee; --newB:#d1f1de; --newBorder:#15803d;
+    --oldA:#ffe5e8; --oldB:#ffcdd3; --oldBorder:#b91c1c;  /* rojo más oscuro */
+    --newA:#e6f7ee; --newB:#ccf0dc; --newBorder:#166534;  /* verde más oscuro */
     --muted:#eef2f7;
   }
-  *{box-sizing:border-box} html,body{height:100%}
-  body{margin:0;color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,Inter,Roboto,"Segoe UI","Helvetica Neue",Arial,sans-serif;background:#fff}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--ink);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+    background:#fff;
+  }
+  /* Fondo Maarlab velado */
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
   body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.44),rgba(255,255,255,.66) 45%,rgba(255,255,255,.92))}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
 
+  /* Barra superior */
   .bar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);z-index:30}
   .barInner{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:1240px;margin:0 auto;padding:10px 16px}
-  .brandChip{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:6px 12px;border-radius:12px;display:inline-flex;align-items:center}
-  .mlogoH{height:22px;display:block}
+  .brandTitle{font:700 18px/1 Poppins, -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui;letter-spacing:.2px}
   .sep{height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 
   .grid2{display:grid;gap:16px}
   @media(min-width:1100px){.grid2{grid-template-columns:2fr 1fr}}
+
   .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px}
   .btn{border:0;border-radius:12px;padding:10px 14px;color:#0b2a5a;background:linear-gradient(135deg,var(--accent),var(--accent2));cursor:pointer;font-weight:600}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
   .chip{display:inline-flex;border:1px solid var(--border);border-radius:12px;overflow:hidden}
   .chip button{padding:6px 10px;border:0;background:#f1f5f9;cursor:pointer;color:#0b2a5a}
   .chip button.active{background:#fff}
@@ -40,11 +47,12 @@
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   .tiny{font-size:11px;color:#64748b}
-  h2{font:700 16px/1.2 Poppins, system-ui; margin:0 0 6px}
+  h2{font:700 16px/1.2 Poppins, -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui; margin:0 0 6px}
 
+  /* Visualizador (izquierda) */
   #exportArea{position:relative}
   .headerRow{display:flex;justify-content:space-between;align-items:center;gap:12px}
-  #hdr-title{font:700 30px Poppins,system-ui}
+  #hdr-title{font:700 30px/1.1 Poppins, -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui}
   .logoBoxSq{width:48px;height:48px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .logoBoxSq img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 
@@ -71,30 +79,44 @@
   .totalPill .v{font-size:22px}
   .notes{margin-top:12px;border:1px dashed var(--border);border-radius:12px;background:#fff;padding:10px;min-height:60px}
   .foot{display:flex;justify-content:space-between;gap:12px;margin-top:12px;color:#64748b;font-size:12px;align-items:center}
+
+  /* Hotel opcional */
   .hotelBox{display:none;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffc8}
   .hotelLogo{width:56px;height:56px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .hotelLogo img{max-width:100%;max-height:100%;object-fit:contain}
 
+  /* Print (PDF) */
   @media print{
     .bar,.sep,#panel,.btnPdfHide{display:none!important}
     *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
     @page{size:A4 landscape;margin:10mm}
   }
+
   #err{display:none;background:#fff4f4;border:1px solid #fecaca;color:#7f1d1d;padding:8px;border-radius:10px;margin:10px 0;font-size:13px}
 </style>
 </head>
 <body>
+  <!-- Barra superior -->
   <div class="bar">
     <div class="barInner">
-      <span class="brandChip">
-        <img class="mlogoH" alt="Maarlab" src="https://maarlab.com/wp-content/uploads/2024/09/maarlab-footer.svg" crossorigin="anonymous" referrerpolicy="no-referrer">
-      </span>
+      <div class="brandTitle">Operations Maarlab</div>
       <div style="display:flex;gap:10px;align-items:center">
-        <div class="chip" id="chipLang">
-          <button data-lang="es" class="active">ES</button><button data-lang="en">EN</button><button data-lang="fr">FR</button><button data-lang="it">IT</button><button data-lang="de">DE</button>
-        </div>
+        <!-- Selector de idioma -->
+        <label class="tiny" style="display:flex;align-items:center;gap:6px">
+          <span id="langLbl">Idioma</span>
+          <select id="langSelect">
+            <option value="es" selected>ES</option>
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
+            <option value="it">IT</option>
+            <option value="de">DE</option>
+          </select>
+        </label>
+        <!-- Monedas -->
         <div class="chip" id="chipCurrency">
-          <button data-cur="EUR" class="active">EUR</button><button data-cur="USD">USD</button><button data-cur="MXN">MXN</button>
+          <button data-cur="EUR" class="active">EUR</button>
+          <button data-cur="USD">USD</button>
+          <button data-cur="MXN">MXN</button>
         </div>
       </div>
     </div>
@@ -102,7 +124,7 @@
   </div>
 
   <main class="wrap grid2">
-    <!-- ===== Visualizador ===== -->
+    <!-- ===== Visualizador (izquierda) ===== -->
     <section class="card" id="cardWrap">
       <div id="err"></div>
       <div id="exportArea">
@@ -113,56 +135,84 @@
             <div class="tiny" id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
             <div class="badges" id="locBadges"></div>
           </div>
-          <div class="logoBoxSq"><img id="maarlabLogoM" alt="M" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
+          <!-- logo M dentro del visualizador -->
+          <div class="logoBoxSq"><img id="maarlabLogoM" alt="M" crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg"></div>
         </div>
 
         <div class="itins">
+          <!-- Anterior -->
           <div class="itinCol itinOld">
             <div style="font:700 14px Poppins,system-ui" id="prevTitle">Itinerario anterior</div>
+
             <div class="leg" id="leg-oo">
               <div class="legHead">
-                <div><div class="codes" id="ooCodes">XXX → XXX</div><div class="tiny" id="ooCities">— → —</div></div>
+                <div>
+                  <div class="codes" id="ooCodes">XXX → XXX</div>
+                  <div class="tiny" id="ooCities">— → —</div>
+                </div>
                 <div class="airLogoBox"><img id="logo-oo" alt="air-oo" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
               </div>
               <div class="meta"><span id="ooMeta">Vuelo — Fecha</span><div class="badges" id="ooBadges"></div></div>
-              <div class="times" id="ooTimes"></div><div class="dim" id="ooDur">Duración: —</div>
+              <div class="times" id="ooTimes"></div>
+              <div class="dim" id="ooDur">Duración: —</div>
             </div>
+
             <div class="leg" id="leg-or">
               <div class="legHead">
-                <div><div class="codes" id="orCodes">XXX → XXX</div><div class="tiny" id="orCities">— → —</div></div>
+                <div>
+                  <div class="codes" id="orCodes">XXX → XXX</div>
+                  <div class="tiny" id="orCities">— → —</div>
+                </div>
                 <div class="airLogoBox"><img id="logo-or" alt="air-or" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
               </div>
               <div class="meta"><span id="orMeta">Vuelo — Fecha</span><div class="badges" id="orBadges"></div></div>
-              <div class="times" id="orTimes"></div><div class="dim" id="orDur">Duración: —</div>
+              <div class="times" id="orTimes"></div>
+              <div class="dim" id="orDur">Duración: —</div>
             </div>
           </div>
 
+          <!-- Nuevo -->
           <div class="itinCol itinNew">
             <div style="font:700 14px Poppins,system-ui" id="newTitle">Itinerario nuevo</div>
+
             <div class="leg" id="leg-no">
               <div class="legHead">
-                <div><div class="codes" id="noCodes">XXX → XXX</div><div class="tiny" id="noCities">— → —</div></div>
+                <div>
+                  <div class="codes" id="noCodes">XXX → XXX</div>
+                  <div class="tiny" id="noCities">— → —</div>
+                </div>
                 <div class="airLogoBox"><img id="logo-no" alt="air-no" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
               </div>
               <div class="meta"><span id="noMeta">Vuelo — Fecha</span><div class="badges" id="noBadges"></div></div>
-              <div class="times" id="noTimes"></div><div class="dim" id="noDur">Duración: —</div>
+              <div class="times" id="noTimes"></div>
+              <div class="dim" id="noDur">Duración: —</div>
             </div>
+
             <div class="leg" id="leg-nr">
               <div class="legHead">
-                <div><div class="codes" id="nrCodes">XXX → XXX</div><div class="tiny" id="nrCities">— → —</div></div>
+                <div>
+                  <div class="codes" id="nrCodes">XXX → XXX</div>
+                  <div class="tiny" id="nrCities">— → —</div>
+                </div>
                 <div class="airLogoBox"><img id="logo-nr" alt="air-nr" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
               </div>
               <div class="meta"><span id="nrMeta">Vuelo — Fecha</span><div class="badges" id="nrBadges"></div></div>
-              <div class="times" id="nrTimes"></div><div class="dim" id="nrDur">Duración: —</div>
+              <div class="times" id="nrTimes"></div>
+              <div class="dim" id="nrDur">Duración: —</div>
             </div>
           </div>
         </div>
 
+        <!-- Hotel opcional -->
         <div class="hotelBox" id="hotelBox">
-          <div><div class="tiny" id="hotelCaption">Hotel</div><div class="big" id="hotelName">—</div></div>
+          <div>
+            <div class="tiny" id="hotelCaption">Hotel</div>
+            <div class="big" id="hotelName">—</div>
+          </div>
           <div class="hotelLogo"><img id="hotelLogoImg" alt="hotel-logo"></div>
         </div>
 
+        <!-- Precios -->
         <div class="prices">
           <div class="pill"><div class="tiny" id="penLabel">Penalización</div><div class="v" id="penVal">€0,00</div></div>
           <div class="pill"><div class="tiny" id="feeLabel">Fee servicio</div><div class="v" id="feeVal">€0,00</div></div>
@@ -171,19 +221,20 @@
           <div class="pill totalPill"><div class="tiny" id="totLabel">Total a pagar</div><div class="v" id="totVal">€0,00</div></div>
         </div>
 
+        <!-- Notas -->
         <div class="notes" contenteditable="true" id="notesBox">Notas / Notes…</div>
       </div>
 
       <div class="foot">
         <div class="tiny" id="footerText">Generado por Maarlab · Contacto: booking@maarlab.com</div>
         <div class="btnPdfHide" style="display:flex;gap:8px">
-          <button id="btnPng" class="btn" disabled>PNG</button>
-          <button id="btnPdf" class="btn" disabled>PDF</button>
+          <button id="btnPng" class="btn">PNG</button>
+          <button id="btnPdf" class="btn">PDF</button>
         </div>
       </div>
     </section>
 
-    <!-- ===== Formulario ===== -->
+    <!-- ===== Formulario (derecha) ===== -->
     <aside class="card" id="panel">
       <h2 id="hOut">Ruta (ida)</h2>
       <div class="row">
@@ -276,6 +327,10 @@
         <label>Localizador reserva <input id="bookingRef" placeholder="ABC123"></label>
         <label>Localizador Maarlab <input id="maarlabRef" placeholder="MLB-0001"></label>
       </div>
+      <div class="row" style="margin-top:6px">
+        <label>Localizador hotel <input id="hotelRef" placeholder="cualquier formato"></label>
+        <div></div>
+      </div>
 
       <h2 style="margin-top:14px">Costes</h2>
       <div class="row-3">
@@ -284,16 +339,14 @@
         <label>Diferencia de tarifa <input id="fareDiff" placeholder="45,50"></label>
       </div>
       <div class="row" style="margin-top:6px">
-        <label>Pax <input id="pax" type="number" min="1" step="1" value="1"></label><div></div>
+        <label>Pax <input id="pax" type="number" min="1" step="1" value="1"></label>
+        <div></div>
       </div>
 
       <div style="display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap">
-        <label style="display:flex;gap:8px;align-items:center">
-          <input type="checkbox" id="ncAgree"><span class="tiny">Confirmo uso informativo y no comercial. Se puede exportar/capturar.</span>
-        </label>
         <div style="flex:1"></div>
-        <button id="btnPng2" class="btn" disabled>PNG</button>
-        <button id="btnPdf2" class="btn" disabled>PDF</button>
+        <button id="btnPng2" class="btn">PNG</button>
+        <button id="btnPdf2" class="btn">PDF</button>
       </div>
 
       <details style="margin-top:12px">
@@ -320,71 +373,80 @@
 <script>
 (function(){
   var $ = function(id){ return document.getElementById(id); };
-  var ICON_DEP = "https://cdn-icons-png.flaticon.com/512/565/565514.png";
-  var ICON_ARR = "https://www.svgrepo.com/show/352351/plane-arrival.svg";
 
+  /* ===== i18n ===== */
   var STR = {
-    es:{hdrSub:"Cambio de vuelos · Round Trip",hdrTitle:"Cambio de vuelos",dep:"Salida",arr:"Llegada",
-        arrStop:"Llegada escala",depStop:"Salida escala",duration:"Duración",layover:"Escala",
+    es:{hdrSub:"Cambio de vuelos · Round Trip",hdrTitle:"Cambio de vuelos",
         prev:"Itinerario anterior",next:"Itinerario nuevo",
+        dep:"Salida",arr:"Llegada",arrStop:"Llegada escala",depStop:"Salida escala",duration:"Duración",layover:"Escala",
         footer:"Generado por Maarlab · Contacto: booking@maarlab.com",
-        exportWarn:"Confirma uso no comercial.", exportFail:"No se pudo exportar (CORS).",
         badges:{plusDays:"+{n} día(s)", tz:"ΔTZ {h}h", dst:"DST", odd:"Duración inusual"}},
-    en:{hdrSub:"Flight change · Round Trip",hdrTitle:"Flight change",dep:"Departure",arr:"Arrival",
-        arrStop:"Arrive stop",depStop:"Depart stop",duration:"Duration",layover:"Layover",
+    en:{hdrSub:"Flight change · Round Trip",hdrTitle:"Flight change",
         prev:"Previous itinerary",next:"New itinerary",
+        dep:"Departure",arr:"Arrival",arrStop:"Arrive stop",depStop:"Depart stop",duration:"Duration",layover:"Layover",
         footer:"Generated by Maarlab · Contact: booking@maarlab.com",
-        exportWarn:"Please confirm non-commercial use.", exportFail:"Export failed (CORS).",
         badges:{plusDays:"+{n} day(s)", tz:"ΔTZ {h}h", dst:"DST", odd:"Odd duration"}},
-    fr:{hdrSub:"Changement de vols · AR",hdrTitle:"Changement de vols",dep:"Départ",arr:"Arrivée",
-        arrStop:"Arrivée escale",depStop:"Départ escale",duration:"Durée",layover:"Escale",
+    fr:{hdrSub:"Changement de vols · AR",hdrTitle:"Changement de vols",
         prev:"Itinéraire précédent",next:"Nouvel itinéraire",
+        dep:"Départ",arr:"Arrivée",arrStop:"Arrivée escale",depStop:"Départ escale",duration:"Durée",layover:"Escale",
         footer:"Généré par Maarlab · Contact : booking@maarlab.com",
-        exportWarn:"Confirmez l’usage non commercial.", exportFail:"Échec d’export (CORS).",
         badges:{plusDays:"+{n} jour(s)", tz:"ΔTZ {h}h", dst:"Heure d'été", odd:"Durée inhabituelle"}},
-    it:{hdrSub:"Cambio voli · A/R",hdrTitle:"Cambio voli",dep:"Partenza",arr:"Arrivo",
-        arrStop:"Arrivo scalo",depStop:"Partenza scalo",duration:"Durata",layover:"Scalo",
+    it:{hdrSub:"Cambio voli · A/R",hdrTitle:"Cambio voli",
         prev:"Itinerario precedente",next:"Nuovo itinerario",
+        dep:"Partenza",arr:"Arrivo",arrStop:"Arrivo scalo",depStop:"Partenza scalo",duration:"Durata",layover:"Scalo",
         footer:"Generato da Maarlab · Contatto: booking@maarlab.com",
-        exportWarn:"Conferma uso non commerciale.", exportFail:"Export fallito (CORS).",
         badges:{plusDays:"+{n} giorno/i", tz:"ΔTZ {h}h", dst:"Ora legale", odd:"Durata insolita"}},
-    de:{hdrSub:"Flugänderung · RT",hdrTitle:"Flugänderung",dep:"Abflug",arr:"Ankunft",
-        arrStop:"Ankunft Zwischenstopp",depStop:"Abflug Zwischenstopp",duration:"Dauer",layover:"Zwischenstopp",
+    de:{hdrSub:"Flugänderung · RT",hdrTitle:"Flugänderung",
         prev:"Bisherige Reiseroute",next:"Neue Reiseroute",
+        dep:"Abflug",arr:"Ankunft",arrStop:"Ankunft Zwischenstopp",depStop:"Abflug Zwischenstopp",duration:"Dauer",layover:"Zwischenstopp",
         footer:"Erstellt von Maarlab · Kontakt: booking@maarlab.com",
-        exportWarn:"Bitte nicht-kommerziellen Nutzen bestätigen.", exportFail:"Export fehlgeschlagen (CORS).",
         badges:{plusDays:"+{n} Tag(e)", tz:"ΔTZ {h}h", dst:"Sommerzeit", odd:"Ungewöhnliche Dauer"}}
   };
   var LANG="es", CUR="EUR";
 
+  /* ===== datos ===== */
   var DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
   var DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
-
-  var AIRLINES = {"U":"easyJet","U2":"easyJet","AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus",
+  /* Aerolíneas (incluye F8 fallback a F9 y U→U2) */
+  var AIRLINES = {
+    "U":"easyJet","U2":"easyJet",
+    "AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
+    "AV":"Avianca","G3":"GOL","H2":"Sky Airline",
     "IB":"Iberia","I2":"Iberia Express","VY":"Vueling","UX":"Air Europa","NT":"Binter Canarias","FR":"Ryanair",
+    "W6":"Wizz Air","W4":"Wizz Air Malta","TO":"Transavia France","HV":"Transavia","BA":"British Airways",
+    "KL":"KLM","AF":"Air France","LH":"Lufthansa","LX":"SWISS","OS":"Austrian","SN":"Brussels Airlines","LO":"LOT",
+    "DY":"Norwegian","EW":"Eurowings","A3":"Aegean","TK":"Turkish Airlines","PC":"Pegasus",
     "F8":"Frontier","F9":"Frontier","AA":"American Airlines","UA":"United","DL":"Delta","B6":"JetBlue","WN":"Southwest","NK":"Spirit",
-    "BA":"British Airways","KL":"KLM","AF":"Air France","LH":"Lufthansa","LX":"SWISS","OS":"Austrian","SN":"Brussels Airlines",
-    "QR":"Qatar","EK":"Emirates","EY":"Etihad","W6":"Wizz Air","W4":"Wizz Air Malta"
+    "AS":"Alaska","AC":"Air Canada","WS":"WestJet","EI":"Aer Lingus","LS":"Jet2"
   };
   var LOGO_FALLBACK = {"F8":"F9","U":"U2"};
 
-  var IATA_DB = {"MAD":"Madrid","TFN":"Tenerife Norte","TFS":"Tenerife Sur","BCN":"Barcelona","LIS":"Lisboa","MEX":"Ciudad de México",
-    "CUN":"Cancún","TQO":"Tulum (Felipe Carrillo Puerto)","CZM":"Cozumel","HUX":"Huatulco","PVR":"Puerto Vallarta","ACA":"Acapulco",
-    "DFW":"Dallas/Fort Worth","EWR":"Newark","LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LAX":"Los Ángeles","SFO":"San Francisco",
-    "PMI":"Palma","IBZ":"Ibiza","ALC":"Alicante","SVQ":"Sevilla","VLC":"Valencia","FRA":"Fráncfort","CDG":"París (CDG)"
+  /* IATA → ciudad (resumen ampliado) */
+  var IATA_DB = {
+    "MAD":"Madrid","TFN":"Tenerife Norte","TFS":"Tenerife Sur","BCN":"Barcelona","VLC":"Valencia","AGP":"Málaga","SVQ":"Sevilla","PMI":"Palma",
+    "IBZ":"Ibiza","ALC":"Alicante","LIS":"Lisboa",
+    "CDG":"París (CDG)","ORY":"París (Orly)","FRA":"Fráncfort","AMS":"Ámsterdam",
+    "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Luton","STN":"Stansted","LCY":"City",
+    "MAN":"Mánchester","LPL":"Liverpool","EMA":"East Midlands",
+    "MEX":"Ciudad de México","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","TQO":"Tulum (Felipe Carrillo Puerto)","CZM":"Cozumel",
+    "HUX":"Huatulco","PVR":"Puerto Vallarta","ACA":"Acapulco","DFW":"Dallas/Fort Worth","EWR":"Newark",
+    "JFK":"Nueva York (JFK)","LAX":"Los Ángeles","SFO":"San Francisco"
   };
-  var TZ_DB = {"MAD":"Europe/Madrid","TFN":"Atlantic/Canary","TFS":"Atlantic/Canary","BCN":"Europe/Madrid","LIS":"Europe/Lisbon",
-               "MEX":"America/Mexico_City","CUN":"America/Cancun","TQO":"America/Cancun","CZM":"America/Cancun","HUX":"America/Mexico_City",
-               "PVR":"America/Mexico_City","ACA":"America/Mexico_City","DFW":"America/Chicago","EWR":"America/New_York",
-               "LHR":"Europe/London","LGW":"Europe/London","LAX":"America/Los_Angeles","SFO":"America/Los_Angeles","CDG":"Europe/Paris","FRA":"Europe/Berlin"};
+  /* IATA → zona horaria */
+  var TZ_DB = {
+    "MAD":"Europe/Madrid","TFN":"Atlantic/Canary","TFS":"Atlantic/Canary","BCN":"Europe/Madrid","VLC":"Europe/Madrid","AGP":"Europe/Madrid","SVQ":"Europe/Madrid","PMI":"Europe/Madrid","IBZ":"Europe/Madrid","ALC":"Europe/Madrid",
+    "LIS":"Europe/Lisbon","CDG":"Europe/Paris","ORY":"Europe/Paris","FRA":"Europe/Berlin","AMS":"Europe/Amsterdam",
+    "LHR":"Europe/London","LGW":"Europe/London","LTN":"Europe/London","STN":"Europe/London","LCY":"Europe/London",
+    "MAN":"Europe/London","LPL":"Europe/London","EMA":"Europe/London",
+    "MEX":"America/Mexico_City","GDL":"America/Mexico_City","MTY":"America/Monterrey","CUN":"America/Cancun","TQO":"America/Cancun","CZM":"America/Cancun",
+    "HUX":"America/Mexico_City","PVR":"America/Mexico_City","ACA":"America/Mexico_City",
+    "DFW":"America/Chicago","EWR":"America/New_York","JFK":"America/New_York","LAX":"America/Los_Angeles","SFO":"America/Los_Angeles"
+  };
 
   var DateTime = luxon.DateTime;
   var hotelLogoData = "";
 
-  function showErr(msg){
-    var e=$("err"); e.textContent=msg; e.style.display="block";
-    setTimeout(function(){ e.style.display="none"; },4000);
-  }
+  /* ===== helpers ===== */
   function nf(cur,lang){
     var loc = lang==="en"?"en-US":lang==="fr"?"fr-FR":lang==="it"?"it-IT":lang==="de"?"de-DE":"es-ES";
     return new Intl.NumberFormat(loc,{style:"currency",currency:cur,minimumFractionDigits:2,maximumFractionDigits:2});
@@ -395,12 +457,7 @@
     var base = ($("airlineBase") && $("airlineBase").value) ? $("airlineBase").value : DEFAULT_AIRLINE_BASE;
     return base.replace(/\/$/,"") + "/" + code + ".png";
   }
-  function fmtDate(d){
-    if(!d) return "—";
-    var parts = String(d).split("-");
-    if(parts.length!==3) return d;
-    return parts[2]+"/"+parts[1]+"/"+parts[0];
-  }
+  function fmtDate(d){ if(!d) return "—"; var p=String(d).split("-"); if(p.length!==3) return d; return p[2]+"/"+p[1]+"/"+p[0]; }
   var HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
   function dayOfWeek(dateISO){
@@ -418,7 +475,7 @@
       var dep = zonedDT(dateISO, depHM, fromIata);
       var arr = zonedDT(dateISO, arrHM, toIata);
       if(!dep || !arr) return NaN;
-      var diff = arr.toUTC().diff(dep.toUTC(), "minutes").minutes;
+      var diff = arr.toUTC().diff(dep.toUTC(),"minutes").minutes;
       while(diff<0) diff+=1440;
       return diff;
     }catch(e){ return NaN; }
@@ -432,11 +489,7 @@
       return diff;
     }catch(e){ return NaN; }
   }
-  function fmtHM(m){
-    if(!isFinite(m)) return "—";
-    m=Math.abs(Math.round(m));
-    return Math.floor(m/60)+"h "+(m%60)+"m";
-  }
+  function fmtHM(m){ if(!isFinite(m)) return "—"; m=Math.abs(Math.round(m)); return Math.floor(m/60)+"h "+(m%60)+"m"; }
 
   function moneyOut(v){
     var fxOn = $("fxEnable") && $("fxEnable").checked;
@@ -449,6 +502,7 @@
     return nf(CUR,LANG).format(v);
   }
 
+  /* i18n aplicar */
   function applyI18n(){
     var S=STR[LANG];
     $("hdr-sub").textContent=S.hdrSub;
@@ -456,9 +510,12 @@
     $("prevTitle").textContent=S.prev;
     $("newTitle").textContent=S.next;
     $("footerText").textContent=S.footer;
+    // label del selector
+    $("langLbl").textContent = LANG==="en"?"Language":LANG==="fr"?"Langue":LANG==="it"?"Lingua":LANG==="de"?"Sprache":"Idioma";
     refresh();
   }
 
+  /* badges inteligentes (día extra, tz, dst, duración rara) */
   function buildBadges(dateISO, depHM, arrHM, fromIata, toIata){
     var S=STR[LANG].badges, out=[];
     try{
@@ -476,6 +533,7 @@
     return out;
   }
 
+  /* logos aerolínea */
   function setLegLogo(imgId, code){
     var img=$(imgId); if(!img) return;
     var raw=normalizeCode(code);
@@ -492,10 +550,11 @@
     img.src=airlineLogoUrl(raw);
   }
 
+  /* render de un tramo */
   function renderLeg(prefix, fromIata, toIata, cityFrom, cityTo){
     var S=STR[LANG];
     var code=normalizeCode($(prefix+"Air").value);
-    var num=(($(prefix+"Num").value)||"").toUpperCase();
+    var num =(($(prefix+"Num").value)||"").toUpperCase();
     var dateISO = (prefix==="oo"||prefix==="or") ? ($(prefix==="oo"?"ooDate":"orDate").value) : ($(prefix==="no"?"noDate":"nrDate").value);
     var dow = dayOfWeek(dateISO);
     var stop=normalizeCode((($(prefix+"Stop")||{}).value)||"");
@@ -513,36 +572,29 @@
     for(var i=0;i<bs.length;i++){ var sp=document.createElement("span"); sp.className="badge"; sp.textContent=bs[i]; $b.appendChild(sp); }
 
     var $t=$(prefix+"Times"); $t.innerHTML="";
-    function cell(lbl,val,kind){
-      var w=document.createElement("div");
-      var l=document.createElement("div"); l.className="tiny";
-      var ic=document.createElement("img"); ic.className="icon"; ic.alt=kind||""; ic.crossOrigin="anonymous"; ic.referrerPolicy="no-referrer";
-      ic.src=(kind==="dep"||kind==="depStop")?ICON_DEP:ICON_ARR;
-      l.appendChild(ic); l.appendChild(document.createTextNode(lbl));
-      var v=document.createElement("div"); v.className="big"; v.textContent=val||"--:--";
-      w.appendChild(l); w.appendChild(v); return w;
-    }
+    function cell(lbl,val){ var w=document.createElement("div"); var l=document.createElement("div"); l.className="tiny"; l.textContent=lbl; var v=document.createElement("div"); v.className="big"; v.textContent=val||"--:--"; w.appendChild(l); w.appendChild(v); return w; }
     var depHM=$(prefix+"Dep").value, arrHM=$(prefix+"Arr").value;
     var totalM=NaN, layM=NaN;
     if(stop && HM_RE.test(stopArr||"") && HM_RE.test(stopDep||"")){
       $t.classList.add("stop");
-      $t.appendChild(cell(S.dep,depHM,"dep"));
-      $t.appendChild(cell(S.arrStop,stopArr,"arrStop"));
-      $t.appendChild(cell(S.depStop,stopDep,"depStop"));
-      $t.appendChild(cell(S.arr,arrHM,"arr"));
+      $t.appendChild(cell(S.dep,depHM));
+      $t.appendChild(cell(S.arrStop,stopArr));
+      $t.appendChild(cell(S.depStop,stopDep));
+      $t.appendChild(cell(S.arr,arrHM));
       var s1=segmentMinutes(dateISO,depHM,stopArr,fromIata,stop);
       var s2=segmentMinutes(dateISO,stopDep,arrHM,stop,toIata);
       layM=layoverMinutes(dateISO,stopArr,stopDep,stop);
       totalM=(isFinite(s1)?s1:0)+(isFinite(s2)?s2:0);
     }else{
       $t.classList.remove("stop");
-      $t.appendChild(cell(S.dep,depHM,"dep"));
-      $t.appendChild(cell(S.arr,arrHM,"arr"));
+      $t.appendChild(cell(S.dep,depHM));
+      $t.appendChild(cell(S.arr,arrHM));
       totalM=segmentMinutes(dateISO,depHM,arrHM,fromIata,toIata);
     }
     $(prefix+"Dur").textContent = S.duration+": "+(isFinite(totalM)?fmtHM(totalM):"—")+(isFinite(layM)?(" · "+S.layover+": "+fmtHM(layM)):"");
   }
 
+  /* refresco global */
   function refresh(){
     try{
       var outFrom=normalizeCode(($("outFrom").value)||"XXX"), outTo=normalizeCode(($("outTo").value)||"XXX");
@@ -568,33 +620,33 @@
       $("ppVal").textContent=moneyOut(p+f+d);
       $("totVal").textContent=moneyOut((p+f+d)*pax);
 
-      var locs=(($("bookingRef").value)||"").trim(), ml=(($("maarlabRef").value)||"").trim();
+      // Chips de localizadores
       var c=$("locBadges"); c.innerHTML="";
-      if(locs){ var b=document.createElement("span"); b.className="badge"; b.textContent="PNR: "+locs; c.appendChild(b); }
-      if(ml){ var b2=document.createElement("span"); b2.className="badge"; b2.textContent="Maarlab: "+ml; c.appendChild(b2); }
+      var locs=(($("bookingRef").value)||"").trim(); if(locs){ var b=document.createElement("span"); b.className="badge"; b.textContent="PNR: "+locs; c.appendChild(b); }
+      var ml=(($("maarlabRef").value)||"").trim(); if(ml){ var b2=document.createElement("span"); b2.className="badge"; b2.textContent="Maarlab: "+ml; c.appendChild(b2); }
+      var hr=(($("hotelRef").value)||"").trim(); if(hr){ var b3=document.createElement("span"); b3.className="badge"; b3.textContent="Hotel: "+hr; c.appendChild(b3); }
 
+      // Hotel opcional
       var hname=(($("hotelNameInput").value)||"").trim();
       $("hotelName").textContent = hname || "—";
       $("hotelBox").style.display = (hname || hotelLogoData) ? "flex" : "none";
       if(hotelLogoData){ $("hotelLogoImg").src = hotelLogoData; $("hotelLogoImg").style.display="block"; }
       else { $("hotelLogoImg").removeAttribute("src"); $("hotelLogoImg").style.display="none"; }
-    }catch(e){ console.error(e); showErr("⚠️ Error de refresco: "+e.message); }
+    }catch(e){ console.error(e); $("err").textContent="⚠️ Error: "+e.message; $("err").style.display="block"; setTimeout(function(){ $("err").style.display="none"; },4000); }
   }
 
+  /* binds */
   function bindAll(){
-    // Enlaza TODOS los inputs para tiempo real
+    // inputs tiempo real
     var inputs = document.querySelectorAll("#panel input, #panel select");
     for(var i=0;i<inputs.length;i++){
       (function(el){
-        el.addEventListener("input", function(e){
-          // Uppercase IATA
+        el.addEventListener("input", function(){
           if(/(outFrom|outTo|retFrom|retTo|Stop)$/i.test(el.id)){ el.value = el.value.toUpperCase(); }
-          // Validación HH:MM
           if(/(Dep|Arr|StopArr|StopDep)$/i.test(el.id)){
             var ok = (!el.value) || HM_RE.test(el.value);
             if(!ok) el.classList.add("invalid"); else el.classList.remove("invalid");
           }
-          // Autocompletar ciudad desde IATA
           var targetId = el.getAttribute("data-iata");
           if(targetId){
             var cityEl=$(targetId), c=el.value.toUpperCase().trim();
@@ -607,7 +659,7 @@
       })(inputs[i]);
     }
 
-    // Hotel logo por archivo
+    // logo hotel por archivo
     if($("hotelLogoFile")){
       $("hotelLogoFile").addEventListener("change", function(e){
         var f = e.target.files && e.target.files[0];
@@ -616,17 +668,15 @@
       });
     }
 
-    // Idioma
-    if($("chipLang")){
-      $("chipLang").addEventListener("click", function(e){
-        var b=e.target.closest("button"); if(!b) return;
-        LANG = b.getAttribute("data-lang");
-        var btns = $("chipLang").querySelectorAll("button"); for(var i=0;i<btns.length;i++){ btns[i].classList.toggle("active", btns[i]===b); }
+    // idioma (select)
+    if($("langSelect")){
+      $("langSelect").addEventListener("change", function(){
+        LANG = this.value || "es";
         applyI18n();
       });
     }
 
-    // Moneda
+    // moneda
     if($("chipCurrency")){
       $("chipCurrency").addEventListener("click", function(e){
         var b=e.target.closest("button"); if(!b) return;
@@ -636,29 +686,20 @@
       });
     }
 
-    // Export habilitación
-    function toggleExport(){
-      var on = $("ncAgree") && $("ncAgree").checked;
-      ["btnPng","btnPdf","btnPng2","btnPdf2"].forEach(function(id){ if($(id)) $(id).disabled = !on; });
-    }
-    if($("ncAgree")) $("ncAgree").addEventListener("change", toggleExport);
-    toggleExport();
+    // export
+    ["btnPng","btnPng2"].forEach(function(id){ if($(id)) $(id).addEventListener("click", exportPNG); });
+    ["btnPdf","btnPdf2"].forEach(function(id){ if($(id)) $(id).addEventListener("click", function(){ window.print(); }); });
 
-    // Botones export
-    var pngButtons=["btnPng","btnPng2"];
-    for(var j=0;j<pngButtons.length;j++){ var id=pngButtons[j]; if($(id)) $(id).addEventListener("click", exportPNG); }
-    var pdfButtons=["btnPdf","btnPdf2"];
-    for(var k=0;k<pdfButtons.length;k++){ var id2=pdfButtons[k]; if($(id2)) $(id2).addEventListener("click", function(){ window.print(); }); }
-
-    // Defaults
+    // defaults
     if($("airlineBase")) $("airlineBase").value = DEFAULT_AIRLINE_BASE;
     if($("maarlabLogoM")) $("maarlabLogoM").src = DEFAULT_MAARLAB_MARK;
 
-    // Datalists
+    // datalists
     var dlAir=$("airlineCodes"); if(dlAir){ dlAir.innerHTML=""; Object.keys(AIRLINES).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); }); }
     var dlI=$("iataList"); if(dlI){ dlI.innerHTML=""; Object.keys(IATA_DB).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlI.appendChild(o); }); }
   }
 
+  /* incrustar imágenes (para PNG, evitar CORS) */
   async function inlineImgs(root){
     var imgs = root.querySelectorAll("img"); var original=[];
     for(var i=0;i<imgs.length;i++){
@@ -680,8 +721,8 @@
     return function(){ for(var j=0;j<original.length;j++){ var tup=original[j]; var im=tup[0]; im.src=tup[1]; im.style.visibility=tup[2]||""; im.removeAttribute("data-inline-src"); im.removeAttribute("data-inline-failed"); } };
   }
 
+  /* export PNG (solo el visualizador) */
   async function exportPNG(){
-    if(!$("ncAgree") || !$("ncAgree").checked){ alert(STR[LANG].exportWarn); return; }
     try{
       var restore = await inlineImgs($("exportArea"));
       var dataUrl = await htmlToImage.toPng($("exportArea"), {pixelRatio:2, cacheBust:true});
@@ -689,15 +730,15 @@
       var out=($("outFrom").value)||"XXX", to=($("outTo").value)||"XXX", r1=($("retFrom").value)||"XXX", r2=($("retTo").value)||"XXX";
       var when = ($("nrDate").value)||($("noDate").value)||($("orDate").value)||($("ooDate").value)||"date";
       var a=document.createElement("a"); a.href=dataUrl; a.download=(out+"-"+to+"_"+r1+"-"+r2+"-"+when+".png").replace(/\s+/g,"_"); a.click();
-    }catch(e){ alert(STR[LANG].exportFail); console.error(e); }
+    }catch(e){ console.error(e); alert("Export PNG falló (CORS o red). Se intentará sin logos si persiste."); }
   }
 
   document.addEventListener("DOMContentLoaded", function(){
     try{
       bindAll();
       applyI18n();
-      refresh(); // primer pintado para que la tarjeta se vea ya
-    }catch(e){ console.error(e); showErr("⚠️ Error inicializando: "+e.message); }
+      refresh(); // primer pintado
+    }catch(e){ console.error(e); $("err").textContent="⚠️ Error inicializando: "+e.message; $("err").style.display="block"; }
   });
 })();
 </script>
