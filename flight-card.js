@@ -1,160 +1,158 @@
 // components/flight-card.js
-const htmlURL = new URL('./flight-card.html', import.meta.url);
+// Web Component <flight-card>: presenta la tarjeta usando el template #tpl-flight-card.
+// No accede a airports.json. Recibe un "model" desde el index y pinta.
 
-export class FlightCard extends HTMLElement{
-  static get observedAttributes(){ return ['mode']; }
-
+class FlightCard extends HTMLElement {
   constructor(){
     super();
     this.attachShadow({mode:'open'});
     this.model = null;
-    this.tpl = null;
   }
 
+  // ===== Helpers =====
+  $(sel){ return this.shadowRoot.querySelector(sel); }
+  $id(id){ return this.shadowRoot.querySelector(`[data-id="${id}"]`); }
+  _clear(node){ if(!node) return; while(node.firstChild) node.removeChild(node.firstChild); }
+
   async connectedCallback(){
-    await this.#ensureTemplate();
-    this.shadowRoot.appendChild(this.tpl.content.cloneNode(true));
-    // Logo por defecto (puedes cambiarlo vía model.brandLogo)
-    this.$('logo-m').src = 'https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg';
+    const tpl = await ensureFlightCardTemplate();
+    const clone = tpl.content.cloneNode(true);
+    this.shadowRoot.appendChild(clone);
+
+    // Logo por defecto
+    const logo = this.$id('logo-m');
+    if (logo) logo.src = 'https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg';
+
+    // Si ya teníamos un modelo antes de conectar, repinta
     if (this.model) this.render(this.model);
   }
 
-  attributeChangedCallback(){
-    // opcional: si quieres re-pintar al cambiar atributos
-    if(this.model) this.render(this.model);
-  }
-
-  async #ensureTemplate(){
-    if(this.tpl) return;
-    const res = await fetch(htmlURL, {cache:'no-store'});
-    const txt = await res.text();
-    const t = document.createElement('template');
-    t.innerHTML = txt;
-    this.tpl = t.content.querySelector('#tpl-flight-card');
-    if(!this.tpl){
-      // Fallback por si el HTML cambia
-      const tf = document.createElement('template');
-      tf.innerHTML = txt;
-      this.tpl = tf;
-    }
-  }
-
-  /** Utils */
-  $(dataId){
-    return this.shadowRoot.querySelector(`[data-id="${dataId}"]`);
-  }
-  _clear(el){ if(!el) return; while(el.firstChild) el.removeChild(el.firstChild); }
-
-  /** API pública */
+  // API pública: recibe un modelo y pinta
   render(model){
-    // Espera una estructura:
-    // {
-    //   i18n:{ sub, title, dates, prevTitle, newTitle, labels:{pen,fee,fare,pp,tot}, modeBadge, sealText },
-    //   brandLogo, watermarkOn, locBadges:[...strings],
-    //   legs:{ oo:{...}, or:{...}, no:{...}, nr:{...} },
-    //   prices:{pen,fee,fare,pp,tot}, notes
-    // }
-    this.model = model;
+    if (!this.shadowRoot) { this.model = model; return; }
+    this.model = model || {};
 
     // Header
-    this.$('hdr-sub').textContent   = model.i18n.sub;
-    this.$('hdr-title').textContent = model.i18n.title;
-    this.$('hdr-dates').textContent = model.i18n.dates;
-    this._clear(this.$('loc-badges'));
-    (model.locBadges||[]).forEach(b=>{
-      const span = document.createElement('span');
-      span.className='badge';
-      span.textContent=b;
-      this.$('loc-badges').appendChild(span);
-    });
-    this.$('mode-badge').textContent = model.i18n.modeBadge;
-    if(model.brandLogo) this.$('logo-m').src = model.brandLogo;
+    safeText(this.$id('hdr-sub'),   model?.i18n?.sub ?? '—');
+    safeText(this.$id('hdr-title'), model?.i18n?.title ?? '—');
+    safeText(this.$id('hdr-dates'), model?.i18n?.dates ?? '—');
 
-    // Watermark (confirmación)
+    // Badges superiores (PNR, Maarlab, Hotel…)
+    const loc = this.$id('loc-badges');
+    this._clear(loc);
+    (model?.locBadges || []).forEach(txt=>{
+      const s=document.createElement('span');
+      s.className='badge';
+      s.textContent = String(txt);
+      loc.appendChild(s);
+    });
+
+    // Modo (Cotización/Confirmación)
+    safeText(this.$id('mode-badge'), model?.i18n?.modeBadge ?? '—');
+
+    // Marca/Logo
+    const logo = this.$id('logo-m');
+    if (logo && model?.brandLogo) logo.src = model.brandLogo;
+
+    // Sello watermark
     const wm = this.shadowRoot.querySelector('.wm');
-    if (model.watermarkOn){
-      wm.dataset.text = model.i18n.sealText || 'CONFIRMADO';
-      wm.classList.add('show');
-    } else {
-      wm.classList.remove('show');
-      wm.dataset.text = '';
+    if (wm){
+      const on = !!model?.watermarkOn;
+      wm.classList.toggle('show', on);
+      wm.setAttribute('data-text', on ? (model?.i18n?.sealText || 'CONFIRMADO') : '');
     }
 
-    // Col titles
-    this.$('prev-title').textContent = model.i18n.prevTitle;
-    this.$('new-title').textContent  = model.i18n.newTitle;
+    // Títulos de columnas
+    safeText(this.$id('prev-title'), model?.i18n?.prevTitle ?? 'Vuelos anteriores');
+    safeText(this.$id('new-title'),  model?.i18n?.newTitle  ?? 'Vuelos nuevos');
 
-    // Legs
-    this._renderLeg('leg-oo', model.legs?.oo);
-    this._renderLeg('leg-or', model.legs?.or);
-    this._renderLeg('leg-no', model.legs?.no);
-    this._renderLeg('leg-nr', model.legs?.nr);
+    // Piernas / tramos
+    this._renderLeg('leg-oo', model?.legs?.oo);
+    this._renderLeg('leg-or', model?.legs?.or);
+    this._renderLeg('leg-no', model?.legs?.no);
+    this._renderLeg('leg-nr', model?.legs?.nr);
 
-    // Prices labels
-    this.$('pen-label').textContent  = model.i18n.labels.pen;
-    this.$('fee-label').textContent  = model.i18n.labels.fee;
-    this.$('fare-label').textContent = model.i18n.labels.fare;
-    this.$('pp-label').textContent   = model.i18n.labels.pp;
-    this.$('tot-label').textContent  = model.i18n.labels.tot;
+    // Precios (etiquetas)
+    safeText(this.$id('pen-label'),  model?.i18n?.labels?.pen  ?? 'Penalización');
+    safeText(this.$id('fee-label'),  model?.i18n?.labels?.fee  ?? 'Fee servicio');
+    safeText(this.$id('fare-label'), model?.i18n?.labels?.fare ?? 'Diferencia de tarifa');
+    safeText(this.$id('pp-label'),   model?.i18n?.labels?.pp   ?? 'Total por pax');
+    safeText(this.$id('tot-label'),  model?.i18n?.labels?.tot  ?? 'Total a pagar');
 
-    // Prices values
-    this.$('pen-val').textContent = model.prices.pen;
-    this.$('fee-val').textContent = model.prices.fee;
-    this.$('fare-val').textContent= model.prices.fare;
-    this.$('pp-val').textContent  = model.prices.pp;
-    this.$('tot-val').textContent = model.prices.tot;
+    // Precios (valores)
+    safeText(this.$id('pen-val'),  model?.prices?.pen  ?? '€0,00');
+    safeText(this.$id('fee-val'),  model?.prices?.fee  ?? '€0,00');
+    safeText(this.$id('fare-val'), model?.prices?.fare ?? '€0,00');
+    safeText(this.$id('pp-val'),   model?.prices?.pp   ?? '€0,00');
+    safeText(this.$id('tot-val'),  model?.prices?.tot  ?? '€0,00');
 
-    // Notes
-    this.$('notes').textContent = model.notes || 'Notas / Notes…';
+    // Notas
+    safeText(this.$id('notes'), model?.notes ?? 'Notas / Notes…');
+
+    // Micro-animación de aparición
+    const card = this.shadowRoot.querySelector('.card');
+    if(card){
+      card.animate([{opacity:.0, transform:'translateY(6px)'},{opacity:1, transform:'translateY(0)'}],
+                   {duration:220, easing:'ease-out'});
+    }
   }
 
   _renderLeg(targetId, leg){
-    const host = this.$(targetId);
+    const host = this.$id(targetId);
+    if (!host) return;
     this._clear(host);
-    if(!leg){ host.style.display='none'; return; }
+
+    if (!leg){
+      host.style.display='none';
+      return;
+    }
     host.style.display='block';
 
-    // Cabecera
-    const head = document.createElement('div');
-    head.className='legHead';
+    // Head
+    const head = el('div','legHead');
     const left = document.createElement('div');
-    const codes = document.createElement('div'); codes.className='codes'; codes.textContent = `${leg.from} → ${leg.to}`;
-    const cities= document.createElement('div'); cities.className='tiny';  cities.textContent = `${leg.cityFrom} → ${leg.cityTo}`;
+
+    const codes = el('div','codes', `${safe(leg.from,'XXX')} → ${safe(leg.to,'XXX')}`);
+    const cities= el('div','tiny',  `${safe(leg.cityFrom,'—')} → ${safe(leg.cityTo,'—')}`);
     left.appendChild(codes); left.appendChild(cities);
 
-    const logoBox = document.createElement('div'); logoBox.className='airLogoBox';
-    const img = document.createElement('img'); img.alt='airline';
-    if(leg.logo){ img.src = leg.logo; }
+    const logoBox = el('div','airLogoBox');
+    const img = document.createElement('img');
+    img.alt = 'airline';
+    if (leg.logo) img.src = leg.logo;
     logoBox.appendChild(img);
 
     head.appendChild(left); head.appendChild(logoBox);
     host.appendChild(head);
 
     // Meta + badges
-    const meta = document.createElement('div'); meta.className='meta';
-    const span = document.createElement('span'); span.textContent = `${leg.flight||''} · ${leg.airline||'—'} · ${leg.dateText||'—'}`;
-    meta.appendChild(span);
-    const badges = document.createElement('div'); badges.className='badges';
-    (leg.badges||[]).forEach(t=>{
-      const b=document.createElement('span'); b.className='badge'; b.textContent=t; badges.appendChild(b);
+    const meta = el('div','meta');
+    const sp = document.createElement('span');
+    sp.textContent = `${safe(leg.flight,'')} · ${safe(leg.airline,'—')} · ${safe(leg.dateText,'—')}`;
+    meta.appendChild(sp);
+
+    const badges = el('div','badges');
+    (leg.badges || []).forEach(t=>{
+      const b = el('span','badge', String(t));
+      badges.appendChild(b);
     });
     meta.appendChild(badges);
     host.appendChild(meta);
 
     // Times
-    const times = document.createElement('div'); 
-    times.className = 'times' + (leg.stop ? ' stop' : '');
-    function cell(lbl,val){
-      const w=document.createElement('div');
-      const l=document.createElement('div'); l.className='tiny'; l.textContent=lbl;
-      const v=document.createElement('div'); v.className='big';  v.textContent=val || '--:--';
-      w.appendChild(l); w.appendChild(v); return w;
-    }
+    const times = el('div', 'times' + (leg.stop ? ' stop' : ''));
+    const cell = (lbl, val)=>{
+      const w = document.createElement('div');
+      const l = el('div','tiny', lbl || '');
+      const v = el('div','big',  val || '--:--');
+      w.appendChild(l); w.appendChild(v);
+      return w;
+    };
     if(leg.stop){
-      times.appendChild(cell(leg.lblDep, leg.dep));
-      times.appendChild(cell(leg.lblArrStop, leg.stopArr));
-      times.appendChild(cell(leg.lblDepStop, leg.stopDep));
-      times.appendChild(cell(leg.lblArr, leg.arr));
+      times.appendChild(cell(leg.lblDep     , leg.dep));
+      times.appendChild(cell(leg.lblArrStop , leg.stopArr));
+      times.appendChild(cell(leg.lblDepStop , leg.stopDep));
+      times.appendChild(cell(leg.lblArr     , leg.arr));
     }else{
       times.appendChild(cell(leg.lblDep, leg.dep));
       times.appendChild(cell(leg.lblArr, leg.arr));
@@ -162,13 +160,70 @@ export class FlightCard extends HTMLElement{
     host.appendChild(times);
 
     // Duración
-    const dim = document.createElement('div'); dim.className='dim';
-    dim.textContent = `${leg.lblDuration}: ${leg.duration}` + (leg.layover? ` · ${leg.lblLayover}: ${leg.layover}`:'');
+    const dim = el('div','dim',
+      `${safe(leg.lblDuration,'Duración')}: ${safe(leg.duration,'—')}` +
+      (leg.layover ? ` · ${safe(leg.lblLayover,'Escala')}: ${safe(leg.layover,'—')}` : '')
+    );
     host.appendChild(dim);
 
-    // Animación de entrada
-    host.animate([{opacity:.0, transform:'translateY(6px)'},{opacity:1, transform:'translateY(0)'}], {duration:240, easing:'ease-out'});
+    // Micro-animación de cada leg
+    host.animate([{opacity:.0, transform:'translateY(6px)'},{opacity:1, transform:'translateY(0)'}],
+                 {duration:200, easing:'ease-out'});
   }
 }
 
+// ===== Registro del custom element =====
 customElements.define('flight-card', FlightCard);
+
+// ===== Utilidades =====
+function el(tag, cls, txt){
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (txt!=null) n.textContent = String(txt);
+  return n;
+}
+function safe(v, def){ return (v==null || v===undefined) ? def : v; }
+function safeText(node, txt){ if(node) node.textContent = String(txt ?? ''); }
+
+// Localiza el template en el documento. Si no existe, lo trae de ./components/flight-card.html
+let _flightCardTemplatePromise;
+async function ensureFlightCardTemplate(){
+  if (_flightCardTemplatePromise) return _flightCardTemplatePromise;
+
+  _flightCardTemplatePromise = new Promise(async (resolve)=>{
+    // ¿Ya está inline?
+    let tpl = document.getElementById('tpl-flight-card');
+    if (tpl instanceof HTMLTemplateElement){
+      resolve(tpl);
+      return;
+    }
+
+    // Lo traemos por fetch y lo insertamos en el DOM para reuso
+    try{
+      const url = new URL('./components/flight-card.html', document.baseURI).toString();
+      const res = await fetch(`${url}?v=${Date.now()}`, {cache:'no-store'});
+      const html = await res.text();
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      tpl = div.querySelector('#tpl-flight-card');
+      if (!(tpl instanceof HTMLTemplateElement)) throw new Error('Template no encontrado en flight-card.html');
+      document.body.appendChild(tpl); // lo dejamos disponible globalmente
+      resolve(tpl);
+    }catch(err){
+      console.error('No se pudo cargar components/flight-card.html:', err);
+      // Fallback: creamos un template mínimo para no romper la app
+      const fallback = document.createElement('template');
+      fallback.id = 'tpl-flight-card';
+      fallback.innerHTML = `
+        <style>:host{display:block}.card{border:1px solid #ccd; border-radius:12px; padding:12px; background:#fff}</style>
+        <div class="card"><div data-id="hdr-title">Tarjeta</div></div>
+      `;
+      document.body.appendChild(fallback);
+      resolve(fallback);
+    }
+  });
+
+  return _flightCardTemplatePromise;
+}
+
+export { FlightCard };
