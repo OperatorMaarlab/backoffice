@@ -1,0 +1,109 @@
+<!-- components/flight-card.html -->
+<template id="tpl-flight-card">
+  <style>
+    :host{display:block}
+    .card{
+      position:relative;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.35)) padding-box,
+        radial-gradient(120% 120% at 0% 0%, rgba(21,199,155,.35), rgba(44,169,255,.25)) border-box;
+      box-shadow: 0 20px 40px rgba(6,24,44,.18), inset 0 1px 0 rgba(255,255,255,.4);
+      overflow:hidden;
+    }
+    .hdr{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      padding:16px 16px 0 16px
+    }
+    .brand{
+      display:flex;flex-direction:column;gap:6px
+    }
+    .sub{font:600 12px/1.1 Poppins,system-ui;color:#335}
+    .title{font:700 28px/1.1 Poppins,system-ui;color:#0b2a5a;letter-spacing:.2px}
+    .dates{font:12px/1.2 system-ui;color:#475569}
+    .badge{display:inline-flex;align-items:center;gap:6px;border:1px solid #d7ddea;background:#fff;border-radius:999px;padding:4px 10px;font-size:11px;color:#334155}
+    .logoCard{width:36px;height:36px;border:1px solid #d7ddea;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden}
+    .logoCard img{max-width:100%;max-height:100%;display:block}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 16px 16px}
+    .col{border:1px solid #e5e9f3;border-radius:14px;padding:12px;background:linear-gradient(180deg,#fff,#f8fbff)}
+
+    .colTitle{font:700 14px Poppins,system-ui;margin-bottom:4px}
+    .leg{border:1px dashed #d7ddea;border-radius:12px;padding:10px;background:#ffffffc8;margin-top:10px;transform:translateZ(0)}
+    .legHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+    .codes{font-weight:700;font-size:18px;color:#0b2a5a}
+    .tiny{font-size:12px;color:#475569}
+    .airLogoBox{height:42px;padding:6px 10px;border:1px solid #d7ddea;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:120px}
+    .airLogoBox img{max-height:100%;width:auto;display:block}
+    .meta{font-size:12px;color:#475569;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .badges{display:flex;gap:6px;flex-wrap:wrap}
+    .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .times.stop{grid-template-columns:repeat(4,1fr)}
+    .big{font-weight:700;font-size:18px;color:#0b2a5a}
+    .dim{font-size:12px;color:#334155;margin-top:6px}
+
+    .prices{display:grid;grid-template-columns:repeat(4,1fr) 1.2fr;gap:12px;margin-top:10px}
+    .pill{border:1px solid #d7ddea;border-radius:14px;padding:10px;text-align:center;background:#eef2f7}
+    .pill .v{font-weight:700}
+    .totalPill{background:linear-gradient(135deg,#e7f3ff,#ecfbff);border-color:#93c5fd}
+    .totalPill .v{font-size:22px}
+
+    .notes{margin-top:12px;border:1px dashed #d7ddea;border-radius:12px;background:#fff;padding:10px;min-height:60px}
+
+    /* Animaciones sutiles */
+    .leg{transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s}
+    .leg:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(6,24,44,.12)}
+    .badge{transition:background .25s, transform .25s}
+    .badge:hover{background:#f5fbff; transform:translateY(-1px)}
+
+    /* Sello de confirmación opcional */
+    .wm{position:absolute;inset:0;pointer-events:none;display:none}
+    .wm.show::before{
+      content:attr(data-text);position:absolute;top:50%;left:50%;
+      transform:translate(-50%,-50%) rotate(-12deg);
+      font:700 64px/1 Poppins,system-ui;color:#0b2a5a;opacity:.08;white-space:nowrap
+    }
+
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
+
+  <div class="card">
+    <div class="wm" part="watermark"></div>
+    <div class="hdr">
+      <div class="brand">
+        <div class="sub" data-id="hdr-sub">Modificación de reserva · Round Trip</div>
+        <div class="title" data-id="hdr-title">Modificación de reserva</div>
+        <div class="tiny" data-id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
+        <div class="badges" data-id="loc-badges"></div>
+        <div class="badges"><span class="badge" data-id="mode-badge">Cotización</span></div>
+      </div>
+      <div class="logoCard"><img data-id="logo-m" alt="M"></div>
+    </div>
+
+    <div class="grid">
+      <div class="col">
+        <div class="colTitle" data-id="prev-title">Vuelos anteriores</div>
+        <div data-id="leg-oo" class="leg"></div>
+        <div data-id="leg-or" class="leg"></div>
+      </div>
+      <div class="col">
+        <div class="colTitle" data-id="new-title">Vuelos nuevos</div>
+        <div data-id="leg-no" class="leg"></div>
+        <div data-id="leg-nr" class="leg"></div>
+      </div>
+    </div>
+
+    <div class="prices">
+      <div class="pill"><div class="tiny" data-id="pen-label">Penalización</div><div class="v" data-id="pen-val">€0,00</div></div>
+      <div class="pill"><div class="tiny" data-id="fee-label">Fee servicio</div><div class="v" data-id="fee-val">€0,00</div></div>
+      <div class="pill"><div class="tiny" data-id="fare-label">Diferencia de tarifa</div><div class="v" data-id="fare-val">€0,00</div></div>
+      <div class="pill"><div class="tiny" data-id="pp-label">Total por pax</div><div class="v" data-id="pp-val">€0,00</div></div>
+      <div class="pill totalPill"><div class="tiny" data-id="tot-label">Total a pagar</div><div class="v" data-id="tot-val">€0,00</div></div>
+    </div>
+
+    <div class="notes" data-id="notes">Notas / Notes…</div>
+  </div>
+</template>
