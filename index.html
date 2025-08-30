@@ -466,35 +466,63 @@
   const HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
   async function loadAirports(){
-    try{
-      const r = await fetch('main/airports.json', { cache:'no-store' });
-      if(!r.ok) throw new Error(`HTTP ${r.status}`);
-      const data = await r.json();
-      if (data.IATA_DB && data.TZ_DB){
-        IATA_DB = data.IATA_DB || {};
-        TZ_DB   = data.TZ_DB   || {};
-      } else {
-        // Formato compacto: { "MAD": {"city":"Madrid","tz":"Europe/Madrid"}, ... }
-        IATA_DB = {}; TZ_DB = {};
-        Object.keys(data||{}).forEach(k=>{
-          const v = data[k] || {};
-          if (v.city) IATA_DB[k] = v.city;
-          if (v.tz)   TZ_DB[k]   = v.tz;
-        });
+    const candidates = [
+      'airports.json',
+      './airports.json',
+      'main/airports.json',
+      './main/airports.json',
+      '/main/airports.json'
+    ];
+    let lastErr = null;
+    for (const url of candidates){
+      try{
+        const antiCache = (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
+        const r = await fetch(url + antiCache, { cache:'no-store' });
+        if(!r.ok) throw new Error(`HTTP ${r.status}`);
+        const data = await r.json();
+        // Formato 1: { IATA_DB:{}, TZ_DB:{} }
+        if (data.IATA_DB && data.TZ_DB){
+          IATA_DB = data.IATA_DB || {};
+          TZ_DB   = data.TZ_DB   || {};
+        } else {
+          // Formato 2 (compacto): { "MAD": {"city":"Madrid","tz":"Europe/Madrid"}, ... }
+          IATA_DB = {}; TZ_DB = {};
+          Object.keys(data||{}).forEach(k=>{
+            const v = data[k] || {};
+            if (v.city) IATA_DB[k] = v.city;
+            if (v.tz)   TZ_DB[k]   = v.tz;
+          });
+        }
+        // Poblar datalist
+        const dlI = $('iataList');
+        if(dlI){
+          dlI.innerHTML='';
+          Object.keys(IATA_DB).sort((a,b)=>a.localeCompare(b)).forEach(k=>{
+            const o=document.createElement('option');
+            o.value=k; o.label=IATA_DB[k];
+            dlI.appendChild(o);
+          });
+        }
+        console.log(`airports.json cargado desde: ${url} · ${Object.keys(IATA_DB).length} IATA, ${Object.keys(TZ_DB).length} TZ`);
+        // Oculta error si lo hubiera mostrado
+        if ($('err')) $('err').style.display='none';
+        return true;
+      }catch(e){
+        lastErr = e;
       }
-      // Repoblar datalist de IATA
-      const dlI = $('iataList');
-      if(dlI){
-        dlI.innerHTML='';
-        Object.keys(IATA_DB).sort().forEach(k=>{
-          const o=document.createElement('option');
-          o.value=k; o.label=IATA_DB[k];
-          dlI.appendChild(o);
-        });
-      }
-    }catch(e){
-      console.warn('No se pudo cargar main/airports.json; UI seguirá en UTC sin autocompletar.', e);
     }
+    // Si llegamos aquí, fallaron todas las rutas
+    const msg = [
+      'No se pudo cargar "airports.json".',
+      'Prueba estas rutas relativas desde ESTE index:',
+      '• airports.json',
+      '• ./airports.json',
+      '• main/airports.json',
+      'Abre el proyecto con un servidor (http://), no con file://'
+    ].join(' ');
+    if($('err')){ $('err').textContent = '⚠️ ' + msg; $('err').style.display='block'; }
+    console.warn(msg, lastErr);
+    return false;
   }
 
   function nf(cur,lang){
@@ -757,14 +785,14 @@
     if($("maarlabLogoMTop")) $("maarlabLogoMTop").src = DEFAULT_MAARLAB_MARK;
     if($("maarlabLogoMCard")) $("maarlabLogoMCard").src = DEFAULT_MAARLAB_MARK;
 
-    // Datalist de aerolíneas (IATA 2-3 letras)
+    // Datalist aerolíneas
     const dlAir=$("airlineCodes");
     if(dlAir){ dlAir.innerHTML=""; Object.keys(AIRLINES).forEach(function(k){ const o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); }); }
   }
 
   document.addEventListener("DOMContentLoaded", async function(){
     try{
-      await loadAirports();   // carga externa obligatoria
+      await loadAirports();   // intenta varias rutas y muestra error si no
       bindAll();
       applyI18n();            // hace refresh() al final
     }catch(e){
