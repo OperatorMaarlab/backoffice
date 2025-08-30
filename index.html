@@ -23,14 +23,17 @@
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
   body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.14),rgba(255,255,255,.22) 45%,rgba(255,255,255,.70))}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
+
   .bar{position:sticky;top:0;background:#ffffff;border-bottom:1px solid var(--border);z-index:30}
   .barInner{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:1240px;margin:0 auto;padding:10px 16px}
   .brandTitle{font:700 18px/1 Poppins,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui;letter-spacing:.2px}
   .sep{height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
   .logoBoxTiny{width:28px;height:28px;border:1px solid var(--border);border-radius:8px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .logoBoxTiny img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+
   .grid2{display:grid;gap:16px}
   @media(min-width:1100px){.grid2{grid-template-columns:2fr 1fr}}
+
   .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px}
   .btn{border:0;border-radius:12px;padding:10px 14px;color:#0b2a5a;background:linear-gradient(135deg,var(--accent),var(--accent2));cursor:pointer;font-weight:600}
   .chip{display:inline-flex;border:1px solid var(--border);border-radius:12px;overflow:hidden}
@@ -44,44 +47,8 @@
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   .tiny{font-size:11px;color:#64748b}
   h2{font:700 16px/1.2 Poppins,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui;margin:0 0 6px}
-  #exportArea{position:relative}
-  .wm{position:absolute;inset:0;pointer-events:none;display:none}
-  .wm.show::before{
-    content:attr(data-text);position:absolute;top:50%;left:50%;
-    transform:translate(-50%,-50%) rotate(-16deg);
-    font:700 64px/1 Poppins,system-ui;color:#0b2a5a;opacity:.08;white-space:nowrap
-  }
-  .headerRow{display:flex;justify-content:space-between;align-items:center;gap:12px}
-  #hdr-title{font:700 32px/1.1 Poppins,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui}
-  .logoCard{width:36px;height:36px;border:1px solid var(--border);border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden}
-  .logoCard img{max-width:100%;max-height:100%;object-fit:contain;display:block}
-  .itins{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
-  .itinCol{border:1px solid var(--border);border-radius:14px;padding:12px;min-height:300px}
-  .itinOld{background:linear-gradient(180deg,var(--oldA),var(--oldB));border-color:var(--oldBorder)}
-  .itinNew{background:linear-gradient(180deg,var(--newA),var(--newB));border-color:var(--newBorder)}
-  .leg{border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffc8;margin-top:10px}
-  .legHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
-  .codes{font-weight:700;font-size:18px}
-  .airLogoBox{height:42px;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:120px}
-  .airLogoBox img{max-height:100%;width:auto;display:block}
-  .meta{font-size:12px;color:#475569;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .badges{display:flex;gap:6px;flex-wrap:wrap}
-  .badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:#fff;border-radius:999px;padding:3px 8px;font-size:11px;color:#334155}
-  #locBadges .badge{font-size:13px;padding:5px 10px}
-  .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .times.stop{grid-template-columns:repeat(4,1fr)}
-  .big{font-weight:700;font-size:18px}
-  .dim{font-size:12px;color:#334155;margin-top:6px}
-  .prices{display:grid;grid-template-columns:repeat(4,1fr) 1.2fr;gap:12px;margin-top:14px}
-  .pill{border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;background:var(--muted)}
-  .pill .v{font-weight:700}
-  .totalPill{background:linear-gradient(135deg,#e7f3ff,#ecfbff);border-color:#93c5fd}
-  .totalPill .v{font-size:22px}
-  .notes{margin-top:12px;border:1px dashed var(--border);border-radius:12px;background:#fff;padding:10px;min-height:60px}
-  .foot{display:flex;justify-content:space-between;gap:12px;margin-top:12px;color:#64748b;font-size:12px;align-items:center}
-  .hotelBox{display:none;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;border:1px dashed var(--border);border-radius:12px;padding:10px;background:#ffffffc8}
-  .hotelLogo{width:56px;height:56px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
-  .hotelLogo img{max-width:100%;max-height:100%;object-fit:contain}
+
+  /* PRINT */
   @media print{
     .bar,.sep,#panel,.btnPdfHide{display:none!important}
     *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
@@ -89,13 +56,9 @@
     html,body{height:auto}
     .wrap{padding:0}
     body{font-size:12px}
-    #hdr-title{font-size:26px}
-    .codes{font-size:16px}
-    .big{font-size:16px}
-    .logoCard{width:28px;height:28px}
-    .notes{min-height:40px}
     #exportArea{transform:scale(0.92);transform-origin:top left}
   }
+
   #err{display:none;background:#fff4f4;border:1px solid #fecaca;color:#7f1d1d;padding:8px;border-radius:10px;margin:10px 0;font-size:13px}
 </style>
 </head>
@@ -139,103 +102,11 @@
     <section class="card" id="cardWrap">
       <div id="err"></div>
       <div id="exportArea">
-        <div class="wm" id="wm" data-text=""></div>
-        <div class="headerRow">
-          <div>
-            <div class="tiny" id="hdr-sub">Modificación de reserva · Round Trip</div>
-            <div id="hdr-title">Modificación de reserva</div>
-            <div class="tiny" id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
-            <div class="badges" id="locBadges"></div>
-            <div class="badges"><span class="badge" id="modeBadge">Cotización</span></div>
-          </div>
-          <div class="logoCard">
-            <img id="maarlabLogoMCard" alt="M" crossorigin="anonymous" referrerpolicy="no-referrer"
-                 src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg">
-          </div>
-        </div>
-
-        <div class="itins">
-          <div class="itinCol itinOld">
-            <div style="font:700 14px Poppins,system-ui" id="prevTitle">Vuelos anteriores</div>
-
-            <div class="leg" id="leg-oo">
-              <div class="legHead">
-                <div>
-                  <div class="codes" id="ooCodes">XXX → XXX</div>
-                  <div class="tiny" id="ooCities">— → —</div>
-                </div>
-                <div class="airLogoBox"><img id="logo-oo" alt="air-oo" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
-              </div>
-              <div class="meta"><span id="ooMeta">Vuelo — Fecha</span><div class="badges" id="ooBadges"></div></div>
-              <div class="times" id="ooTimes"></div>
-              <div class="dim" id="ooDur">Duración: —</div>
-            </div>
-
-            <div class="leg" id="leg-or">
-              <div class="legHead">
-                <div>
-                  <div class="codes" id="orCodes">XXX → XXX</div>
-                  <div class="tiny" id="orCities">— → —</div>
-                </div>
-                <div class="airLogoBox"><img id="logo-or" alt="air-or" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
-              </div>
-              <div class="meta"><span id="orMeta">Vuelo — Fecha</span><div class="badges" id="orBadges"></div></div>
-              <div class="times" id="orTimes"></div>
-              <div class="dim" id="orDur">Duración: —</div>
-            </div>
-          </div>
-
-          <div class="itinCol itinNew">
-            <div style="font:700 14px Poppins,system-ui" id="newTitle">Vuelos nuevos</div>
-
-            <div class="leg" id="leg-no">
-              <div class="legHead">
-                <div>
-                  <div class="codes" id="noCodes">XXX → XXX</div>
-                  <div class="tiny" id="noCities">— → —</div>
-                </div>
-                <div class="airLogoBox"><img id="logo-no" alt="air-no" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
-              </div>
-              <div class="meta"><span id="noMeta">Vuelo — Fecha</span><div class="badges" id="noBadges"></div></div>
-              <div class="times" id="noTimes"></div>
-              <div class="dim" id="noDur">Duración: —</div>
-            </div>
-
-            <div class="leg" id="leg-nr">
-              <div class="legHead">
-                <div>
-                  <div class="codes" id="nrCodes">XXX → XXX</div>
-                  <div class="tiny" id="nrCities">— → —</div>
-                </div>
-                <div class="airLogoBox"><img id="logo-nr" alt="air-nr" crossorigin="anonymous" referrerpolicy="no-referrer"></div>
-              </div>
-              <div class="meta"><span id="nrMeta">Vuelo — Fecha</span><div class="badges" id="nrBadges"></div></div>
-              <div class="times" id="nrTimes"></div>
-              <div class="dim" id="nrDur">Duración: —</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="hotelBox" id="hotelBox">
-          <div>
-            <div class="tiny" id="hotelCaption">Hotel</div>
-            <div class="big" id="hotelName">—</div>
-          </div>
-          <div class="hotelLogo"><img id="hotelLogoImg" alt="hotel-logo"></div>
-        </div>
-
-        <div class="prices">
-          <div class="pill"><div class="tiny" id="penLabel">Penalización</div><div class="v" id="penVal">€0,00</div></div>
-          <div class="pill"><div class="tiny" id="feeLabel">Fee servicio</div><div class="v" id="feeVal">€0,00</div></div>
-          <div class="pill"><div class="tiny" id="fareLabel">Diferencia de tarifa</div><div class="v" id="fareVal">€0,00</div></div>
-          <div class="pill"><div class="tiny" id="ppLabel">Total por pax</div><div class="v" id="ppVal">€0,00</div></div>
-          <div class="pill totalPill"><div class="tiny" id="totLabel">Total a pagar</div><div class="v" id="totVal">€0,00</div></div>
-        </div>
-
-        <div class="notes" contenteditable="true" id="notesBox">Notas / Notes…</div>
+        <!-- Web Component de la tarjeta -->
+        <flight-card id="viewer"></flight-card>
       </div>
 
-      <div class="foot">
+      <div class="foot" style="display:flex;justify-content:space-between;gap:12px;margin-top:12px;color:#64748b;font-size:12px;align-items:center">
         <div class="tiny" id="footerText">Generado por Maarlab · Contacto: booking@maarlab.com</div>
         <div class="btnPdfHide" style="display:flex;gap:8px">
           <button id="btnPdf" class="btn">PDF</button>
@@ -392,7 +263,215 @@
   <datalist id="airlineCodes"></datalist>
   <datalist id="iataList"></datalist>
 
+<!-- ===== Template del Web Component (integrado) ===== -->
+<template id="tpl-flight-card">
+  <style>
+    :host{display:block}
+    .card{
+      position:relative;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.35)) padding-box,
+        radial-gradient(120% 120% at 0% 0%, rgba(21,199,155,.35), rgba(44,169,255,.25)) border-box;
+      box-shadow: 0 20px 40px rgba(6,24,44,.18), inset 0 1px 0 rgba(255,255,255,.4);
+      overflow:hidden;
+    }
+    .hdr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 16px 0 16px}
+    .brand{display:flex;flex-direction:column;gap:6px}
+    .sub{font:600 12px/1.1 Poppins,system-ui;color:#335}
+    .title{font:700 28px/1.1 Poppins,system-ui;color:#0b2a5a;letter-spacing:.2px}
+    .dates{font:12px/1.2 system-ui;color:#475569}
+    .badge{display:inline-flex;align-items:center;gap:6px;border:1px solid #d7ddea;background:#fff;border-radius:999px;padding:4px 10px;font-size:11px;color:#334155;transition:background .25s, transform .25s}
+    .badge:hover{background:#f5fbff; transform:translateY(-1px)}
+    .logoCard{width:36px;height:36px;border:1px solid #d7ddea;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden}
+    .logoCard img{max-width:100%;max-height:100%;display:block}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 16px 16px}
+    .col{border:1px solid #e5e9f3;border-radius:14px;padding:12px;background:linear-gradient(180deg,#fff,#f8fbff)}
+    .colTitle{font:700 14px Poppins,system-ui;margin-bottom:4px}
+
+    .leg{border:1px dashed #d7ddea;border-radius:12px;padding:10px;background:#ffffffc8;margin-top:10px;transform:translateZ(0);transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s}
+    .leg:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(6,24,44,.12)}
+    .legHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+    .codes{font-weight:700;font-size:18px;color:#0b2a5a}
+    .tiny{font-size:12px;color:#475569}
+    .airLogoBox{height:42px;padding:6px 10px;border:1px solid #d7ddea;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:120px}
+    .airLogoBox img{max-height:100%;width:auto;display:block}
+    .meta{font-size:12px;color:#475569;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .badges{display:flex;gap:6px;flex-wrap:wrap}
+    .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .times.stop{grid-template-columns:repeat(4,1fr)}
+    .big{font-weight:700;font-size:18px;color:#0b2a5a}
+    .dim{font-size:12px;color:#334155;margin-top:6px}
+
+    .prices{display:grid;grid-template-columns:repeat(4,1fr) 1.2fr;gap:12px;margin-top:10px}
+    .pill{border:1px solid #d7ddea;border-radius:14px;padding:10px;text-align:center;background:#eef2f7}
+    .pill .v{font-weight:700}
+    .totalPill{background:linear-gradient(135deg,#e7f3ff,#ecfbff);border-color:#93c5fd}
+    .totalPill .v{font-size:22px}
+
+    .notes{margin-top:12px;border:1px dashed #d7ddea;border-radius:12px;background:#fff;padding:10px;min-height:60px}
+
+    .wm{position:absolute;inset:0;pointer-events:none;display:none}
+    .wm.show::before{
+      content:attr(data-text);position:absolute;top:50%;left:50%;
+      transform:translate(-50%,-50%) rotate(-12deg);
+      font:700 64px/1 Poppins,system-ui;color:#0b2a5a;opacity:.08;white-space:nowrap
+    }
+
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
+
+  <div class="card">
+    <div class="wm" part="watermark"></div>
+    <div class="hdr">
+      <div class="brand">
+        <div class="sub" data-id="hdr-sub">Modificación de reserva · Round Trip</div>
+        <div class="title" data-id="hdr-title">Modificación de reserva</div>
+        <div class="dates tiny" data-id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
+        <div class="badges" data-id="loc-badges"></div>
+        <div class="badges"><span class="badge" data-id="mode-badge">Cotización</span></div>
+      </div>
+      <div class="logoCard"><img data-id="logo-m" alt="M"></div>
+    </div>
+
+    <div class="grid">
+      <div class="col">
+        <div class="colTitle" data-id="prev-title">Vuelos anteriores</div>
+        <div data-id="leg-oo" class="leg"></div>
+        <div data-id="leg-or" class="leg"></div>
+      </div>
+      <div class="col">
+        <div class="colTitle" data-id="new-title">Vuelos nuevos</div>
+        <div data-id="leg-no" class="leg"></div>
+        <div data-id="leg-nr" class="leg"></div>
+      </div>
+    </div>
+
+    <div class="prices">
+      <div class="pill"><div class="tiny" data-id="pen-label">Penalización</div><div class="v" data-id="pen-val">€0,00</div></div>
+      <div class="pill"><div class="tiny" data-id="fee-label">Fee servicio</div><div class="v" data-id="fee-val">€0,00</div></div>
+      <div class="pill"><div class="tiny" data-id="fare-label">Diferencia de tarifa</div><div class="v" data-id="fare-val">€0,00</div></div>
+      <div class="pill"><div class="tiny" data-id="pp-label">Total por pax</div><div class="v" data-id="pp-val">€0,00</div></div>
+      <div class="pill totalPill"><div class="tiny" data-id="tot-label">Total a pagar</div><div class="v" data-id="tot-val">€0,00</div></div>
+    </div>
+
+    <div class="notes" data-id="notes">Notas / Notes…</div>
+  </div>
+</template>
+<!-- ===== Fin template componente ===== -->
+
 <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+
+<!-- ===== Web Component (integrado) ===== -->
+<script type="module">
+class FlightCard extends HTMLElement{
+  static get observedAttributes(){ return ['mode']; }
+  constructor(){ super(); this.attachShadow({mode:'open'}); this.model=null; }
+  connectedCallback(){
+    const tpl = document.getElementById('tpl-flight-card');
+    this.shadowRoot.appendChild(tpl.content.cloneNode(true));
+    this.$('logo-m').src = 'https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg';
+    if (this.model) this.render(this.model);
+  }
+  attributeChangedCallback(){ if(this.model) this.render(this.model); }
+  $(id){ return this.shadowRoot.querySelector(`[data-id="${id}"]`); }
+  _clear(el){ if(!el) return; while(el.firstChild) el.removeChild(el.firstChild); }
+  render(model){
+    this.model = model;
+
+    this.$('hdr-sub').textContent   = model.i18n.sub;
+    this.$('hdr-title').textContent = model.i18n.title;
+    this.$('hdr-dates').textContent = model.i18n.dates;
+
+    this._clear(this.$('loc-badges'));
+    (model.locBadges||[]).forEach(b=>{
+      const s=document.createElement('span'); s.className='badge'; s.textContent=b;
+      this.$('loc-badges').appendChild(s);
+    });
+
+    this.$('mode-badge').textContent = model.i18n.modeBadge;
+    if(model.brandLogo) this.$('logo-m').src = model.brandLogo;
+
+    const wm=this.shadowRoot.querySelector('.wm');
+    if(model.watermarkOn){ wm.dataset.text = model.i18n.sealText || 'CONFIRMADO'; wm.classList.add('show'); }
+    else { wm.dataset.text=''; wm.classList.remove('show'); }
+
+    this.$('prev-title').textContent = model.i18n.prevTitle;
+    this.$('new-title').textContent  = model.i18n.newTitle;
+
+    this._renderLeg('leg-oo', model.legs?.oo);
+    this._renderLeg('leg-or', model.legs?.or);
+    this._renderLeg('leg-no', model.legs?.no);
+    this._renderLeg('leg-nr', model.legs?.nr);
+
+    this.$('pen-label').textContent  = model.i18n.labels.pen;
+    this.$('fee-label').textContent  = model.i18n.labels.fee;
+    this.$('fare-label').textContent = model.i18n.labels.fare;
+    this.$('pp-label').textContent   = model.i18n.labels.pp;
+    this.$('tot-label').textContent  = model.i18n.labels.tot;
+
+    this.$('pen-val').textContent = model.prices.pen;
+    this.$('fee-val').textContent = model.prices.fee;
+    this.$('fare-val').textContent= model.prices.fare;
+    this.$('pp-val').textContent  = model.prices.pp;
+    this.$('tot-val').textContent = model.prices.tot;
+
+    this.$('notes').textContent = model.notes || 'Notas / Notes…';
+  }
+  _renderLeg(targetId, leg){
+    const host=this.$(targetId);
+    this._clear(host);
+    if(!leg){ host.style.display='none'; return; }
+    host.style.display='block';
+
+    const head=document.createElement('div'); head.className='legHead';
+    const left=document.createElement('div');
+    const codes=document.createElement('div'); codes.className='codes'; codes.textContent=`${leg.from} → ${leg.to}`;
+    const cities=document.createElement('div'); cities.className='tiny'; cities.textContent=`${leg.cityFrom} → ${leg.cityTo}`;
+    left.appendChild(codes); left.appendChild(cities);
+
+    const lb=document.createElement('div'); lb.className='airLogoBox';
+    const img=document.createElement('img'); img.alt='airline';
+    if(leg.logo) img.src=leg.logo; lb.appendChild(img);
+
+    head.appendChild(left); head.appendChild(lb); host.appendChild(head);
+
+    const meta=document.createElement('div'); meta.className='meta';
+    const span=document.createElement('span'); span.textContent=`${leg.flight||''} · ${leg.airline||'—'} · ${leg.dateText||'—'}`;
+    meta.appendChild(span);
+    const badges=document.createElement('div'); badges.className='badges';
+    (leg.badges||[]).forEach(t=>{ const b=document.createElement('span'); b.className='badge'; b.textContent=t; badges.appendChild(b); });
+    meta.appendChild(badges);
+    host.appendChild(meta);
+
+    const times=document.createElement('div'); times.className='times'+(leg.stop?' stop':'');
+    const cell=(lbl,val)=>{ const w=document.createElement('div'); const l=document.createElement('div'); l.className='tiny'; l.textContent=lbl; const v=document.createElement('div'); v.className='big'; v.textContent=val||'--:--'; w.appendChild(l); w.appendChild(v); return w; };
+    if(leg.stop){
+      times.appendChild(cell(leg.lblDep, leg.dep));
+      times.appendChild(cell(leg.lblArrStop, leg.stopArr));
+      times.appendChild(cell(leg.lblDepStop, leg.stopDep));
+      times.appendChild(cell(leg.lblArr, leg.arr));
+    }else{
+      times.appendChild(cell(leg.lblDep, leg.dep));
+      times.appendChild(cell(leg.lblArr, leg.arr));
+    }
+    host.appendChild(times);
+
+    const dim=document.createElement('div'); dim.className='dim';
+    dim.textContent = `${leg.lblDuration}: ${leg.duration}` + (leg.layover? ` · ${leg.lblLayover}: ${leg.layover}`:'');
+    host.appendChild(dim);
+
+    host.animate([{opacity:.0, transform:'translateY(6px)'},{opacity:1, transform:'translateY(0)'}], {duration:240, easing:'ease-out'});
+  }
+}
+customElements.define('flight-card', FlightCard);
+</script>
+
+<!-- ===== App principal ===== -->
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -404,33 +483,32 @@
         dep:"Salida",arr:"Llegada",arrStop:"Llegada escala",depStop:"Salida escala",duration:"Duración",layover:"Escala",
         footer:"Generado por Maarlab · Contacto: booking@maarlab.com",
         badgeMode:{quote:"Cotización",confirm:"Confirmación"},
-        badges:{plusDays:"+{n} día(s)", tz:"ΔTZ {h}h", dst:"DST", odd:"Duración inusual"}},
+    },
     en:{hdrSub:"Reservation change · Round Trip",hdrTitle:"Reservation change",
         prev:"Previous flights",next:"New flights",
         dep:"Departure",arr:"Arrival",arrStop:"Arrive stop",depStop:"Depart stop",duration:"Duration",layover:"Layover",
         footer:"Generated by Maarlab · Contact: booking@maarlab.com",
         badgeMode:{quote:"Quotation",confirm:"Confirmation"},
-        badges:{plusDays:"+{n} day(s)", tz:"ΔTZ {h}h", dst:"DST", odd:"Odd duration"}},
+    },
     fr:{hdrSub:"Modification de réservation · AR",hdrTitle:"Modification de réservation",
         prev:"Vols précédents",next:"Nouveaux vols",
         dep:"Départ",arr:"Arrivée",arrStop:"Arrivée escale",depStop:"Départ escale",duration:"Durée",layover:"Escale",
         footer:"Généré par Maarlab · Contact : booking@maarlab.com",
         badgeMode:{quote:"Devis",confirm:"Confirmation"},
-        badges:{plusDays:"+{n} jour(s)", tz:"ΔTZ {h}h", dst:"Heure d'été", odd:"Durée inhabituelle"}},
+    },
     it:{hdrSub:"Modifica prenotazione · A/R",hdrTitle:"Modifica prenotazione",
         prev:"Voli precedenti",next:"Nuovi voli",
         dep:"Partenza",arr:"Arrivo",arrStop:"Arrivo scalo",depStop:"Partenza scalo",duration:"Durata",layover:"Scalo",
         footer:"Generato da Maarlab · Contatto: booking@maarlab.com",
         badgeMode:{quote:"Preventivo",confirm:"Conferma"},
-        badges:{plusDays:"+{n} giorno/i", tz:"ΔTZ {h}h", dst:"Ora legale", odd:"Durata insolita"}},
+    },
     de:{hdrSub:"Reservierungsänderung · RT",hdrTitle:"Reservierungsänderung",
         prev:"Bisherige Flüge",next:"Neue Flüge",
         dep:"Abflug",arr:"Ankunft",arrStop:"Ankunft Zwischenstopp",depStop:"Abflug Zwischenstopp",duration:"Dauer",layover:"Zwischenstopp",
         footer:"Erstellt von Maarlab · Kontakt: booking@maarlab.com",
         badgeMode:{quote:"Angebot",confirm:"Bestätigung"},
-        badges:{plusDays:"+{n} Tag(e)", tz:"ΔTZ {h}h", dst:"Sommerzeit", odd:"Ungewöhnliche Dauer"}}
+    }
   };
-  let LANG="es", CUR="EUR", MODE="quote";
   const W = {
     es:{confTitle:"Confirmación de cambio", totQuote:"Total a pagar", totConf:"Total pagado", seal:"CONFIRMADO"},
     en:{confTitle:"Change confirmation",  totQuote:"Total due",     totConf:"Total paid",   seal:"CONFIRMED"},
@@ -439,91 +517,25 @@
     de:{confTitle:"Änderungsbestätigung", totQuote:"Gesamt fällig",  totConf:"Gesamt bezahlt", seal:"BESTÄTIGT"}
   };
 
-  /* ===== datos ===== */
+  /* ===== datos (sin fallback embebido) ===== */
   const DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
   const DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
-
-  /* Aerolíneas (incluye fallback F8→F9 y U→U2) */
   const AIRLINES = {
-    "U":"easyJet","U2":"easyJet",
-    "AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
-    "AV":"Avianca","G3":"GOL","H2":"Sky Airline",
-    "IB":"Iberia","I2":"Iberia Express","VY":"Vueling","UX":"Air Europa","NT":"Binter Canarias","FR":"Ryanair",
-    "W6":"Wizz Air","W4":"Wizz Air Malta","TO":"Transavia France","HV":"Transavia","BA":"British Airways",
-    "KL":"KLM","AF":"Air France","LH":"Lufthansa","LX":"SWISS","OS":"Austrian","SN":"Brussels Airlines","LO":"LOT",
-    "DY":"Norwegian","EW":"Eurowings","A3":"Aegean","TK":"Turkish Airlines","PC":"Pegasus",
+    "U":"easyJet","U2":"easyJet","AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
+    "AV":"Avianca","G3":"GOL","H2":"Sky Airline","IB":"Iberia","I2":"Iberia Express","VY":"Vueling","UX":"Air Europa","NT":"Binter Canarias","FR":"Ryanair",
+    "W6":"Wizz Air","W4":"Wizz Air Malta","TO":"Transavia France","HV":"Transavia","BA":"British Airways","KL":"KLM","AF":"Air France","LH":"Lufthansa","LX":"SWISS",
+    "OS":"Austrian","SN":"Brussels Airlines","LO":"LOT","DY":"Norwegian","EW":"Eurowings","A3":"Aegean","TK":"Turkish Airlines","PC":"Pegasus",
     "F8":"Frontier","F9":"Frontier","AA":"American Airlines","UA":"United","DL":"Delta","B6":"JetBlue","WN":"Southwest","NK":"Spirit",
     "AS":"Alaska","AC":"Air Canada","WS":"WestJet","EI":"Aer Lingus","LS":"Jet2"
   };
   const LOGO_FALLBACK = {"F8":"F9","U":"U2"};
 
-  /* === BDD aeropuertos: SOLO desde JSON externo === */
-  let IATA_DB = {};  // IATA -> ciudad
-  let TZ_DB   = {};  // IATA -> zona horaria
+  // Se cargan desde main/airports.json
+  let IATA_DB = {};   // { "MAD":"Madrid", ... }
+  let TZ_DB   = {};   // { "MAD":"Europe/Madrid", ... }
 
   const DateTime = luxon.DateTime;
   let hotelLogoData = "";
-  const HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-
-  async function loadAirports(){
-    const candidates = [
-      'airports.json',
-      './airports.json',
-      'main/airports.json',
-      './main/airports.json',
-      '/main/airports.json'
-    ];
-    let lastErr = null;
-    for (const url of candidates){
-      try{
-        const antiCache = (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
-        const r = await fetch(url + antiCache, { cache:'no-store' });
-        if(!r.ok) throw new Error(`HTTP ${r.status}`);
-        const data = await r.json();
-        // Formato 1: { IATA_DB:{}, TZ_DB:{} }
-        if (data.IATA_DB && data.TZ_DB){
-          IATA_DB = data.IATA_DB || {};
-          TZ_DB   = data.TZ_DB   || {};
-        } else {
-          // Formato 2 (compacto): { "MAD": {"city":"Madrid","tz":"Europe/Madrid"}, ... }
-          IATA_DB = {}; TZ_DB = {};
-          Object.keys(data||{}).forEach(k=>{
-            const v = data[k] || {};
-            if (v.city) IATA_DB[k] = v.city;
-            if (v.tz)   TZ_DB[k]   = v.tz;
-          });
-        }
-        // Poblar datalist
-        const dlI = $('iataList');
-        if(dlI){
-          dlI.innerHTML='';
-          Object.keys(IATA_DB).sort((a,b)=>a.localeCompare(b)).forEach(k=>{
-            const o=document.createElement('option');
-            o.value=k; o.label=IATA_DB[k];
-            dlI.appendChild(o);
-          });
-        }
-        console.log(`airports.json cargado desde: ${url} · ${Object.keys(IATA_DB).length} IATA, ${Object.keys(TZ_DB).length} TZ`);
-        // Oculta error si lo hubiera mostrado
-        if ($('err')) $('err').style.display='none';
-        return true;
-      }catch(e){
-        lastErr = e;
-      }
-    }
-    // Si llegamos aquí, fallaron todas las rutas
-    const msg = [
-      'No se pudo cargar "airports.json".',
-      'Prueba estas rutas relativas desde ESTE index:',
-      '• airports.json',
-      '• ./airports.json',
-      '• main/airports.json',
-      'Abre el proyecto con un servidor (http://), no con file://'
-    ].join(' ');
-    if($('err')){ $('err').textContent = '⚠️ ' + msg; $('err').style.display='block'; }
-    console.warn(msg, lastErr);
-    return false;
-  }
 
   function nf(cur,lang){
     const loc = lang==="en"?"en-US":lang==="fr"?"fr-FR":lang==="it"?"it-IT":lang==="de"?"de-DE":"es-ES";
@@ -536,6 +548,7 @@
     return base.replace(/\/$/,"") + "/" + code + ".png";
   }
   function fmtDate(d){ if(!d) return "—"; const p=String(d).split("-"); if(p.length!==3) return d; return p[2]+"/"+p[1]+"/"+p[0]; }
+  const HM_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
   function dayOfWeek(dateISO){
     if(!dateISO) return "";
@@ -568,6 +581,9 @@
   }
   function fmtHM(m){ if(!isFinite(m)) return "—"; m=Math.abs(Math.round(m)); return Math.floor(m/60)+"h "+(m%60)+"m"; }
 
+  let LANG="es", CUR="EUR";
+  let MODE = "quote"; // "quote" | "confirm"
+
   function moneyOut(v){
     const fxOn = $("fxEnable") && $("fxEnable").checked;
     if(CUR==="EUR") return nf("EUR",LANG).format(v);
@@ -579,148 +595,202 @@
     return nf(CUR,LANG).format(v);
   }
 
-  function applyI18n(){
-    const S = STR[LANG], M = W[LANG] || W.es;
-    $("hdr-title").textContent = (MODE === "confirm") ? M.confTitle : S.hdrTitle;
-    $("hdr-sub").textContent   = S.hdrSub;
-    $("prevTitle").textContent = S.prev;
-    $("newTitle").textContent  = S.next;
-    $("footerText").textContent= S.footer;
-    $("langLbl").textContent = LANG==="en"?"Language":LANG==="fr"?"Langue":LANG==="it"?"Lingua":LANG==="de"?"Sprache":"Idioma";
-    const badgeText = (MODE==="confirm") ? S.badgeMode.confirm : S.badgeMode.quote;
-    if ($("modeBadge")) $("modeBadge").textContent = badgeText;
-    $("totLabel").textContent = (MODE==="confirm") ? M.totConf : M.totQuote;
-    const wm = $("wm"); if(wm){ wm.dataset.text = (MODE==="confirm") ? (M.seal || "CONFIRMADO") : ""; wm.classList.toggle("show", MODE==="confirm"); }
-    refresh();
-  }
-
   function buildBadges(dateISO, depHM, arrHM, fromIata, toIata){
-    const S=STR[LANG].badges; const out=[];
+    const S=STR[LANG];
+    const out=[];
     try{
       const dep=zonedDT(dateISO,depHM,fromIata), arr=zonedDT(dateISO,arrHM,toIata);
       if(!dep||!arr) return out;
       const depLocal=dep.setZone(TZ_DB[fromIata]||dep.zoneName);
       const arrLocal=arr.setZone(TZ_DB[toIata]||arr.zoneName);
       const plusDays = Math.floor(arrLocal.startOf("day").diff(depLocal.startOf("day"),"days").days);
-      if(plusDays>0) out.push(S.plusDays.replace("{n}",plusDays));
-      const deltaH=(arr.offset-dep.offset)/60; if(deltaH!==0) out.push(S.tz.replace("{h}",(deltaH>0?"+":"")+deltaH));
-      if(dep.zoneName===arr.zoneName && dep.offset!==arr.offset) out.push(S.dst);
+      if(plusDays>0) out.push(`+${plusDays} día(s)`);
+      const deltaH=(arr.offset-dep.offset)/60; if(deltaH!==0) out.push(`ΔTZ ${(deltaH>0?'+':'')}${deltaH}h`);
+      if(dep.zoneName===arr.zoneName && dep.offset!==arr.offset) out.push("DST");
       const m=segmentMinutes(dateISO,depHM,arrHM,fromIata,toIata);
-      if(isFinite(m) && (m<30||m>960)) out.push(S.odd);
+      if(isFinite(m) && (m<30||m>960)) out.push("Duración inusual");
     }catch(e){}
     return out;
   }
 
-  function setLegLogo(imgId, code){
-    const img=$(imgId); if(!img) return;
+  function setLegLogo(imgEl, code){
     const raw=normalizeCode(code);
-    if(!raw){ img.style.visibility="hidden"; img.removeAttribute("src"); return; }
+    if(!raw){ imgEl.style.visibility="hidden"; imgEl.removeAttribute("src"); return; }
     const fallback = LOGO_FALLBACK[raw] ? normalizeCode(LOGO_FALLBACK[raw]) : "";
-    img.style.visibility="visible"; img.onerror=null;
-    img.onerror=function(){
-      if(fallback && img.getAttribute("data-fb")!=="1"){
-        img.setAttribute("data-fb","1"); img.src=airlineLogoUrl(fallback);
-      }else{ img.style.visibility="hidden"; img.removeAttribute("src"); }
+    imgEl.style.visibility="visible"; imgEl.onerror=null;
+    imgEl.onerror=function(){
+      if(fallback && imgEl.getAttribute("data-fb")!=="1"){
+        imgEl.setAttribute("data-fb","1"); imgEl.src=airlineLogoUrl(fallback);
+      }else{ imgEl.style.visibility="hidden"; imgEl.removeAttribute("src"); }
     };
-    img.crossOrigin="anonymous"; img.referrerPolicy="no-referrer";
-    img.removeAttribute("data-fb");
-    img.src=airlineLogoUrl(raw);
+    imgEl.crossOrigin="anonymous"; imgEl.referrerPolicy="no-referrer";
+    imgEl.removeAttribute("data-fb");
+    imgEl.src=airlineLogoUrl(raw);
   }
 
-  function renderLeg(prefix, fromIata, toIata, cityFrom, cityTo){
-    const S=STR[LANG];
-    const code=normalizeCode($(prefix+"Air").value);
-    const num =(($(prefix+"Num").value)||"").toUpperCase();
-    const dateISO = (prefix==="oo"||prefix==="or") ? ($(prefix==="oo"?"ooDate":"orDate").value) : ($(prefix==="no"?"noDate":"nrDate").value);
-    const dow = dayOfWeek(dateISO);
-    const stop=normalizeCode((($(prefix+"Stop")||{}).value)||"");
-    const stopArr=(($(prefix+"StopArr")||{}).value)||"";
-    const stopDep=(($(prefix+"StopDep")||{}).value)||"";
-
-    $(prefix+"Codes").textContent = (fromIata||"XXX")+" → "+(toIata||"XXX");
-    $(prefix+"Cities").textContent = (cityFrom||"—")+" → "+(cityTo||"—");
-    const dateTxt = dateISO? (dow+" "+fmtDate(dateISO)) : "—";
-    $(prefix+"Meta").textContent = (code||"")+(num||"")+" · "+(AIRLINES[code]||"—")+" · "+dateTxt;
-    setLegLogo("logo-"+prefix, code);
-
-    const $b=$(prefix+"Badges"); $b.innerHTML="";
-    const bs = buildBadges(dateISO, $(prefix+"Dep").value, $(prefix+"Arr").value, fromIata, toIata);
-    for(let i=0;i<bs.length;i++){ const sp=document.createElement("span"); sp.className="badge"; sp.textContent=bs[i]; $b.appendChild(sp); }
-
-    const $t=$(prefix+"Times"); $t.innerHTML="";
-    function cell(lbl,val){ const w=document.createElement("div"); const l=document.createElement("div"); l.className="tiny"; l.textContent=lbl; const v=document.createElement("div"); v.className="big"; v.textContent=val||"--:--"; w.appendChild(l); w.appendChild(v); return w; }
-    const depHM=$(prefix+"Dep").value, arrHM=$(prefix+"Arr").value;
-    let totalM=NaN, layM=NaN;
-    if(stop && HM_RE.test(stopArr||"") && HM_RE.test(stopDep||"")){
-      $t.classList.add("stop");
-      $t.appendChild(cell(S.dep,depHM));
-      $t.appendChild(cell(S.arrStop,stopArr));
-      $t.appendChild(cell(S.depStop,stopDep));
-      $t.appendChild(cell(S.arr,arrHM));
-      const s1=segmentMinutes(dateISO,depHM,stopArr,fromIata,stop);
-      const s2=segmentMinutes(dateISO,stopDep,arrHM,stop,toIata);
-      layM=layoverMinutes(dateISO,stopArr,stopDep,stop);
-      totalM=(isFinite(s1)?s1:0)+(isFinite(s2)?s2:0);
-    }else{
-      $t.classList.remove("stop");
-      $t.appendChild(cell(S.dep,depHM));
-      $t.appendChild(cell(S.arr,arrHM));
-      totalM=segmentMinutes(dateISO,depHM,arrHM,fromIata,toIata);
+  function applyI18n(){
+    const S = STR[LANG], M = W[LANG] || W.es;
+    $("footerText").textContent= S.footer;
+    $("langLbl").textContent = LANG==="en"?"Language":LANG==="fr"?"Langue":LANG==="it"?"Lingua":LANG==="de"?"Sprache":"Idioma";
+    if ($("viewer")){
+      // El título/sub lo pinta el componente desde el modelo
+      // Solo refrescamos para re-calcular labels/dates
+      refresh();
     }
-    $(prefix+"Dur").textContent = S.duration+": "+(isFinite(totalM)?fmtHM(totalM):"—")+(isFinite(layM)?(" · "+S.layover+": "+fmtHM(layM)):"");
+  }
+
+  function buildModelForCard(){
+    const viewer = $("viewer");
+    if(!viewer) return null;
+
+    const S = STR[LANG], M = W[LANG] || W.es;
+    const modeBadge = (MODE==="confirm") ? S.badgeMode.confirm : S.badgeMode.quote;
+    const sealOn = (MODE==="confirm");
+
+    // Fechas header
+    const hdrDates = (function(){
+      const ood=fmtDate(($("ooDate").value)||""), ord=fmtDate(($("orDate").value)||""), nod=fmtDate(($("noDate").value)||""), nrd=fmtDate(($("nrDate").value)||"");
+      const oodD=dayOfWeek(($("ooDate").value)||""), ordD=dayOfWeek(($("orDate").value)||""), nodD=dayOfWeek(($("noDate").value)||""), nrdD=dayOfWeek(($("nrDate").value)||"");
+      return "Ida: "+(oodD?oodD+" ":"")+ood+" → "+(nodD?nodD+" ":"")+nod+" · Vuelta: "+(ordD?ordD+" ":"")+ord+" → "+(nrdD?nrdD+" ":"")+nrd;
+    })();
+
+    const locBadges=[];
+    const b = (($("bookingRef").value)||"").trim(); if(b) locBadges.push("PNR: "+b);
+    const m = (($("maarlabRef").value)||"").trim();  if(m) locBadges.push("Maarlab: "+m);
+    const h = (($("hotelRef").value)||"").trim();    if(h) locBadges.push("Hotel: "+h);
+
+    function legFrom(prefix, fromIata, toIata, cityFrom, cityTo){
+      const code = normalizeCode(($(prefix+"Air").value)||'');
+      const num  = (($(prefix+"Num").value)||'').toUpperCase();
+      const dateISO = (prefix==='oo'||prefix==='or')
+        ? ($(prefix==='oo' ? 'ooDate' : 'orDate').value)
+        : ($(prefix==='no' ? 'noDate' : 'nrDate').value);
+      const dow = dayOfWeek(dateISO);
+      const dateText = dateISO ? (dow+" "+fmtDate(dateISO)) : "—";
+      const stop = normalizeCode((( $(prefix+"Stop") || {} ).value)||'');
+      const stopArr = (( $(prefix+"StopArr") || {} ).value)||'';
+      const stopDep = (( $(prefix+"StopDep") || {} ).value)||'';
+
+      const bs = buildBadges(dateISO,
+        $(prefix+"Dep").value,
+        $(prefix+"Arr").value,
+        fromIata, toIata);
+
+      const depHM = $(prefix+"Dep").value;
+      const arrHM = $(prefix+"Arr").value;
+      let durationM=NaN, layM=NaN;
+      if (stop && HM_RE.test(stopArr||'') && HM_RE.test(stopDep||'')){
+        const s1 = segmentMinutes(dateISO, depHM,  stopArr, fromIata, stop);
+        const s2 = segmentMinutes(dateISO, stopDep, arrHM,  stop,     toIata);
+        layM = layoverMinutes(dateISO, stopArr, stopDep, stop);
+        durationM = (isFinite(s1)?s1:0) + (isFinite(s2)?s2:0);
+      }else{
+        durationM = segmentMinutes(dateISO, depHM, arrHM, fromIata, toIata);
+      }
+
+      const lblDep=S.dep, lblArr=S.arr, lblArrStop=S.arrStop, lblDepStop=S.depStop, lblDuration=S.duration, lblLayover=S.layover;
+
+      return {
+        from: fromIata || 'XXX',
+        to:   toIata   || 'XXX',
+        cityFrom: cityFrom || '—',
+        cityTo:   cityTo   || '—',
+        flight: (code||'')+(num||''),
+        airline: AIRLINES[code] || '—',
+        dateText,
+        badges: bs,
+        dep: depHM, arr: arrHM,
+        stop: !!(stop && stopArr && stopDep),
+        stopArr, stopDep,
+        duration: isFinite(durationM)? fmtHM(durationM) : '—',
+        layover:  isFinite(layM)? fmtHM(layM) : '',
+        lblDep, lblArr, lblArrStop, lblDepStop, lblDuration, lblLayover,
+        logo: airlineLogoUrl(code)
+      };
+    }
+
+    const outFrom=normalizeCode(($("outFrom").value)||"XXX"), outTo=normalizeCode(($("outTo").value)||"XXX");
+    const retFrom=normalizeCode(($("retFrom").value)||"XXX"), retTo=normalizeCode(($("retTo").value)||"XXX");
+    const newOutFrom=normalizeCode(($("newOutFrom").value)||"") || outFrom;
+    const newOutTo  =normalizeCode(($("newOutTo").value)||"")   || outTo;
+    const newRetFrom=normalizeCode(($("newRetFrom").value)||"") || retFrom;
+    const newRetTo  =normalizeCode(($("newRetTo").value)||"")   || retTo;
+
+    const outFromCity=($("outFromCity").value)||"—", outToCity=($("outToCity").value)||"—";
+    const retFromCity=($("retFromCity").value)||"—", retToCity=($("retToCity").value)||"—";
+    const newOutFromCity = ($("newOutFromCity").value)|| outFromCity;
+    const newOutToCity   = ($("newOutToCity").value)||   outToCity;
+    const newRetFromCity = ($("newRetFromCity").value)|| retFromCity;
+    const newRetToCity   = ($("newRetToCity").value)||   retToCity;
+
+    const p=parseMoney(($("penalty").value)||0),
+          f=parseMoney(($("fee").value)||0),
+          d=parseMoney(($("fareDiff").value)||0);
+    const pax = Math.max(1, parseInt((($("pax").value)||"1"),10)||1);
+
+    const i18nLabels = {
+      pen: "Penalización", fee:"Fee servicio", fare:"Diferencia de tarifa", pp:"Total por pax",
+      tot: (MODE==='confirm') ? (W[LANG]?.totConf || "Total pagado") : (W[LANG]?.totQuote || "Total a pagar")
+    };
+
+    return {
+      i18n:{
+        sub: STR[LANG].hdrSub,
+        title: (MODE==='confirm') ? (W[LANG]?.confTitle || 'Confirmación de cambio') : (STR[LANG]?.hdrTitle || 'Modificación de reserva'),
+        dates: hdrDates,
+        prevTitle: STR[LANG]?.prev || 'Vuelos anteriores',
+        newTitle:  STR[LANG]?.next || 'Vuelos nuevos',
+        labels: i18nLabels,
+        modeBadge,
+        sealText: W[LANG]?.seal || 'CONFIRMADO'
+      },
+      brandLogo: $("maarlabLogoMTop")?.src || DEFAULT_MAARLAB_MARK,
+      watermarkOn: sealOn,
+      locBadges,
+      legs:{
+        oo: legFrom('oo', outFrom, outTo, outFromCity, outToCity),
+        or: legFrom('or', retFrom, retTo, retFromCity, retToCity),
+        no: legFrom('no', newOutFrom, newOutTo, newOutFromCity, newOutToCity),
+        nr: legFrom('nr', newRetFrom, newRetTo, newRetFromCity, newRetToCity)
+      },
+      prices:{
+        pen: moneyOut(p),
+        fee: moneyOut(f),
+        fare:moneyOut(d),
+        pp:  moneyOut(p+f+d),
+        tot: moneyOut((p+f+d)*pax)
+      },
+      notes: $("notesBox")?.textContent || ""
+    };
   }
 
   function refresh(){
     try{
-      const outFrom=normalizeCode(($("outFrom").value)||"XXX"), outTo=normalizeCode(($("outTo").value)||"XXX");
-      const retFrom=normalizeCode(($("retFrom").value)||"XXX"), retTo=normalizeCode(($("retTo").value)||"XXX");
-      const outFromCity=($("outFromCity").value)||"—", outToCity=($("outToCity").value)||"—";
-      const retFromCity=($("retFromCity").value)||"—", retToCity=($("retToCity").value)||"—";
+      // Autocompletar ciudad desde IATA (inputs con data-iata)
+      // (El render del componente usa ya los valores de inputs)
+      const inputs = document.querySelectorAll("#panel input[data-iata]");
+      inputs.forEach(el=>{
+        const targetId = el.getAttribute("data-iata");
+        if(targetId){
+          const cityEl=$(targetId), c=(el.value||"").toUpperCase().trim();
+          if(cityEl && c.length>=3 && IATA_DB[c]) cityEl.value = IATA_DB[c];
+        }
+      });
 
-      const newOutFrom=normalizeCode(($("newOutFrom").value)||"") || outFrom;
-      const newOutTo  =normalizeCode(($("newOutTo").value)||"")   || outTo;
-      const newRetFrom=normalizeCode(($("newRetFrom").value)||"") || retFrom;
-      const newRetTo  =normalizeCode(($("newRetTo").value)||"")   || retTo;
-
-      const newOutFromCity = ($("newOutFromCity").value)|| outFromCity;
-      const newOutToCity   = ($("newOutToCity").value)|| outToCity;
-      const newRetFromCity = ($("newRetFromCity").value)|| retFromCity;
-      const newRetToCity   = ($("newRetToCity").value)|| retToCity;
-
-      const ood=fmtDate(($("ooDate").value)||""), ord=fmtDate(($("orDate").value)||""), nod=fmtDate(($("noDate").value)||""), nrd=fmtDate(($("nrDate").value)||"");
-      const oodD=dayOfWeek(($("ooDate").value)||""), ordD=dayOfWeek(($("orDate").value)||""), nodD=dayOfWeek(($("noDate").value)||""), nrdD=dayOfWeek(($("nrDate").value)||"");
-      $("hdr-dates").textContent = "Ida: "+(oodD?oodD+" ":"")+ood+" → "+(nodD?nodD+" ":"")+nod+" · Vuelta: "+(ordD?ordD+" ":"")+ord+" → "+(nrdD?nrdD+" ":"")+nrd;
-
-      renderLeg("oo", outFrom, outTo, outFromCity, outToCity);
-      renderLeg("or", retFrom, retTo, retFromCity, retToCity);
-      renderLeg("no", newOutFrom, newOutTo, newOutFromCity, newOutToCity);
-      renderLeg("nr", newRetFrom, newRetTo, newRetFromCity, newRetToCity);
-
-      const p=parseMoney(($("penalty").value)||0), f=parseMoney(($("fee").value)||0), d=parseMoney(($("fareDiff").value)||0);
-      const pax = Math.max(1, parseInt((($("pax").value)||"1"),10)||1);
-      $("penVal").textContent=moneyOut(p);
-      $("feeVal").textContent=moneyOut(f);
-      $("fareVal").textContent=moneyOut(d);
-      $("ppVal").textContent=moneyOut(p+f+d);
-      $("totVal").textContent=moneyOut((p+f+d)*pax);
-
-      const c=$("locBadges"); c.innerHTML="";
-      const locs=(($("bookingRef").value)||"").trim(); if(locs){ const b=document.createElement("span"); b.className="badge"; b.textContent="PNR: "+locs; c.appendChild(b); }
-      const ml=(($("maarlabRef").value)||"").trim(); if(ml){ const b2=document.createElement("span"); b2.className="badge"; b2.textContent="Maarlab: "+ml; c.appendChild(b2); }
-      const hr=(($("hotelRef").value)||"").trim(); if(hr){ const b3=document.createElement("span"); b3.className="badge"; b3.textContent="Hotel: "+hr; c.appendChild(b3); }
-
-      const hname=(($("hotelNameInput").value)||"").trim();
-      $("hotelName").textContent = hname || "—";
-      $("hotelBox").style.display = (hname || hotelLogoData) ? "flex" : "none";
-      if(hotelLogoData){ $("hotelLogoImg").src = hotelLogoData; $("hotelLogoImg").style.display="block"; }
-      else { $("hotelLogoImg").removeAttribute("src"); $("hotelLogoImg").style.display="none"; }
+      // Render tarjeta
+      const viewer = $("viewer");
+      if (viewer) {
+        const model = buildModelForCard();
+        if (model) viewer.render(model);
+      }
     }catch(e){
       console.error(e);
-      if ($("err")){ $("err").textContent="⚠️ Error: "+e.message; $("err").style.display="block"; setTimeout(()=>{ $("err").style.display="none"; },4000); }
+      if ($("err")){ $("err").textContent="⚠️ Error: "+e.message; $("err").style.display="block"; setTimeout(function(){ $("err").style.display="none"; },4000); }
     }
   }
 
   function bindAll(){
+    // Cambios de inputs
     const inputs = document.querySelectorAll("#panel input, #panel select");
     inputs.forEach(function(el){
       const handler = function(){
@@ -762,7 +832,7 @@
       $("chipCurrency").addEventListener("click", function(e){
         const b=e.target.closest("button"); if(!b) return;
         CUR = b.getAttribute("data-cur");
-        Array.from($("chipCurrency").querySelectorAll("button")).forEach(x=>x.classList.toggle("active", x===b));
+        Array.from($("chipCurrency").querySelectorAll("button")).forEach(function(x){ x.classList.toggle("active", x===b); });
         refresh();
       });
     }
@@ -771,7 +841,7 @@
       $("chipMode").addEventListener("click", function(e){
         const b = e.target.closest("button"); if(!b) return;
         MODE = b.getAttribute("data-mode") || "quote";
-        Array.from($("chipMode").querySelectorAll("button")).forEach(x=>x.classList.toggle("active", x===b));
+        Array.from($("chipMode").querySelectorAll("button")).forEach(function(x){ x.classList.toggle("active", x===b); });
         applyI18n();
       });
     }
@@ -783,18 +853,36 @@
 
     if($("airlineBase")) $("airlineBase").value = DEFAULT_AIRLINE_BASE;
     if($("maarlabLogoMTop")) $("maarlabLogoMTop").src = DEFAULT_MAARLAB_MARK;
-    if($("maarlabLogoMCard")) $("maarlabLogoMCard").src = DEFAULT_MAARLAB_MARK;
-
-    // Datalist aerolíneas
-    const dlAir=$("airlineCodes");
-    if(dlAir){ dlAir.innerHTML=""; Object.keys(AIRLINES).forEach(function(k){ const o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); }); }
   }
 
-  document.addEventListener("DOMContentLoaded", async function(){
+  async function loadAirports(){
     try{
-      await loadAirports();   // intenta varias rutas y muestra error si no
+      const res = await fetch('main/airports.json', {cache:'no-store'});
+      if(!res.ok) throw new Error('No se pudo cargar main/airports.json');
+      const data = await res.json();
+      // Formato esperado:
+      // { "IATA_DB": { "MAD":"Madrid", ... }, "TZ_DB": { "MAD":"Europe/Madrid", ... } }
+      IATA_DB = data.IATA_DB || {};
+      TZ_DB   = data.TZ_DB   || {};
+
+      // Datalists
+      const dlI=$("iataList"); if(dlI){ dlI.innerHTML=""; Object.keys(IATA_DB).sort().forEach(function(k){ const o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlI.appendChild(o); }); }
+      const dlAir=$("airlineCodes"); if(dlAir){ dlAir.innerHTML=""; Object.keys(AIRLINES).forEach(function(k){ const o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); }); }
+
+      refresh();
+    }catch(err){
+      console.error(err);
+      if ($("err")){ $("err").textContent="⚠️ "+err.message; $("err").style.display="block"; }
+      // incluso si falló, que pinte algo
+      refresh();
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    try{
       bindAll();
-      applyI18n();            // hace refresh() al final
+      loadAirports(); // carga JSON externo (sin fallback embebido)
+      applyI18n();    // esto llamará a refresh() indirectamente
     }catch(e){
       console.error(e);
       if ($("err")){ $("err").textContent="⚠️ Error inicializando: "+e.message; $("err").style.display="block"; }
