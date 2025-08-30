@@ -9,8 +9,8 @@
   :root{
     --card:#fff; --ink:#0b2a5a; --sub:#475569; --border:#d7ddea;
     --accent:#15c79b; --accent2:#2ca9ff;
-    --oldA:#ffc7d0; --oldB:#ff9aa9; --oldBorder:#7f1d1d;
-    --newA:#cfeedd; --newB:#aee6c8; --newBorder:#14532d;
+    --oldA:#ffc7d0; --oldB:#ff9aa9; --oldBorder:#7f1d1d;  /* rojo más oscuro */
+    --newA:#cfeedd; --newB:#aee6c8; --newBorder:#14532d;  /* verde más oscuro */
     --muted:#eef2f7;
   }
   *{box-sizing:border-box}
@@ -20,10 +20,12 @@
     font:15px/1.5 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
     background:#0a223f;
   }
+  /* Fondo Maarlab oscuro con velo */
   body::before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--accent),var(--accent2))}
   body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(255,255,255,.14),rgba(255,255,255,.22) 45%,rgba(255,255,255,.70))}
   .wrap{max-width:1240px;margin:0 auto;padding:16px}
 
+  /* Barra superior */
   .bar{position:sticky;top:0;background:#ffffff;border-bottom:1px solid var(--border);z-index:30}
   .barInner{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:1240px;margin:0 auto;padding:10px 16px}
   .brandTitle{font:700 18px/1 Poppins,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui;letter-spacing:.2px}
@@ -48,6 +50,7 @@
   .tiny{font-size:11px;color:#64748b}
   h2{font:700 16px/1.2 Poppins,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui;margin:0 0 6px}
 
+  /* Visualizador */
   #exportArea{position:relative}
   .wm{position:absolute;inset:0;pointer-events:none;display:none}
   .wm.show::before{
@@ -58,6 +61,7 @@
   .headerRow{display:flex;justify-content:space-between;align-items:center;gap:12px}
   #hdr-title{font:700 32px/1.1 Poppins,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,system-ui}
 
+  /* Logo M dentro de la tarjeta */
   .logoCard{width:36px;height:36px;border:1px solid var(--border);border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .logoCard img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 
@@ -92,6 +96,7 @@
   .hotelLogo{width:56px;height:56px;border:1px solid var(--border);border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
   .hotelLogo img{max-width:100%;max-height:100%;object-fit:contain}
 
+  /* PRINT: 1 sola página A4 landscape */
   @media print{
     .bar,.sep,#panel,.btnPdfHide{display:none!important}
     *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
@@ -159,6 +164,7 @@
             <div class="badges" id="locBadges"></div>
             <div class="badges"><span class="badge" id="modeBadge">Cotización</span></div>
           </div>
+          <!-- Logo M en la tarjeta -->
           <div class="logoCard">
             <img id="maarlabLogoMCard" alt="M" crossorigin="anonymous" referrerpolicy="no-referrer"
                  src="https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg">
@@ -447,7 +453,7 @@
         badges:{plusDays:"+{n} Tag(e)", tz:"ΔTZ {h}h", dst:"Sommerzeit", odd:"Ungewöhnliche Dauer"}}
   };
   var LANG="es", CUR="EUR";
-  var MODE = "quote";
+  var MODE = "quote"; // "quote" | "confirm"
   var W = {
     es:{confTitle:"Confirmación de cambio", totQuote:"Total a pagar", totConf:"Total pagado", seal:"CONFIRMADO"},
     en:{confTitle:"Change confirmation",  totQuote:"Total due",     totConf:"Total paid",   seal:"CONFIRMED"},
@@ -460,7 +466,7 @@
   var DEFAULT_AIRLINE_BASE = "https://maarlabcdnstorage.blob.core.windows.net/web-assets/images/airlines";
   var DEFAULT_MAARLAB_MARK = "https://cdn.theorg.com/5a5ab266-2e99-4c2f-9c04-fe46304ee4fc_thumb.jpg";
 
-  /* Aerolíneas (logos y nombres) */
+  /* Aerolíneas (incluye fallback F8→F9 y U→U2) */
   var AIRLINES = {
     "U":"easyJet","U2":"easyJet",
     "AM":"Aeroméxico","Y4":"Volaris","VB":"VivaAerobus","LA":"LATAM","AR":"Aerolíneas Argentinas","CM":"Copa Airlines",
@@ -474,10 +480,27 @@
   };
   var LOGO_FALLBACK = {"F8":"F9","U":"U2"};
 
-  /* Aeropuertos dinámicos (se cargan desde main/airports.json) */
-  var IATA_DB = {};   // { IATA -> Ciudad }
-  var TZ_DB   = {};   // { IATA -> Timezone }
-  var AIRPORTS_LOADED = false;
+  /* IATA → ciudad; y TZ por aeropuerto */
+  var IATA_DB = {
+    "MAD":"Madrid","TFN":"Tenerife Norte","TFS":"Tenerife Sur","LPA":"Las Palmas (Gran Canaria)","SPC":"La Palma","BIO":"Bilbao",
+    "BCN":"Barcelona","VLC":"Valencia","AGP":"Málaga","SVQ":"Sevilla","PMI":"Palma","IBZ":"Ibiza","ALC":"Alicante",
+    "LIS":"Lisboa","CDG":"París (CDG)","ORY":"París (Orly)","FRA":"Fráncfort","AMS":"Ámsterdam",
+    "HEL":"Helsinki",
+    "LHR":"Londres (Heathrow)","LGW":"Londres (Gatwick)","LTN":"Luton","STN":"Stansted","LCY":"City","MAN":"Mánchester","LPL":"Liverpool","EMA":"East Midlands",
+    "MEX":"Ciudad de México","NLU":"Felipe Ángeles (CDMX)","GDL":"Guadalajara","MTY":"Monterrey","CUN":"Cancún","TQO":"Tulum (Felipe Carrillo Puerto)","CZM":"Cozumel",
+    "HUX":"Huatulco","PVR":"Puerto Vallarta","ACA":"Acapulco",
+    "DFW":"Dallas/Fort Worth","EWR":"Newark","JFK":"Nueva York (JFK)","LAX":"Los Ángeles","SFO":"San Francisco"
+  };
+  var TZ_DB = {
+    "MAD":"Europe/Madrid","BIO":"Europe/Madrid","BCN":"Europe/Madrid","VLC":"Europe/Madrid","AGP":"Europe/Madrid","SVQ":"Europe/Madrid","PMI":"Europe/Madrid","IBZ":"Europe/Madrid","ALC":"Europe/Madrid",
+    "TFN":"Atlantic/Canary","TFS":"Atlantic/Canary","LPA":"Atlantic/Canary","SPC":"Atlantic/Canary",
+    "LIS":"Europe/Lisbon","CDG":"Europe/Paris","ORY":"Europe/Paris","FRA":"Europe/Berlin","AMS":"Europe/Amsterdam",
+    "HEL":"Europe/Helsinki",
+    "LHR":"Europe/London","LGW":"Europe/London","LTN":"Europe/London","STN":"Europe/London","LCY":"Europe/London","MAN":"Europe/London","LPL":"Europe/London","EMA":"Europe/London",
+    "MEX":"America/Mexico_City","NLU":"America/Mexico_City","GDL":"America/Mexico_City","MTY":"America/Monterrey",
+    "CUN":"America/Cancun","TQO":"America/Cancun","CZM":"America/Cancun","HUX":"America/Mexico_City","PVR":"America/Mexico_City","ACA":"America/Mexico_City",
+    "DFW":"America/Chicago","EWR":"America/New_York","JFK":"America/New_York","LAX":"America/Los_Angeles","SFO":"America/Los_Angeles"
+  };
 
   var DateTime = luxon.DateTime;
   var hotelLogoData = "";
@@ -636,7 +659,7 @@
       var outFromCity=($("outFromCity").value)||"—", outToCity=($("outToCity").value)||"—";
       var retFromCity=($("retFromCity").value)||"—", retToCity=($("retToCity").value)||"—";
 
-      // Rutas NUEVAS
+      // Rutas NUEVAS (independientes, con fallback si están vacías)
       var newOutFrom=normalizeCode(($("newOutFrom").value)||"") || outFrom;
       var newOutTo  =normalizeCode(($("newOutTo").value)||"")   || outTo;
       var newRetFrom=normalizeCode(($("newRetFrom").value)||"") || retFrom;
@@ -651,7 +674,7 @@
       var oodD=dayOfWeek(($("ooDate").value)||""), ordD=dayOfWeek(($("orDate").value)||""), nodD=dayOfWeek(($("noDate").value)||""), nrdD=dayOfWeek(($("nrDate").value)||"");
       $("hdr-dates").textContent = "Ida: "+(oodD?oodD+" ":"")+ood+" → "+(nodD?nodD+" ":"")+nod+" · Vuelta: "+(ordD?ordD+" ":"")+ord+" → "+(nrdD?nrdD+" ":"")+nrd;
 
-      // Render legs
+      // Render
       renderLeg("oo", outFrom, outTo, outFromCity, outToCity);
       renderLeg("or", retFrom, retTo, retFromCity, retToCity);
       renderLeg("no", newOutFrom, newOutTo, newOutFromCity, newOutToCity);
@@ -684,66 +707,25 @@
     }
   }
 
-  /* ====== Carga dinámica de aeropuertos ====== */
-  function loadAirports(){
-    fetch("main/airports.json",{cache:"no-store"})
-    .then(function(r){ if(!r.ok) throw new Error("No se pudo cargar main/airports.json"); return r.json(); })
-    .then(function(data){
-      IATA_DB = {}; TZ_DB = {};
-      var arr = Array.isArray(data) ? data : (Array.isArray(data.airports)? data.airports : []);
-      if(!arr.length && !Array.isArray(data)){
-        // quizá formato { "MAD": {city:"Madrid", timezone:"Europe/Madrid"}, ... }
-        Object.keys(data||{}).forEach(function(k){
-          var rec=data[k]||{};
-          var iata = (rec.iata||rec.code||k||"").toString().toUpperCase();
-          var city = rec.city||rec.municipality||rec.town||rec.name||rec.city_name||"";
-          var tz   = rec.tz||rec.timezone||rec.time_zone||rec.tzdb||"UTC";
-          if(iata.length===3){ IATA_DB[iata]=city||iata; TZ_DB[iata]=tz||"UTC"; }
-        });
-      }else{
-        arr.forEach(function(rec){
-          if(!rec) return;
-          var iata = (rec.iata||rec.code||rec.IATA||rec.iata_code||"").toString().toUpperCase();
-          if(iata.length!==3) return;
-          var city = rec.city||rec.municipality||rec.town||rec.name||rec.city_name||iata;
-          var tz   = rec.tz||rec.timezone||rec.time_zone||rec.tzdb||"UTC";
-          IATA_DB[iata]=city;
-          TZ_DB[iata]=tz;
-        });
-      }
-      AIRPORTS_LOADED = true;
-
-      // Rellenar datalist
-      var dlI=$("iataList"); if(dlI){ dlI.innerHTML=""; Object.keys(IATA_DB).sort().forEach(function(k){
-        var o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlI.appendChild(o);
-      }); }
-      refresh();
-    })
-    .catch(function(err){
-      console.error(err);
-      AIRPORTS_LOADED=false;
-      var dlI=$("iataList"); if(dlI) dlI.innerHTML="";
-      if ($("err")){ $("err").textContent="⚠️ "+err.message+" (puedes seguir rellenando manualmente)"; $("err").style.display="block"; setTimeout(function(){ $("err").style.display="none"; },4500); }
-    });
-  }
-
   function bindAll(){
-    // Inputs
+    // Cambios de inputs (realtime)
     var inputs = document.querySelectorAll("#panel input, #panel select");
     inputs.forEach(function(el){
       var handler = function(){
+        // Uppercase sólo en campos de códigos/IATA
         if(/(From|To)$/.test(el.id) || /Stop|Air$/i.test(el.id)){
           el.value = (el.value||"").toUpperCase();
         }
+        // Validación HH:MM
         if(/(Dep|Arr|StopArr|StopDep)$/i.test(el.id)){
           var ok = (!el.value) || /^([01]\d|2[0-3]):[0-5]\d$/.test(el.value);
           el.classList.toggle("invalid", !ok);
         }
-        // Autocompletar ciudad desde IATA si tenemos DB
+        // Autocompletar ciudad desde IATA
         var targetId = el.getAttribute("data-iata");
         if(targetId){
           var cityEl=$(targetId), c=(el.value||"").toUpperCase().trim();
-          if(cityEl && c.length===3 && IATA_DB[c]) cityEl.value = IATA_DB[c];
+          if(cityEl && c.length>=3 && IATA_DB[c]) cityEl.value = IATA_DB[c];
         }
         refresh();
       };
@@ -752,7 +734,7 @@
       el.addEventListener("keyup", handler);
     });
 
-    // Logo hotel
+    // Logo hotel desde archivo
     if($("hotelLogoFile")){
       $("hotelLogoFile").addEventListener("change", function(e){
         var f = e.target.files && e.target.files[0];
@@ -779,7 +761,7 @@
       });
     }
 
-    // Modo
+    // Modo (Cotización/Confirmación) — sólo textos/etiquetas
     if ($("chipMode")) {
       $("chipMode").addEventListener("click", function(e){
         var b = e.target.closest("button"); if(!b) return;
@@ -789,7 +771,7 @@
       });
     }
 
-    // PDF
+    // Botones PDF
     ["btnPdf","btnPdf2","btnPdfTop"].forEach(function(id){
       var el=$(id); if(!el) return;
       el.addEventListener("click", function(){ window.print(); });
@@ -800,15 +782,15 @@
     if($("maarlabLogoMTop")) $("maarlabLogoMTop").src = DEFAULT_MAARLAB_MARK;
     if($("maarlabLogoMCard")) $("maarlabLogoMCard").src = DEFAULT_MAARLAB_MARK;
 
-    // Datalist aerolíneas
+    // Datalists
     var dlAir=$("airlineCodes"); if(dlAir){ dlAir.innerHTML=""; Object.keys(AIRLINES).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); }); }
+    var dlI=$("iataList"); if(dlI){ dlI.innerHTML=""; Object.keys(IATA_DB).forEach(function(k){ var o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlI.appendChild(o); }); }
   }
 
   document.addEventListener("DOMContentLoaded", function(){
     try{
       bindAll();
-      loadAirports();     // <-- carga dinámica del JSON
-      applyI18n();        // llama a refresh()
+      applyI18n();  // llama a refresh()
       refresh();
     }catch(e){
       console.error(e);
