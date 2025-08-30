@@ -856,25 +856,63 @@ customElements.define('flight-card', FlightCard);
   }
 
   async function loadAirports(){
-    try{
-      const res = await fetch('main/airports.json', {cache:'no-store'});
-      if(!res.ok) throw new Error('No se pudo cargar main/airports.json');
-      const data = await res.json();
-      // Formato esperado:
-      // { "IATA_DB": { "MAD":"Madrid", ... }, "TZ_DB": { "MAD":"Europe/Madrid", ... } }
-      IATA_DB = data.IATA_DB || {};
-      TZ_DB   = data.TZ_DB   || {};
+    // Fallback mínimo por si no carga el JSON (mantiene duración/autocompletar vivos)
+    const FALLBACK_IATA = { "MAD":"Madrid", "TFN":"Tenerife Norte", "TFS":"Tenerife Sur", "LPA":"Las Palmas (Gran Canaria)" };
+    const FALLBACK_TZ   = { "MAD":"Europe/Madrid", "TFN":"Atlantic/Canary", "TFS":"Atlantic/Canary", "LPA":"Atlantic/Canary" };
 
-      // Datalists
-      const dlI=$("iataList"); if(dlI){ dlI.innerHTML=""; Object.keys(IATA_DB).sort().forEach(function(k){ const o=document.createElement("option"); o.value=k; o.label=IATA_DB[k]; dlI.appendChild(o); }); }
-      const dlAir=$("airlineCodes"); if(dlAir){ dlAir.innerHTML=""; Object.keys(AIRLINES).forEach(function(k){ const o=document.createElement("option"); o.value=k; o.label=AIRLINES[k]; dlAir.appendChild(o); }); }
+    // Rutas a intentar (útil si el proyecto se sirve desde subcarpetas)
+    const guesses = [
+      './main/airports.json',
+      'main/airports.json',
+      `${location.pathname.replace(/\/[^/]*$/, '/') }main/airports.json`
+    ];
+    let loaded = false, lastErr = null;
 
-      refresh();
-    }catch(err){
-      console.error(err);
-      if ($("err")){ $("err").textContent="⚠️ "+err.message; $("err").style.display="block"; }
-      // incluso si falló, que pinte algo
-      refresh();
+    for (const url of guesses){
+      try{
+        const res = await fetch(`${url}?v=${Date.now()}`, {cache:'no-store'});
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        IATA_DB = data.IATA_DB || {};
+        TZ_DB   = data.TZ_DB   || {};
+        loaded = true;
+        break;
+      }catch(err){
+        lastErr = err;
+      }
+    }
+
+    if(!loaded){
+      IATA_DB = FALLBACK_IATA;
+      TZ_DB   = FALLBACK_TZ;
+      const box = document.getElementById('err');
+      if (box){
+        box.textContent = `⚠️ No se pudo cargar main/airports.json (usando fallback). Detalle: ${lastErr?.message || 'desconocido'}`;
+        box.style.display = 'block';
+      }
+    }
+
+    // Rellena datalists después de tener datos
+    const dlI=document.getElementById("iataList");
+    if(dlI){
+      dlI.innerHTML="";
+      Object.keys(IATA_DB).sort().forEach(k=>{
+        const o=document.createElement("option");
+        o.value=k; o.label=IATA_DB[k];
+        dlI.appendChild(o);
+      });
+    }
+    const dlAir=document.getElementById("airlineCodes");
+    if(dlAir){
+      dlAir.innerHTML="";
+      Object.keys(AIRLINES).forEach(k=>{
+        const o=document.createElement("option");
+        o.value=k; o.label=AIRLINES[k];
+        dlAir.appendChild(o);
+      });
+    }
+
+    refresh();
     }
   }
 
