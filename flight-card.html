@@ -2,6 +2,13 @@
 <template id="tpl-flight-card">
   <style>
     :host{display:block}
+
+    /* Colores y bordes temáticos */
+    :host{
+      --oldA:#ffc7d0; --oldB:#ff9aa9; --oldBorder:#7f1d1d;
+      --newA:#cfeedd; --newB:#aee6c8; --newBorder:#14532d;
+    }
+
     .card{
       position:relative;
       border-radius:20px;
@@ -16,9 +23,7 @@
       display:flex;justify-content:space-between;align-items:center;gap:12px;
       padding:16px 16px 0 16px
     }
-    .brand{
-      display:flex;flex-direction:column;gap:6px
-    }
+    .brand{display:flex;flex-direction:column;gap:6px}
     .sub{font:600 12px/1.1 Poppins,system-ui;color:#335}
     .title{font:700 28px/1.1 Poppins,system-ui;color:#0b2a5a;letter-spacing:.2px}
     .dates{font:12px/1.2 system-ui;color:#475569}
@@ -27,9 +32,28 @@
     .logoCard img{max-width:100%;max-height:100%;display:block}
 
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 16px 16px}
-    .col{border:1px solid #e5e9f3;border-radius:14px;padding:12px;background:linear-gradient(180deg,#fff,#f8fbff)}
 
+    /* Base de columna */
+    .col{
+      border-radius:14px;
+      padding:12px;
+      background:linear-gradient(180deg,#fff,#f8fbff);
+      border:2px solid transparent; /* necesario para el truco del borde degradado */
+    }
     .colTitle{font:700 14px Poppins,system-ui;margin-bottom:4px}
+
+    /* Bordes rojo (anteriores) y verde (nuevos) con degradado */
+    .col--old{
+      background:
+        linear-gradient(180deg,#fff,#f8fbff) padding-box,
+        linear-gradient(180deg,var(--oldA),var(--oldB)) border-box;
+    }
+    .col--new{
+      background:
+        linear-gradient(180deg,#fff,#f8fbff) padding-box,
+        linear-gradient(180deg,var(--newA),var(--newB)) border-box;
+    }
+
     .leg{border:1px dashed #d7ddea;border-radius:12px;padding:10px;background:#ffffffc8;margin-top:10px;transform:translateZ(0)}
     .legHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
     .codes{font-weight:700;font-size:18px;color:#0b2a5a}
@@ -76,7 +100,7 @@
       <div class="brand">
         <div class="sub" data-id="hdr-sub">Modificación de reserva · Round Trip</div>
         <div class="title" data-id="hdr-title">Modificación de reserva</div>
-        <div class="tiny" data-id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
+        <div class="tiny dates" data-id="hdr-dates">Ida: — → — · Vuelta: — → —</div>
         <div class="badges" data-id="loc-badges"></div>
         <div class="badges"><span class="badge" data-id="mode-badge">Cotización</span></div>
       </div>
@@ -84,12 +108,14 @@
     </div>
 
     <div class="grid">
-      <div class="col">
+      <!-- antes: <div class="col"> -->
+      <div class="col col--old">
         <div class="colTitle" data-id="prev-title">Vuelos anteriores</div>
         <div data-id="leg-oo" class="leg"></div>
         <div data-id="leg-or" class="leg"></div>
       </div>
-      <div class="col">
+      <!-- antes: <div class="col"> -->
+      <div class="col col--new">
         <div class="colTitle" data-id="new-title">Vuelos nuevos</div>
         <div data-id="leg-no" class="leg"></div>
         <div data-id="leg-nr" class="leg"></div>
